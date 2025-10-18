@@ -2,7 +2,7 @@
 
 이 문서는 프로젝트의 개발 규칙과 표준을 정의합니다. 모든 개발자(AI 포함)는 이 규칙을 따라야 합니다.
 
-**Note**: 이 파일은 dev-rules-starter-kit 템플릿입니다. `setup.sh`를 실행하면 PROJECT_NAME이 자동으로 치환됩니다.
+**Note**: 이 파일은 dev-rules-starter-kit 템플릿입니다. `setup.sh`를 실행하면 TestDevRules이 자동으로 치환됩니다.
 
 ---
 
@@ -280,7 +280,7 @@ MAJOR.MINOR.PATCH-LABEL
 # TASKS/FEAT-2025-10-18-01.yaml
 task_id: "FEAT-2025-10-18-01"
 title: "Add user registration"
-project: "PROJECT_NAME"
+project: "TestDevRules"
 priority: "high"
 tags: [feature, auth]
 
@@ -307,7 +307,7 @@ python scripts/task_executor.py TASKS/FEAT-2025-10-18-01.yaml
 **3. 옵시디언에서 자동 생성**:
 - `개발일지/2025-10-18_Add_user_registration.md` ✅
 - `TASKS/FEAT-2025-10-18-01.md` (체크리스트 업데이트) ✅
-- `MOCs/PROJECT_NAME_개발_지식맵.md` (자동 갱신) ✅
+- `MOCs/TestDevRules_개발_지식맵.md` (자동 갱신) ✅
 
 ### 시간 절감 효과
 

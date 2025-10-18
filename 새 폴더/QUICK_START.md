@@ -102,7 +102,7 @@ npx husky set .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
 vim .env  # 또는 선호하는 에디터 사용
 
 # 필수 항목 설정:
-PROJECT_NAME=MyNewProject
+TestDevRules=MyNewProject
 LANGUAGE=python  # 또는 javascript
 FRAMEWORK=fastapi  # 또는 react, express, etc.
 

@@ -65,7 +65,7 @@ python setup.py --project-name "MyNewProject"
 ```
 
 **자동 처리 항목**:
-- ✅ 프로젝트명 일괄 변경 (PROJECT_NAME → MyNewProject)
+- ✅ 프로젝트명 일괄 변경 (TestDevRules → MyNewProject)
 - ✅ 의존성 설치 (requirements.txt)
 - ✅ Pre-commit 훅 설치
 - ✅ Commitlint 설정
@@ -79,7 +79,7 @@ cp .env.example .env
 
 # 2. .env 파일 수정 (필수)
 # OBSIDIAN_VAULT_PATH=C:/Users/YourName/Documents/ObsidianVault
-# PROJECT_NAME=MyNewProject
+# TestDevRules=MyNewProject
 ```
 
 ### Step 3: 즉시 사용

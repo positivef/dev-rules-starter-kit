@@ -1,6 +1,6 @@
 task_id: "FEAT-YYYY-MM-DD-01"
 title: "Task title (descriptive, 3-8 words)"
-project: "PROJECT_NAME"
+project: "TestDevRules"
 priority: "high"  # high, medium, low
 type: "feature"   # feature, bugfix, refactor, docs
 tags: [development, automation]
