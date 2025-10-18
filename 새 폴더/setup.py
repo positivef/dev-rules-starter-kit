@@ -1,0 +1,134 @@
+
+import argparse
+import glob
+import os
+import subprocess
+import sys
+
+import shutil
+from pathlib import Path
+
+# 기본 설정
+DEFAULT_PROJECT_NAME = "PROJECT_NAME"
+FILES_TO_REPLACE_CONTENT = [
+    "README.md",
+    "DEVELOPMENT_RULES.md",
+    "TASKS/TEMPLATE.yaml",
+]
+
+
+def copy_scaffold_files(framework: str | None):
+    """템플릿 파일을 프로젝트 루트에 복사합니다."""
+    print("\n📂 Scaffolding project files...")
+    
+    template_dirs = ["general"]
+    if framework:
+        framework_dir = Path("templates") / framework
+        if framework_dir.is_dir():
+            template_dirs.append(framework)
+            print(f"   - Framework detected: {framework}")
+        else:
+            print(f"   - ⚠️  Framework '{framework}' not found. Skipping.", file=sys.stderr)
+
+    for dir_name in template_dirs:
+        source_dir = Path("templates") / dir_name
+        for item in source_dir.iterdir():
+            dest_path = Path(".") / item.name
+            try:
+                if item.is_dir():
+                    shutil.copytree(item, dest_path, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(item, dest_path)
+                print(f"   - Created/Updated {dest_path}")
+            except Exception as e:
+                print(f"   - ⚠️  Could not copy {item}: {e}", file=sys.stderr)
+
+
+def run_command(command, description):
+    """주어진 명령어를 실행하고 결과를 출력합니다."""
+    print(f"\n🚀 Executing: {description}")
+    try:
+        subprocess.run(command, check=True, shell=True, text=True, capture_output=True)
+        print(f"✅ Success: {description}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error executing command: {' '.join(command)}", file=sys.stderr)
+        print(e.stderr, file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"❌ Command not found: {command[0]}", file=sys.stderr)
+        print("Please ensure the command is installed and in your PATH.", file=sys.stderr)
+        sys.exit(1)
+
+def replace_project_name(project_name):
+    """프로젝트 내 파일들의 플레이스홀더를 새 프로젝트 이름으로 교체합니다."""
+    print(f"🔄 Replacing '{DEFAULT_PROJECT_NAME}' with '{project_name}' in files...")
+    
+    files_to_scan = FILES_TO_REPLACE_CONTENT
+    all_markdown_files = glob.glob("**/*.md", recursive=True)
+    files_to_scan.extend(all_markdown_files)
+    
+    for filename in files_to_scan:
+        if os.path.exists(filename) and os.path.isfile(filename):
+            try:
+                with open(filename, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                if DEFAULT_PROJECT_NAME in content:
+                    new_content = content.replace(DEFAULT_PROJECT_NAME, project_name)
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        f.write(new_content)
+                    print(f"  - Updated {filename}")
+
+            except Exception as e:
+                print(f"  - ⚠️  Could not process {filename}: {e}", file=sys.stderr)
+
+def main():
+    """스크립트의 메인 실행 함수입니다."""
+    parser = argparse.ArgumentParser(
+        description="A cross-platform setup script for the dev-rules-starter-kit."
+    )
+    parser.add_argument(
+        "--project-name",
+        required=True,
+        help="The name of the new project (e.g., 'MyAwesomeProject').",
+    )
+    parser.add_argument(
+        "--framework",
+        default=None,
+        help="Optional: The framework to scaffold for (e.g., 'fastapi')."
+    )
+    args = parser.parse_args()
+
+    print("=============================================")
+    print("🚀 Dev Rules Starter Kit Setup Initializing 🚀")
+    print("=============================================")
+
+    # 1. 프로젝트 이름 변경
+    replace_project_name(args.project_name)
+
+    # 2. 스캐폴딩 파일 복사
+    copy_scaffold_files(args.framework)
+    
+    # 2. 의존성 설치
+    run_command(
+        f"{sys.executable} -m pip install -r requirements.txt",
+        "Installing Python dependencies..."
+    )
+
+    # 3. pre-commit 훅 설정
+    run_command(
+        f"{sys.executable} -m pre_commit install",
+        "Installing pre-commit hooks..."
+    )
+    run_command(
+        f"{sys.executable} -m pre_commit install --hook-type commit-msg",
+        "Installing commit-msg hook for commitlint..."
+    )
+
+    print("\n======================================")
+    print("✅ Dev Rules v2.0 Setup Complete!")
+    print("Automated rule enforcement is now active.")
+    print("======================================")
+
+if __name__ == "__main__":
+    main()
