@@ -1,0 +1,95 @@
+{
+  "2c3cc9eb": {
+    "type": "UnicodeEncodeError",
+    "message": "'cp949' codec can't encode character '\\u2705' in position 0",
+    "normalized_pattern": "<value> codec can<value>\\u<number>' in position <number>",
+    "contexts": [
+      "Python print() or file write operations on Windows"
+    ],
+    "solution": "Replace all emoji with ASCII alternatives. Use [OK], [FAIL], [WARN] instead of emoji",
+    "tags": [
+      "encoding",
+      "emoji",
+      "windows",
+      "cp949",
+      "unicode"
+    ],
+    "occurrences": 1,
+    "first_seen": "2025-10-19T10:40:06.361577",
+    "last_seen": "2025-10-19T10:40:06.361632"
+  },
+  "8536de91": {
+    "type": "UnicodeEncodeError",
+    "message": "'cp949' codec can't encode character in Korean text with emoji",
+    "normalized_pattern": "<value> codec can't encode character in Korean text with emoji",
+    "contexts": [
+      "Windows console output with mixed Korean and emoji"
+    ],
+    "solution": "1) Use UTF-8 encoding: open(file, encoding='utf-8') 2) Remove emoji 3) Set PYTHONIOENCODING=utf-8",
+    "tags": [
+      "encoding",
+      "korean",
+      "emoji",
+      "windows",
+      "cp949"
+    ],
+    "occurrences": 1,
+    "first_seen": "2025-10-19T10:40:06.364828",
+    "last_seen": "2025-10-19T10:40:06.364849"
+  },
+  "34b5f40a": {
+    "type": "UnicodeDecodeError",
+    "message": "Git diff shows garbled Korean characters",
+    "normalized_pattern": "Git diff shows garbled Korean characters",
+    "contexts": [
+      "Git operations on Windows with Korean filenames/content"
+    ],
+    "solution": "git config --global core.quotepath false && git config --global i18n.commitencoding utf-8",
+    "tags": [
+      "git",
+      "encoding",
+      "korean",
+      "windows"
+    ],
+    "occurrences": 1,
+    "first_seen": "2025-10-19T10:40:06.368014",
+    "last_seen": "2025-10-19T10:40:06.368036"
+  },
+  "c164bcc3": {
+    "type": "UnicodeEncodeError",
+    "message": "Korean characters not saved correctly to file",
+    "normalized_pattern": "Korean characters not saved correctly to file",
+    "contexts": [
+      "File.write() without explicit encoding on Windows"
+    ],
+    "solution": "Always use encoding=\"utf-8\": with open(file, \"w\", encoding=\"utf-8\")",
+    "tags": [
+      "encoding",
+      "korean",
+      "file-io",
+      "windows"
+    ],
+    "occurrences": 1,
+    "first_seen": "2025-10-19T10:40:06.370197",
+    "last_seen": "2025-10-19T10:40:06.370213"
+  },
+  "0b2e2e0a": {
+    "type": "UnicodeEncodeError",
+    "message": "Bash heredoc fails with Korean characters on Windows",
+    "normalized_pattern": "Bash heredoc fails with Korean characters on Windows",
+    "contexts": [
+      "Using cat << 'EOF' with Korean text in git bash"
+    ],
+    "solution": "Use Python Write tool instead of bash heredoc for Korean content. Or write to temp file with UTF-8 encoding first",
+    "tags": [
+      "bash",
+      "encoding",
+      "korean",
+      "windows",
+      "heredoc"
+    ],
+    "occurrences": 1,
+    "first_seen": "2025-10-19T10:40:06.372878",
+    "last_seen": "2025-10-19T10:40:06.372894"
+  }
+}

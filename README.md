@@ -26,61 +26,42 @@
 
 ---
 
-## 🚀 빠른 시작 (15분)
+## 🚀 빠른 시작 (5분)
 
 ### Option 1: Bash Wrapper (권장 - Linux/macOS/Git Bash)
 
+`setup.sh`는 내부적으로 `setup.py`를 호출하며, 실패 시 자동 롤백 기능을 포함합니다.
+
 ```bash
-# 1. 프로젝트 생성
-mkdir ~/my-new-project
-cd ~/my-new-project
+# 1. 프로젝트 생성 및 이동
+mkdir ~/my-new-project && cd ~/my-new-project
 
-# 2. 스타터 킷 복사
-cp -r ~/GitHub/dev-rules-starter-kit/* .
-cp ~/GitHub/dev-rules-starter-kit/.* . 2>/dev/null || true
+# 2. 스타터 킷 파일 복사
+cp -r path/to/dev-rules-starter-kit/{*,.*} .
 
-# 3. 초기화 실행 (bash wrapper)
-./setup.sh --project-name "MyNewProject"
-# 또는 프레임워크 지정:
-# ./setup.sh --project-name "MyNewProject" --framework fastapi
+# 3. 초기화 스크립트 실행
+./setup.sh --project-name "MyNewProject" --framework fastapi
 ```
 
 ### Option 2: Python Direct (Windows/모든 플랫폼)
 
 ```bash
-# 1. 프로젝트 생성
-mkdir my-new-project
-cd my-new-project
+# Windows PowerShell 예시
+mkdir MyNewProject; cd MyNewProject
+Copy-Item -Recurse path/to/dev-rules-starter-kit/* -Destination .
+Copy-Item -Recurse path/to/dev-rules-starter-kit/.* -Destination . -ErrorAction SilentlyContinue
 
-# 2. 스타터 킷 복사
-# Windows PowerShell:
-Copy-Item -Recurse C:\GitHub\dev-rules-starter-kit\* .
-# Linux/macOS:
-# cp -r ~/GitHub/dev-rules-starter-kit/* .
-
-# 3. 초기화 실행 (Python)
-python setup.py --project-name "MyNewProject"
-# 또는 프레임워크 지정:
-# python setup.py --project-name "MyNewProject" --framework fastapi
+python setup.py --project-name "MyNewProject" --framework fastapi
 ```
 
-**자동 처리 항목**:
-- ✅ 프로젝트명 일괄 변경 (TestDevRules → MyNewProject)
-- ✅ 의존성 설치 (requirements.txt)
-- ✅ Pre-commit 훅 설치
-- ✅ Commitlint 설정
-- ✅ 실패 시 자동 롤백 (git stash)
+**✨ 자동 처리 항목**:
+- ✅ 프로젝트명 일괄 변경
+- ✅ 프레임워크별 파일 스캐폴딩 (`.editorconfig`, `Dockerfile` 등)
+- ✅ Python 의존성 설치 (`requirements.txt`)
+- ✅ `pre-commit` 훅 설치 (코드/커밋 자동 검증)
+- ✅ `gitleaks` 설치 (비밀 정보 유출 방지)
+- ✅ (Bash) 실패 시 자동 롤백 (`git stash`)
 
-### Step 2: 환경변수 설정
-
-```bash
-# 1. .env.example 복사
-cp .env.example .env
-
-# 2. .env 파일 수정 (필수)
-# OBSIDIAN_VAULT_PATH=C:/Users/YourName/Documents/ObsidianVault
-# TestDevRules=MyNewProject
-```
 
 ### Step 3: 즉시 사용
 
