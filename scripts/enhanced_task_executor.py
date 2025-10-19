@@ -69,8 +69,9 @@ class EnhancedTaskExecutor:
     - Evidence Collection: SHA-256 hashing + provenance
     """
 
-    def __init__(self, verbose: bool = True):
+    def __init__(self, verbose: bool = True, force: bool = False):
         self.verbose = verbose
+        self.force = force  # Force execution even with violations
         self.constitutional = ConstitutionalValidator()
         self.root = Path(".").resolve()
         self.env = build_env()
@@ -126,34 +127,47 @@ class EnhancedTaskExecutor:
 
                 if errors:
                     self.log(f"\nCRITICAL: {len(errors)} constitutional error(s) detected")
-                    response = input("Proceed anyway? This may violate project standards (yes/no): ").strip().lower()
 
-                    if response not in ["yes", "y"]:
-                        raise SecurityError("Constitutional validation failed - user rejected")
-
-                    self.log("⚠️  User override - proceeding with violations")
+                    if self.force:
+                        self.log("[WARN]  FORCE MODE - Proceeding despite violations")
+                    else:
+                        try:
+                            response = input("Proceed anyway? This may violate project standards (yes/no): ").strip().lower()
+                            if response not in ["yes", "y"]:
+                                raise SecurityError("Constitutional validation failed - user rejected")
+                            self.log("[WARN]  User override - proceeding with violations")
+                        except (EOFError, KeyboardInterrupt):
+                            raise SecurityError(
+                                "Constitutional validation failed - non-interactive mode requires --force flag"
+                            )
 
                 if warnings:
-                    self.log(f"⚠️  {len(warnings)} warning(s) - consider addressing these")
+                    self.log(f"[WARN]  {len(warnings)} warning(s) - consider addressing these")
             else:
-                self.log("✅ Constitutional compliance: ALL PASS\n")
+                self.log("[PASS] Constitutional compliance: ALL PASS\n")
         else:
-            self.log("⚠️  Constitutional validation SKIPPED (emergency mode)\n")
+            self.log("[WARN]  Constitutional validation SKIPPED (emergency mode)\n")
 
         # === 2. Check Checklists Status ===
         self.log("[STEP 2] Checking checklists status...")
         checklists_complete = self._check_checklists(tasks_file)
 
         if not checklists_complete:
-            response = input("Some checklists are incomplete. Proceed anyway? (yes/no): ").strip().lower()
-            if response not in ["yes", "y"]:
-                raise TaskExecutorError("Execution aborted - incomplete checklists")
-            self.log("⚠️  User override - proceeding with incomplete checklists\n")
+            if self.force:
+                self.log("[WARN]  FORCE MODE - Proceeding with incomplete checklists\n")
+            else:
+                try:
+                    response = input("Some checklists are incomplete. Proceed anyway? (yes/no): ").strip().lower()
+                    if response not in ["yes", "y"]:
+                        raise TaskExecutorError("Execution aborted - incomplete checklists")
+                    self.log("[WARN]  User override - proceeding with incomplete checklists\n")
+                except (EOFError, KeyboardInterrupt):
+                    raise TaskExecutorError("Incomplete checklists - non-interactive mode requires --force flag")
 
         # === 3. Parse Tasks ===
         self.log("[STEP 3] Parsing tasks and phases...")
         phases = self._parse_tasks(tasks_file)
-        self.log(f"✅ Found {len(phases)} phases with {sum(len(p.tasks) for p in phases)} total tasks\n")
+        self.log(f"[PASS] Found {len(phases)} phases with {sum(len(p.tasks) for p in phases)} total tasks\n")
 
         # === 4. Setup Tracking ===
         task_id = self._generate_task_id(tasks_file)
@@ -178,7 +192,7 @@ class EnhancedTaskExecutor:
                 self.log(f"{'='*60}")
 
                 if phase.blocking:
-                    self.log("⚠️  BLOCKING PHASE - Must complete before user stories")
+                    self.log("[WARN]  BLOCKING PHASE - Must complete before user stories")
 
                 # Execute phase
                 phase_results = self._execute_phase(phase, state_file)
@@ -188,7 +202,7 @@ class EnhancedTaskExecutor:
                 if phase.blocking and any(t.status == "failed" for t in phase.tasks):
                     raise TaskExecutorError(f"Blocking phase '{phase.name}' failed - cannot proceed to user stories")
 
-                self.log(f"✅ Phase '{phase.name}' completed\n")
+                self.log(f"[PASS] Phase '{phase.name}' completed\n")
 
             # === 6. Mark Tasks as Completed in File ===
             self.log("[STEP 5] Updating tasks.md with completion status...")
@@ -198,7 +212,7 @@ class EnhancedTaskExecutor:
             self.log("[STEP 6] Collecting evidence...")
             final_evidence = self._collect_evidence(tasks_file.parent)
             evidence_hashes.update(final_evidence)
-            self.log(f"✅ Collected {len(evidence_hashes)} evidence files\n")
+            self.log(f"[PASS] Collected {len(evidence_hashes)} evidence files\n")
 
             # === 8. Provenance Recording ===
             provenance = {
@@ -222,7 +236,7 @@ class EnhancedTaskExecutor:
             )
 
             self.log(f"\n{'='*60}")
-            self.log("✅ ALL PHASES COMPLETED SUCCESSFULLY")
+            self.log("[PASS] ALL PHASES COMPLETED SUCCESSFULLY")
             self.log(f"{'='*60}")
             self.log(f"Evidence files: {len(evidence_hashes)}")
             self.log(f"Provenance: RUNS/{task_id}/provenance.json\n")
@@ -231,7 +245,7 @@ class EnhancedTaskExecutor:
             if os.getenv("OBSIDIAN_ENABLED", "false").lower() == "true":
                 self.log("[STEP 7] Syncing to Obsidian...")
                 self._sync_to_obsidian(tasks_file, task_id, evidence_hashes, "success")
-                self.log("✅ Obsidian sync complete (3 seconds)\n")
+                self.log("[PASS] Obsidian sync complete (3 seconds)\n")
 
             return {
                 "status": "success",
@@ -251,7 +265,7 @@ class EnhancedTaskExecutor:
                 },
             )
 
-            self.log(f"\n❌ EXECUTION FAILED: {e}\n")
+            self.log(f"\n[FAIL] EXECUTION FAILED: {e}\n")
             raise
 
     def _check_checklists(self, tasks_file: Path) -> bool:
@@ -260,12 +274,12 @@ class EnhancedTaskExecutor:
         checklists_dir = feature_dir / "checklists"
 
         if not checklists_dir.exists():
-            self.log("ℹ️  No checklists directory found - skipping validation")
+            self.log("[INFO]  No checklists directory found - skipping validation")
             return True
 
         checklist_files = list(checklists_dir.glob("*.md"))
         if not checklist_files:
-            self.log("ℹ️  No checklist files found - skipping validation")
+            self.log("[INFO]  No checklist files found - skipping validation")
             return True
 
         all_complete = True
@@ -279,7 +293,7 @@ class EnhancedTaskExecutor:
             completed = len([m for m in content.split("\n") if "- [X]" in m or "- [x]" in m])
             incomplete = total - completed
 
-            status = "✓ PASS" if incomplete == 0 else "✗ FAIL"
+            status = "[PASS] PASS" if incomplete == 0 else "[FAIL] FAIL"
             if incomplete > 0:
                 all_complete = False
 
@@ -372,7 +386,7 @@ class EnhancedTaskExecutor:
 
         # Execute parallel tasks
         if parallel_tasks:
-            self.log(f"⚡ Executing {len(parallel_tasks)} parallel tasks...")
+            self.log(f"[PARALLEL] Executing {len(parallel_tasks)} parallel tasks...")
 
             with ThreadPoolExecutor(max_workers=min(5, len(parallel_tasks))) as executor:
                 future_to_task = {executor.submit(self._execute_task, task): task for task in parallel_tasks}
@@ -383,25 +397,25 @@ class EnhancedTaskExecutor:
                         result = future.result()
                         task.status = "completed"
                         evidence.update(result.get("evidence", {}))
-                        self.log(f"  ✅ {task.task_id}: {task.description[:60]}...")
+                        self.log(f"  [PASS] {task.task_id}: {task.description[:60]}...")
                     except Exception as e:
                         task.status = "failed"
-                        self.log(f"  ❌ {task.task_id} failed: {e}")
+                        self.log(f"  [FAIL] {task.task_id} failed: {e}")
                         raise
 
         # Execute sequential tasks
         if sequential_tasks:
-            self.log(f"→ Executing {len(sequential_tasks)} sequential tasks...")
+            self.log(f"-> Executing {len(sequential_tasks)} sequential tasks...")
 
             for task in sequential_tasks:
                 try:
                     result = self._execute_task(task)
                     task.status = "completed"
                     evidence.update(result.get("evidence", {}))
-                    self.log(f"  ✅ {task.task_id}: {task.description[:60]}...")
+                    self.log(f"  [PASS] {task.task_id}: {task.description[:60]}...")
                 except Exception as e:
                     task.status = "failed"
-                    self.log(f"  ❌ {task.task_id} failed: {e}")
+                    self.log(f"  [FAIL] {task.task_id} failed: {e}")
                     raise
 
         return {"evidence": evidence}
@@ -444,7 +458,7 @@ class EnhancedTaskExecutor:
                     content = re.sub(pattern, r"\1[X] \2", content)
 
         tasks_file.write_text(content, encoding="utf-8")
-        self.log(f"✅ Updated {tasks_file.name} with completion status")
+        self.log(f"[PASS] Updated {tasks_file.name} with completion status")
 
     def _collect_evidence(self, feature_dir: Path) -> Dict[str, str]:
         """Collect evidence files and calculate SHA-256 hashes"""
@@ -498,19 +512,19 @@ class EnhancedTaskExecutor:
             }
 
             devlog_path = create_devlog(contract, execution_result)
-            self.log(f"   📝 Obsidian devlog: {devlog_path.name}")
+            self.log(f"   [DOC] Obsidian devlog: {devlog_path.name}")
 
             if status == "success":
                 append_evidence(task_id, list(evidence_hashes.keys()), evidence_hashes)
-                self.log("   📎 Evidence synced to Obsidian")
+                self.log("   [ATTACH] Evidence synced to Obsidian")
 
             return True
 
         except ImportError as e:
-            self.log(f"   ⚠️  Obsidian bridge not available: {e}")
+            self.log(f"   [WARN]  Obsidian bridge not available: {e}")
             return False
         except Exception as e:
-            self.log(f"   ⚠️  Obsidian sync failed: {e}")
+            self.log(f"   [WARN]  Obsidian sync failed: {e}")
             return False
 
 
@@ -525,23 +539,26 @@ def main():
         action="store_true",
         help="Skip constitutional validation (emergency use only)",
     )
+    parser.add_argument(
+        "--force", "-f", action="store_true", help="Force execution even with violations (non-interactive mode)"
+    )
     parser.add_argument("--quiet", action="store_true", help="Reduce output verbosity")
 
     args = parser.parse_args()
 
     tasks_file = Path(args.tasks_file)
     if not tasks_file.exists():
-        print(f"❌ File not found: {tasks_file}")
+        print(f"[FAIL] File not found: {tasks_file}")
         sys.exit(1)
 
-    executor = EnhancedTaskExecutor(verbose=not args.quiet)
+    executor = EnhancedTaskExecutor(verbose=not args.quiet, force=args.force)
 
     try:
         result = executor.execute(tasks_file, skip_constitutional=args.skip_constitutional)
-        print(f"\n✅ Execution completed: {result['status']}")
+        print(f"\n[PASS] Execution completed: {result['status']}")
         sys.exit(0)
     except Exception as e:
-        print(f"\n❌ Execution failed: {e}")
+        print(f"\n[FAIL] Execution failed: {e}")
         sys.exit(1)
 
 
