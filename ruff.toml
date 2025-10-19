@@ -30,8 +30,8 @@ exclude = [
     "venv",
 ]
 
-# Same as Black.
-line-length = 88
+# Allow longer lines for docstrings and comments
+line-length = 125
 
 # Allow unused variables when underscore-prefixed.
 [mccabe]

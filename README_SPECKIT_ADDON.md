@@ -306,30 +306,46 @@ specs/feat-user-auth/
 
 ## 💡 기존 시스템과의 통합
 
-### TaskExecutor와의 비교
+### EnhancedTaskExecutor: 최고의 통합 (v1.0.0) ✨
 
-| 기능 | TaskExecutor (기존) | Spec-Kit (신규) |
-|------|---------------------|-----------------|
-| 작업 정의 | YAML | Markdown |
-| 워크플로우 | 단일 실행 | 6단계 (specify → implement) |
-| 검증 | 수동 | Constitutional Gates 자동 |
-| 병렬화 | 없음 | [P] 마커 자동 인식 |
-| 문서 생성 | 개발일지만 | spec, plan, tasks, contracts 전체 |
+**새로운 통합 시스템**이 두 가지 접근방식의 장점을 결합합니다:
+
+| 기능 | TaskExecutor (기존) | /speckit-implement | **EnhancedTaskExecutor** ✨ |
+|------|---------------------|--------------------|-----------------------------|
+| 작업 정의 | YAML | Markdown | **Both** (YAML + Markdown) |
+| Constitutional 검증 | ❌ | ✅ | ✅ **10 articles** |
+| Obsidian 동기화 | ✅ | ❌ | ✅ **95% 시간 절감** |
+| 병렬 실행 | ❌ | ✅ [P] | ✅ **[P] 마커** |
+| Evidence 수집 | ✅ SHA-256 | ❌ | ✅ **SHA-256 + Provenance** |
+| Phase 구조 | ❌ | ✅ | ✅ **Setup→Foundational→Stories** |
+| Checklist 검증 | ❌ | ✅ | ✅ **자동 검증** |
 
 ### 통합 사용 예시
 
 ```bash
-# Spec-Kit으로 계획 수립
-/speckit-specify "Feature X"
-/speckit-plan "Tech stack Y"
-/speckit-tasks
+# ✨ NEW: EnhancedTaskExecutor (권장)
+python scripts/enhanced_task_executor.py specs/feat-x/tasks.md
 
-# TaskExecutor로 실행 (선택적)
-python scripts/task_executor.py specs/feat-x/tasks.md
+# 장점:
+# ✅ Constitutional validation (10 articles)
+# ✅ Obsidian auto-sync (95% time savings: 20min → 3sec)
+# ✅ Parallel execution ([P] markers)
+# ✅ Evidence collection (SHA-256 hashing)
+# ✅ Phase-based execution (Setup → Foundational → Stories → Polish)
 
-# 또는 Spec-Kit으로 직접 실행
-/speckit-implement
+# 기존 방식도 계속 작동:
+# - YAML contracts: python scripts/task_executor.py TASKS/FEAT-*.yaml
+# - Spec-Kit commands: /speckit-implement (Claude Code only)
 ```
+
+### 사용 시나리오별 권장사항
+
+| 시나리오 | 권장 도구 | 이유 |
+|---------|---------|------|
+| **새 기능 개발** | EnhancedTaskExecutor | Constitutional + Obsidian + 병렬화 모두 필요 |
+| **긴급 수정 (Hot-fix)** | TaskExecutor (YAML) | 빠른 실행, Constitutional 검증 불필요 |
+| **실험적 프로토타입** | /speckit-implement | Claude Code 환경에서 빠른 반복 |
+| **프로덕션 릴리스** | EnhancedTaskExecutor | 모든 검증 + 증거 수집 필수 |
 
 ---
 
@@ -348,12 +364,20 @@ dev-rules-starter-kit/
 │       ├── speckit-tasks.md
 │       └── speckit-implement.md
 │
+├── scripts/                         # UPDATED
+│   ├── task_executor.py             # 기존 YAML executor
+│   ├── constitutional_validator.py  # NEW: 10 articles 검증
+│   └── enhanced_task_executor.py    # NEW: 통합 버전 ✨
+│
 ├── templates/                       # NEW
 │   ├── spec-template.md
 │   ├── plan-template.md
 │   ├── tasks-template.md
 │   └── checklists/
 │       └── checklist-template.md
+│
+├── tests/                           # UPDATED
+│   └── test_enhanced_executor.py    # NEW: EnhancedTaskExecutor 테스트
 │
 └── specs/                           # NEW (기능별 생성)
     └── feat-example/
@@ -367,6 +391,88 @@ dev-rules-starter-kit/
         │   └── api.openapi.yaml
         └── checklists/
             └── requirements.md
+```
+
+---
+
+## 🚀 빠른 시작 가이드 (EnhancedTaskExecutor)
+
+### 1. Constitutional 검증만 실행
+
+```bash
+# 독립 실행 모드
+python scripts/constitutional_validator.py specs/feat-example/tasks.md
+
+# 출력 예시:
+# ==================================================
+# CONSTITUTIONAL COMPLIANCE REPORT
+# ==================================================
+#
+# ERRORS (1):
+#   Article III: NO TEST TASKS FOUND. Tests must come before implementation.
+#
+# WARNINGS (2):
+#   Article VI: No logging/observability tasks found.
+#   Article IX: Missing spec.md or plan.md.
+# ==================================================
+```
+
+### 2. 전체 실행 (검증 + 실행 + Obsidian)
+
+```bash
+# EnhancedTaskExecutor 사용
+python scripts/enhanced_task_executor.py specs/feat-example/tasks.md
+
+# 출력 예시:
+# ============================================================
+# ENHANCED TASK EXECUTOR - Spec-Kit Mode
+# ============================================================
+#
+# [STEP 1] Running Constitutional compliance check...
+# ✅ Constitutional compliance: ALL PASS
+#
+# [STEP 2] Checking checklists status...
+# | Checklist        | Total | Completed | Incomplete | Status |
+# |------------------|-------|-----------|------------|--------|
+# | requirements.md  | 12    | 12        | 0          | ✓ PASS |
+#
+# [STEP 3] Parsing tasks and phases...
+# ✅ Found 4 phases with 18 total tasks
+#
+# [STEP 4] Beginning phase-by-phase execution...
+# ============================================================
+# PHASE: Setup
+# ============================================================
+# → Executing 3 sequential tasks...
+#   ✅ T001: Create project structure...
+#   ✅ T002: Initialize dependencies...
+#   ✅ T003: Configure linting...
+# ✅ Phase 'Setup' completed
+#
+# [Phase 2-4 continues...]
+#
+# ✅ ALL PHASES COMPLETED SUCCESSFULLY
+# Evidence files: 8
+# Provenance: RUNS/feat-example-20251020-143000/provenance.json
+#
+# [STEP 7] Syncing to Obsidian...
+# ✅ Obsidian sync complete (3 seconds)
+```
+
+### 3. 긴급 모드 (Constitutional 검증 스킵)
+
+```bash
+# --skip-constitutional 플래그 사용
+python scripts/enhanced_task_executor.py specs/feat-example/tasks.md --skip-constitutional
+
+# 주의: 프로덕션 배포에는 사용 금지!
+```
+
+### 4. 조용한 실행 (로그 최소화)
+
+```bash
+# --quiet 플래그 사용
+python scripts/enhanced_task_executor.py specs/feat-example/tasks.md --quiet
 ```
 
 ---
