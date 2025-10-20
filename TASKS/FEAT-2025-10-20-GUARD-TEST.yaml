@@ -1,0 +1,54 @@
+task_id: FEAT-2025-10-20-GUARD-TEST
+description: Integration test for Constitutional Guards
+project: dev-rules-starter-kit
+created: 2025-10-20
+priority: high
+status: testing
+
+phases:
+  - phase: 1
+    name: "Setup and Testing"
+    tasks:
+      - id: "1.1"
+        description: "Write test for guard validation"
+        type: "test"
+        order: 1
+        estimated_time: "15min"
+
+      - id: "1.2"
+        description: "Implement guard integration"
+        type: "implementation"
+        order: 2
+        estimated_time: "30min"
+
+      - id: "1.3"
+        description: "Test guard against TDD violations"
+        type: "test"
+        order: 3
+        estimated_time: "10min"
+
+  - phase: 2
+    name: "Validation"
+    tasks:
+      - id: "2.1"
+        description: "Validate all guards work correctly"
+        type: "test"
+        order: 1
+        estimated_time: "20min"
+
+      - id: "2.2"
+        description: "Document guard usage"
+        type: "documentation"
+        order: 2
+        estimated_time: "15min"
+
+success_criteria:
+  - "All guards detect violations correctly"
+  - "TDD order enforced (test before implementation)"
+  - "Emoji detection works"
+  - "Secret detection works"
+
+validation:
+  - "Run pytest tests/test_constitutional_guards.py -v"
+  - "Verify 12/12 tests passing"
+  - "Integration test with real task execution"
