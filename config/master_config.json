@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "generated_at": "2025-10-21T00:00:00Z",
+  "project": {
+    "name": "Dev Rules Starter Kit",
+    "code": "DevRulesStarter",
+    "description": "Reusable rules + automation starter kit"
+  },
+  "paths": {
+    "repo_root": ".",
+    "obsidian_vault": "C:/Users/user/Documents/Obsidian Vault",
+    "docs_root": "docs",
+    "tasks_root": "TASKS"
+  },
+  "agents": {
+    "codex": {
+      "role": "code-implementation",
+      "focus": "python + automation"
+    },
+    "claude": {
+      "role": "documentation",
+      "focus": "context synthesis"
+    },
+    "gemini": {
+      "role": "analysis",
+      "focus": "plan validation"
+    }
+  },
+  "sync": {
+    "context_schema_version": "c7-sync-1.0",
+    "required_env_keys": [
+      "OBSIDIAN_VAULT_PATH",
+      "OBSIDIAN_ENABLED",
+      "PROJECT_NAME"
+    ]
+  },
+  "precision_system": {
+    "enabled": true,
+    "verification_level": "standard",
+    "orchestration_policy": {
+      "risk_threshold": 0.8,
+      "failure_rate_limit": 0.3,
+      "zen_mcp_enabled": true,
+      "min_confidence_threshold": 0.8,
+      "auto_validation_commands": [
+        "python -m pytest tests/ -q",
+        "python scripts/constitutional_validator.py"
+      ]
+    },
+    "mcp_servers": {
+      "context7": {
+        "enabled": true,
+        "priority": "high",
+        "use_cases": ["documentation", "api_reference", "best_practices"]
+      },
+      "sequential": {
+        "enabled": true,
+        "priority": "high",
+        "use_cases": ["architecture", "debugging", "complex_logic"]
+      },
+      "playwright": {
+        "enabled": true,
+        "priority": "medium",
+        "use_cases": ["ui_testing", "e2e", "visual_regression"]
+      },
+      "serena": {
+        "enabled": false,
+        "priority": "medium",
+        "use_cases": ["refactoring", "symbol_operations"]
+      },
+      "morphllm": {
+        "enabled": false,
+        "priority": "low",
+        "use_cases": ["bulk_edits", "pattern_application"]
+      },
+      "magic": {
+        "enabled": true,
+        "priority": "medium",
+        "use_cases": ["ui_components", "design_systems"]
+      }
+    },
+    "hallucination_guard": {
+      "enabled": true,
+      "strict_mode": false,
+      "anti_patterns": [
+        "always works",
+        "never fails",
+        "100% secure",
+        "perfectly scalable"
+      ]
+    },
+    "theory_validation": {
+      "enabled": true,
+      "required_theories": ["SOLID", "DRY"],
+      "min_compliance_score": 0.85
+    }
+  }
+}
