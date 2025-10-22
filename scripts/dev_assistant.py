@@ -667,7 +667,7 @@ class EvidenceLogger:
                     f.write(f"  Violations: {len(violations)}\n")
                     for v in violations:
                         fix_hint = " [fixable]" if v.get("fix_available") else ""
-                        f.write(f"    • Line {v['line']}:{v['column']} - " f"{v['code']}: {v['message']}{fix_hint}\n")
+                        f.write(f"    • Line {v['line']}:{v['column']} - {v['code']}: {v['message']}{fix_hint}\n")
 
         except Exception as e:
             self._logger.error(f"Failed to write text log: {e}", exc_info=True)
@@ -929,7 +929,7 @@ class FileChangeProcessor:
                 # Log classification info
                 mode_badge = "🔍 DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
                 self._logger.debug(
-                    f"[{mode_badge}] Criticality: {classification.criticality_score:.2f} - " f"{classification.reason}"
+                    f"[{mode_badge}] Criticality: {classification.criticality_score:.2f} - {classification.reason}"
                 )
 
             # Run Ruff verification if available
@@ -1071,7 +1071,7 @@ class FileChangeProcessor:
                 # Format with visual indicator for violations
                 fix_hint = " [fixable]" if violation.fix_available else ""
                 self._logger.warning(
-                    f"  • Line {violation.line}:{violation.column} - " f"{violation.code}: {violation.message}{fix_hint}"
+                    f"  • Line {violation.line}:{violation.column} - {violation.code}: {violation.message}{fix_hint}"
                 )
 
         if not from_cache:
@@ -1178,8 +1178,7 @@ class DevAssistant:
                     max_entries=config.cache_max_entries,
                 )
                 self._logger.debug(
-                    f"Verification cache enabled (TTL={config.cache_ttl_seconds}s, "
-                    f"max={config.cache_max_entries} entries)"
+                    f"Verification cache enabled (TTL={config.cache_ttl_seconds}s, max={config.cache_max_entries} entries)"
                 )
             except Exception as e:
                 self._logger.warning(f"Failed to initialize verification cache: {e}")
@@ -1393,8 +1392,40 @@ Configuration:
         action="store_true",
         help="Show cache statistics and exit (Phase C)",
     )
+    parser.add_argument(
+        "--team-stats",
+        action="store_true",
+        help="Generate team statistics dashboard and exit (Phase C Week 2)",
+    )
 
     args = parser.parse_args()
+
+    # Phase C Week 2: Handle team-stats flag (early exit)
+    if args.team_stats:
+        try:
+            from pathlib import Path as PathLib
+            from team_stats_aggregator import TeamStatsAggregator
+
+            cache_dir = PathLib.cwd() / "RUNS" / ".cache"
+            evidence_dir = PathLib.cwd() / "RUNS" / "evidence"
+            output_dir = PathLib.cwd() / "RUNS" / "stats"
+
+            aggregator = TeamStatsAggregator(cache_dir, evidence_dir, output_dir)
+            dashboard_path = aggregator.generate_report()
+
+            print("\n" + "=" * 60)
+            print("Team Statistics Dashboard Generated")
+            print("=" * 60)
+            print(f"Dashboard: {dashboard_path}")
+            print(f"Trends:    {output_dir / 'trends.json'}")
+            print(f"Problems:  {output_dir / 'problem_files.json'}")
+            print("=" * 60)
+            print(f"\nView dashboard: cat {dashboard_path}")
+            print("=" * 60 + "\n")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Error generating team statistics: {e}", file=sys.stderr)
+            sys.exit(1)
 
     # Phase C: Handle cache-stats flag (early exit)
     if args.cache_stats:
