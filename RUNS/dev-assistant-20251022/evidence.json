@@ -1,0 +1,134 @@
+{
+  "events": [
+    {
+      "timestamp": "2025-10-22T08:46:41.755317",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpt5_ahmvc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 49.99732971191406
+    },
+    {
+      "timestamp": "2025-10-22T08:46:41.809644",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpt5_ahmvc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 51.32246017456055
+    },
+    {
+      "timestamp": "2025-10-22T08:46:42.098015",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpt5_ahmvc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 83.50276947021484
+    },
+    {
+      "timestamp": "2025-10-22T08:51:09.647094",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi607ya7u\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 44.31653022766113
+    },
+    {
+      "timestamp": "2025-10-22T08:51:09.689001",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi607ya7u\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 39.89982604980469
+    },
+    {
+      "timestamp": "2025-10-22T08:51:09.963703",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi607ya7u\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 55.97257614135742
+    },
+    {
+      "timestamp": "2025-10-22T09:06:51.432278",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpy85htcqp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 69.51904296875
+    },
+    {
+      "timestamp": "2025-10-22T09:06:51.502306",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpy85htcqp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 59.452056884765625
+    },
+    {
+      "timestamp": "2025-10-22T09:06:51.718442",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpy85htcqp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 52.384376525878906
+    },
+    {
+      "timestamp": "2025-10-22T09:12:23.561601",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpbt14urn1\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 78.71580123901367
+    },
+    {
+      "timestamp": "2025-10-22T09:12:23.612695",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpbt14urn1\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 48.04348945617676
+    },
+    {
+      "timestamp": "2025-10-22T09:12:23.850337",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpbt14urn1\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 64.12386894226074
+    }
+  ],
+  "summary": {
+    "total_verifications": 12,
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "success_rate": 1.0,
+    "avg_duration_ms": 58.10417731602987,
+    "total_duration_ms": 697.2501277923584
+  },
+  "exported_at": "2025-10-22T09:12:23.850337"
+}

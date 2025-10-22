@@ -82,6 +82,14 @@ git commit -m "feat: initial project setup"
 
 # 3. 버전 릴리스
 git push origin main
+# → GitHub Actions의 `semantic-release` 워크플로우가 실행되며,
+#    루트의 `package.json`과 `.releaserc.json`에 정의된 전략을 사용해 버전을 산출합니다.
+# (선택) 로컬에서 릴리스 파이프라인 점검
+nvm use  # 또는 corepack enable/npm을 사용해 Node 20 활성화
+python scripts/check_release_env.py  # 환경 진단 (문제 없으면 0으로 종료)
+npm install --no-fund --no-audit
+npm run release -- --dry-run
+# 참고: 루트에 `.nvmrc`(Node 20)를 제공하므로 `nvm use` 혹은 `corepack enable` 환경에서 맞춰 실행하세요.
 ```
 
 ---
@@ -216,6 +224,157 @@ cat .env | grep OBSIDIAN_VAULT_PATH
 
 # 경로 테스트
 ls -la "$OBSIDIAN_VAULT_PATH"
+```
+
+---
+
+## 🤖 Development Assistant
+
+**자동 파일 감시 및 코드 검증 시스템**
+
+Development Assistant는 Python 파일의 변경사항을 실시간으로 감지하고 자동으로 코드 품질을 검증하는 프로덕션급 파일 워처입니다.
+
+### 주요 기능
+
+- **실시간 파일 감시**: `scripts/`, `tests/` 디렉토리의 Python 파일 변경 자동 감지
+- **자동 Ruff 검증**: 파일 저장 시 자동으로 Ruff 린팅 실행 (<200ms)
+- **증거 기반 로깅**: 모든 검증 결과를 JSON + 텍스트로 자동 기록
+- **디바운싱**: 연속된 저장을 500ms 간격으로 병합하여 불필요한 검증 방지
+- **낮은 리소스 사용**: 유휴 시 <2% CPU 사용
+- **우아한 종료**: SIGINT/SIGTERM 신호 처리로 안전한 종료
+
+### 빠른 시작
+
+```bash
+# 1. 기본 실행 (scripts/, tests/ 감시)
+python scripts/dev_assistant.py
+
+# 2. 커스텀 디렉토리 감시
+python scripts/dev_assistant.py --watch-dirs scripts tests src
+
+# 3. 디바운스 시간 조정 (1초)
+python scripts/dev_assistant.py --debounce 1000
+
+# 4. 디버그 모드
+python scripts/dev_assistant.py --log-level DEBUG
+```
+
+### 설정 (pyproject.toml)
+
+모든 파라미터는 `pyproject.toml`에서 설정 가능하며, CLI 인자가 우선순위를 가집니다.
+
+```toml
+[tool.dev-assistant]
+# 활성화 여부
+enabled = true
+
+# 감시할 디렉토리 목록
+watch_paths = ["scripts", "tests", "src"]
+
+# 디바운스 시간 (밀리초)
+debounce_ms = 500
+
+# Ruff 검증 타임아웃 (초)
+verification_timeout_sec = 2.0
+
+# 증거 로그 보관 기간 (일)
+log_retention_days = 7
+
+# Ruff 검증 활성화
+enable_ruff = true
+
+# 증거 로깅 활성화
+enable_evidence = true
+```
+
+### 증거 로그
+
+검증 결과는 `RUNS/dev-assistant-YYYYMMDD/` 디렉토리에 자동 저장됩니다:
+
+- **evidence.json**: 구조화된 JSON 형식 (프로그래밍 방식 분석용)
+- **verification.log**: 사람이 읽기 쉬운 텍스트 형식
+
+#### 로그 예시
+
+```
+[2025-10-22T10:30:15] PASS - scripts/task_executor.py
+  Duration: 120ms
+
+[2025-10-22T10:31:42] FAIL - scripts/new_feature.py
+  Duration: 95ms
+  Violations: 2
+    • Line 15:1 - E501: Line too long (120 > 88 characters) [fixable]
+    • Line 3:8 - F401: `os` imported but unused [fixable]
+```
+
+### CLI 참조
+
+```bash
+python scripts/dev_assistant.py --help
+
+옵션:
+  --watch-dirs DIR [DIR ...]    감시할 디렉토리 (config 파일 오버라이드)
+  --debounce MS                 디바운스 시간 밀리초 (config 파일 오버라이드)
+  --log-level LEVEL             로깅 레벨 (DEBUG|INFO|WARNING|ERROR)
+  --no-ruff                     Ruff 검증 비활성화 (config 파일 오버라이드)
+  --no-evidence                 증거 로깅 비활성화 (config 파일 오버라이드)
+```
+
+### 워크플로우 통합
+
+**개발 중 실시간 검증**:
+```bash
+# 터미널 1: Development Assistant 실행
+python scripts/dev_assistant.py
+
+# 터미널 2: 코드 작업
+vim scripts/my_feature.py  # 저장 시 자동 검증됨
+```
+
+**CI/CD 통합**:
+```yaml
+# .github/workflows/quality.yml
+- name: Run Ruff checks
+  run: ruff check scripts/ tests/
+
+# 또는 Development Assistant의 증거 로그 분석
+- name: Analyze verification evidence
+  run: python scripts/analyze_evidence.py RUNS/dev-assistant-*/evidence.json
+```
+
+### 성능 특성
+
+- **검증 속도**: 일반적인 Python 파일 <200ms
+- **CPU 사용**: 유휴 시 <2% (파일 변경 시 순간적으로 증가)
+- **메모리**: 파일 워처 + 스레드 풀 ~20MB
+- **디스크 I/O**: 증거 로그만 기록 (일일 ~1-5MB)
+
+### 문제 해결
+
+**"Ruff not found" 오류**:
+```bash
+pip install ruff
+```
+
+**"tomllib/tomli not available" 경고**:
+```bash
+# Python 3.11 미만인 경우
+pip install tomli
+```
+
+**파일 감시가 작동하지 않음**:
+```bash
+# watchdog 재설치
+pip install --upgrade watchdog
+
+# 디렉토리 권한 확인
+ls -la scripts/ tests/
+```
+
+**과도한 검증 실행**:
+```bash
+# 디바운스 시간 증가 (1초)
+python scripts/dev_assistant.py --debounce 1000
 ```
 
 ---
