@@ -991,14 +991,39 @@ class FileChangeProcessor:
 
         # Cache miss: Run verification
         mode_badge = "🔍 DEEP" if analysis_mode == "deep" else "⚡ FAST"
-        self._logger.info(f"[VERIFY] Running Ruff check ({mode_badge})...")
+        self._logger.info(f"[VERIFY] Running analysis ({mode_badge})...")
 
-        # Phase C: For DEEP_MODE files, we'll use Ruff for now
-        # TODO Week 2: Integrate DeepAnalyzer here
+        # Phase C Week 2: Use DeepAnalyzer for DEEP_MODE files
         if classification and classification.mode == AnalysisMode.DEEP_MODE:
-            self._logger.warning(f"[DEEP MODE] Full semantic analysis not yet implemented, using Ruff for {file_path.name}")
+            self._logger.info(f"[DEEP MODE] Running comprehensive analysis for {file_path.name}")
 
-        result = self._ruff_verifier.verify_file(file_path)
+            # Import DeepAnalyzer dynamically
+            from deep_analyzer import DeepAnalyzer
+
+            deep_analyzer = DeepAnalyzer(mcp_enabled=False, ruff_verifier=self._ruff_verifier)
+            deep_result = deep_analyzer.analyze(file_path)
+
+            # Log deep analysis results
+            self._logger.info(f"[DEEP] Quality score: {deep_result.overall_score:.1f}/10.0")
+
+            if deep_result.solid_violations:
+                self._logger.warning(f"[DEEP] SOLID violations: {len(deep_result.solid_violations)}")
+                for violation in deep_result.solid_violations[:3]:  # Show first 3
+                    self._logger.warning(f"  • Line {violation['line']}: {violation['principle']} - {violation['message']}")
+
+            if deep_result.security_issues:
+                self._logger.error(f"[DEEP] Security issues: {len(deep_result.security_issues)}")
+                for issue in deep_result.security_issues[:3]:  # Show first 3
+                    self._logger.error(f"  • Line {issue['line']}: {issue['issue']} - {issue['message']}")
+
+            if deep_result.hallucination_risks:
+                self._logger.info(f"[DEEP] Hallucination risks: {len(deep_result.hallucination_risks)}")
+
+            # Use the ruff_result from deep analysis for compatibility
+            result = deep_result.ruff_result
+        else:
+            # FAST_MODE: Use standard Ruff verification
+            result = self._ruff_verifier.verify_file(file_path)
 
         # Phase C: Store in cache if available
         if self._cache:
