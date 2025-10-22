@@ -62,6 +62,22 @@ enable_ruff = true
 # Enable automatic evidence logging
 enable_evidence = true
 
+# Phase C: Cache configuration
+cache_enabled = true
+cache_ttl_seconds = 300
+cache_max_entries = 1000
+
+# Phase C: Critical file detection
+criticality_threshold = 0.5
+critical_patterns = [
+    "*_executor.py",
+    "*_validator.py",
+    "constitutional_*.py",
+    "*_guard.py",
+    "*_steering.py",
+    "project_*.py"
+]
+
 [tool.ruff]
 # Import from existing ruff.toml if present
 extend = "ruff.toml"

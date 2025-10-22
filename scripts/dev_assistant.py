@@ -63,6 +63,15 @@ except ImportError:
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
+# Phase C imports (try both relative and absolute imports for compatibility)
+try:
+    from scripts.critical_file_detector import CriticalFileDetector, AnalysisMode, FileClassification
+    from scripts.verification_cache import VerificationCache
+except ImportError:
+    # Fallback for running directly from scripts/ directory
+    from critical_file_detector import CriticalFileDetector, AnalysisMode, FileClassification
+    from verification_cache import VerificationCache
+
 
 @dataclass
 class AssistantConfig:
@@ -75,11 +84,20 @@ class AssistantConfig:
     log_retention_days: int = 7
     enable_ruff: bool = True
     enable_evidence: bool = True
+    # Phase C: Cache configuration
+    cache_enabled: bool = True
+    cache_ttl_seconds: int = 300
+    cache_max_entries: int = 1000
+    # Phase C: Critical file detection
+    criticality_threshold: float = 0.5
+    critical_patterns: List[str] = None
 
     def __post_init__(self):
         """Set defaults for mutable fields."""
         if self.watch_paths is None:
             self.watch_paths = ["scripts", "tests"]
+        if self.critical_patterns is None:
+            self.critical_patterns = ["*_executor.py", "*_validator.py", "constitutional_*.py"]
 
     def validate(self) -> List[str]:
         """
@@ -112,6 +130,25 @@ class AssistantConfig:
 
         if not isinstance(self.enable_evidence, bool):
             errors.append("enable_evidence must be boolean")
+
+        # Phase C validation
+        if not isinstance(self.cache_enabled, bool):
+            errors.append("cache_enabled must be boolean")
+
+        if not isinstance(self.cache_ttl_seconds, int) or self.cache_ttl_seconds < 0:
+            errors.append("cache_ttl_seconds must be non-negative integer")
+
+        if not isinstance(self.cache_max_entries, int) or self.cache_max_entries <= 0:
+            errors.append("cache_max_entries must be positive integer")
+
+        if not isinstance(self.criticality_threshold, (int, float)) or not (0.0 <= self.criticality_threshold <= 1.0):
+            errors.append("criticality_threshold must be between 0.0 and 1.0")
+
+        if self.critical_patterns is not None:
+            if not isinstance(self.critical_patterns, list):
+                errors.append("critical_patterns must be list")
+            elif not all(isinstance(p, str) for p in self.critical_patterns):
+                errors.append("critical_patterns must contain only strings")
 
         return errors
 
@@ -177,6 +214,12 @@ class ConfigLoader:
                 log_retention_days=assistant_config.get("log_retention_days", 7),
                 enable_ruff=assistant_config.get("enable_ruff", True),
                 enable_evidence=assistant_config.get("enable_evidence", True),
+                # Phase C configuration
+                cache_enabled=assistant_config.get("cache_enabled", True),
+                cache_ttl_seconds=assistant_config.get("cache_ttl_seconds", 300),
+                cache_max_entries=assistant_config.get("cache_max_entries", 1000),
+                criticality_threshold=assistant_config.get("criticality_threshold", 0.5),
+                critical_patterns=assistant_config.get("critical_patterns"),
             )
 
             # Validate configuration
@@ -201,6 +244,8 @@ class ConfigLoader:
         log_level: Optional[str] = None,
         no_ruff: bool = False,
         no_evidence: bool = False,
+        disable_cache: bool = False,
+        clear_cache: bool = False,
     ) -> AssistantConfig:
         """
         Merge configuration with CLI arguments (CLI takes precedence).
@@ -212,6 +257,8 @@ class ConfigLoader:
             log_level: Logging level (doesn't affect config)
             no_ruff: Disable Ruff verification
             no_evidence: Disable evidence logging
+            disable_cache: Disable verification cache (Phase C)
+            clear_cache: Clear cache on startup (Phase C)
 
         Returns:
             Merged configuration
@@ -228,6 +275,10 @@ class ConfigLoader:
 
         if no_evidence:
             config.enable_evidence = False
+
+        # Phase C: Cache control
+        if disable_cache:
+            config.cache_enabled = False
 
         # Validate merged config
         errors = config.validate()
@@ -502,7 +553,15 @@ class EvidenceLogger:
             except Exception as e:
                 self._logger.warning(f"Failed to rotate {item.name}: {e}")
 
-    def log_verification(self, event_type: str, file_path: Path, result: VerificationResult) -> None:
+    def log_verification(
+        self,
+        event_type: str,
+        file_path: Path,
+        result: VerificationResult,
+        from_cache: bool = False,
+        criticality_score: Optional[float] = None,
+        analysis_mode: Optional[str] = None,
+    ) -> None:
         """
         Log verification result to evidence files.
 
@@ -510,6 +569,9 @@ class EvidenceLogger:
             event_type: Type of change (modified, created)
             file_path: Path to verified file
             result: VerificationResult object
+            from_cache: Whether result came from cache (Phase C)
+            criticality_score: File criticality score (Phase C)
+            analysis_mode: Analysis mode used (fast/deep) (Phase C)
         """
         with self._lock:
             # Build verification details
@@ -545,7 +607,16 @@ class EvidenceLogger:
                 "file": file_str,
                 "verification": verification_data,
                 "duration_ms": result.duration_ms,
+                # Phase C fields
+                "from_cache": from_cache,
             }
+
+            # Add optional Phase C fields
+            if criticality_score is not None:
+                event["criticality_score"] = criticality_score
+
+            if analysis_mode is not None:
+                event["analysis_mode"] = analysis_mode
 
             self._events.append(event)
 
@@ -761,6 +832,11 @@ class FileChangeProcessor:
     Runs in a separate thread to avoid blocking the file watcher.
     Executes Ruff verification on each Python file change.
     Logs verification evidence automatically.
+
+    Phase C Integration:
+    - Uses CriticalFileDetector to classify files (FAST/DEEP/SKIP)
+    - Checks VerificationCache before running verification
+    - Stores verification results in cache for future use
     """
 
     def __init__(
@@ -770,6 +846,8 @@ class FileChangeProcessor:
         logger: logging.Logger,
         ruff_verifier: Optional[RuffVerifier] = None,
         evidence_logger: Optional[EvidenceLogger] = None,
+        detector: Optional[CriticalFileDetector] = None,
+        cache: Optional[VerificationCache] = None,
     ):
         """
         Initialize processor.
@@ -780,12 +858,16 @@ class FileChangeProcessor:
             logger: Logger instance
             ruff_verifier: Optional RuffVerifier instance for code verification
             evidence_logger: Optional EvidenceLogger for tracking verification results
+            detector: Optional CriticalFileDetector for smart file classification (Phase C)
+            cache: Optional VerificationCache for result caching (Phase C)
         """
         self._queue = event_queue
         self._stop_event = stop_event
         self._logger = logger
         self._ruff_verifier = ruff_verifier
         self._evidence_logger = evidence_logger
+        self._detector = detector
+        self._cache = cache
         self._processed_count = 0
 
     def run(self) -> None:
@@ -810,7 +892,14 @@ class FileChangeProcessor:
 
     def _process_change(self, event_type: str, file_path: Path) -> None:
         """
-        Process a single file change.
+        Process a single file change with Phase C intelligence.
+
+        Phase C Flow:
+        1. Classify file criticality (FAST/DEEP/SKIP)
+        2. Check cache for existing result
+        3. Run verification if cache miss
+        4. Store result in cache
+        5. Log evidence with Phase C metadata
 
         Args:
             event_type: Type of change (modified, created)
@@ -827,42 +916,132 @@ class FileChangeProcessor:
 
             self._logger.info(f"[{event_type.upper()}] {display_path}")
 
+            # Phase C: Classify file if detector available
+            classification = None
+            if self._detector:
+                classification = self._detector.classify(file_path)
+
+                # Skip if not a code file
+                if classification.mode == AnalysisMode.SKIP:
+                    self._logger.debug(f"[SKIP] {display_path.name} - {classification.reason}")
+                    return
+
+                # Log classification info
+                mode_badge = "🔍 DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
+                self._logger.debug(
+                    f"[{mode_badge}] Criticality: {classification.criticality_score:.2f} - " f"{classification.reason}"
+                )
+
             # Run Ruff verification if available
             if self._ruff_verifier:
-                self._run_verification(file_path, event_type)
+                self._run_verification(file_path, event_type, classification)
 
         except Exception as e:
             self._logger.error(f"Error processing {file_path}: {e}", exc_info=True)
 
-    def _run_verification(self, file_path: Path, event_type: str = "modified") -> None:
+    def _run_verification(
+        self,
+        file_path: Path,
+        event_type: str = "modified",
+        classification: Optional[FileClassification] = None,
+    ) -> None:
         """
-        Run Ruff verification and log results.
+        Run Ruff verification with Phase C caching and smart analysis.
+
+        Phase C Flow:
+        1. Check cache for existing result (hash-based)
+        2. If cache hit: Return cached result
+        3. If cache miss: Run verification
+        4. Store result in cache
+        5. Log evidence with Phase C metadata
 
         Args:
             file_path: Path to Python file to verify
             event_type: Type of file event (modified, created)
+            classification: Optional FileClassification from Phase C detector
         """
-        self._logger.info("[VERIFY] Running Ruff check...")
+        # Extract Phase C metadata
+        criticality_score = classification.criticality_score if classification else None
+        analysis_mode = classification.mode.value if classification else "fast"
+
+        # Phase C: Check cache if available
+        if self._cache:
+            cached_result = self._cache.get(file_path)
+            if cached_result is not None:
+                result = cached_result
+                self._logger.info("[CACHE HIT] Using cached result")
+
+                # Still log to evidence (cache hits are valuable data)
+                if self._evidence_logger:
+                    try:
+                        self._evidence_logger.log_verification(
+                            event_type,
+                            file_path,
+                            result,
+                            from_cache=True,
+                            criticality_score=criticality_score,
+                            analysis_mode=analysis_mode,
+                        )
+                    except Exception as e:
+                        self._logger.warning(f"Failed to log evidence: {e}")
+
+                # Report cached results
+                self._report_verification_result(result, from_cache=True)
+                return
+
+        # Cache miss: Run verification
+        mode_badge = "🔍 DEEP" if analysis_mode == "deep" else "⚡ FAST"
+        self._logger.info(f"[VERIFY] Running Ruff check ({mode_badge})...")
+
+        # Phase C: For DEEP_MODE files, we'll use Ruff for now
+        # TODO Week 2: Integrate DeepAnalyzer here
+        if classification and classification.mode == AnalysisMode.DEEP_MODE:
+            self._logger.warning(f"[DEEP MODE] Full semantic analysis not yet implemented, using Ruff for {file_path.name}")
 
         result = self._ruff_verifier.verify_file(file_path)
+
+        # Phase C: Store in cache if available
+        if self._cache:
+            self._cache.put(file_path, result, mode=analysis_mode)
+            self._logger.debug(f"[CACHE PUT] Stored result (mode={analysis_mode})")
 
         # Log evidence if logger is available
         if self._evidence_logger:
             try:
-                self._evidence_logger.log_verification(event_type, file_path, result)
+                self._evidence_logger.log_verification(
+                    event_type,
+                    file_path,
+                    result,
+                    from_cache=False,
+                    criticality_score=criticality_score,
+                    analysis_mode=analysis_mode,
+                )
             except Exception as e:
                 self._logger.warning(f"Failed to log evidence: {e}")
 
+        # Report results
+        self._report_verification_result(result, from_cache=False)
+
+    def _report_verification_result(self, result: VerificationResult, from_cache: bool = False) -> None:
+        """
+        Report verification results to console.
+
+        Args:
+            result: VerificationResult to report
+            from_cache: Whether result came from cache
+        """
+        cache_badge = "[CACHED] " if from_cache else ""
+
         # Handle errors
         if result.error:
-            self._logger.error(f"[ERROR] Verification failed: {result.error}")
+            self._logger.error(f"{cache_badge}[ERROR] Verification failed: {result.error}")
             return
 
         # Report results
         if result.passed:
-            self._logger.info(f"[PASS] No violations found ({result.duration_ms:.0f}ms)")
+            self._logger.info(f"{cache_badge}[PASS] No violations found ({result.duration_ms:.0f}ms)")
         else:
-            self._logger.warning(f"[FAIL] Ruff found {result.violation_count} violation(s):")
+            self._logger.warning(f"{cache_badge}[FAIL] Ruff found {result.violation_count} violation(s):")
             for violation in result.violations:
                 # Format with visual indicator for violations
                 fix_hint = " [fixable]" if violation.fix_available else ""
@@ -870,7 +1049,8 @@ class FileChangeProcessor:
                     f"  • Line {violation.line}:{violation.column} - " f"{violation.code}: {violation.message}{fix_hint}"
                 )
 
-        self._logger.info(f"[INFO] Verification complete in {result.duration_ms:.0f}ms")
+        if not from_cache:
+            self._logger.info(f"[INFO] Verification complete in {result.duration_ms:.0f}ms")
 
 
 class DevAssistant:
@@ -949,8 +1129,44 @@ class DevAssistant:
             except Exception as e:
                 self._logger.warning(f"Failed to initialize evidence logger: {e}")
 
+        # Phase C: Setup critical file detector
+        detector = None
+        if config is not None:
+            try:
+                detector = CriticalFileDetector(git_enabled=True)
+                # Update detector patterns if custom patterns provided
+                if config.critical_patterns:
+                    detector.CRITICAL_PATTERNS = set(config.critical_patterns)
+                detector.CRITICALITY_THRESHOLD = config.criticality_threshold
+                self._logger.debug(f"Critical file detection enabled (threshold={config.criticality_threshold:.2f})")
+            except Exception as e:
+                self._logger.warning(f"Failed to initialize critical file detector: {e}")
+
+        # Phase C: Setup verification cache
+        cache = None
+        if config is not None and config.cache_enabled and enable_ruff:
+            try:
+                cache_dir = self._root / "RUNS" / ".cache"
+                cache = VerificationCache(
+                    cache_dir=cache_dir,
+                    ttl_seconds=config.cache_ttl_seconds,
+                    max_entries=config.cache_max_entries,
+                )
+                self._logger.debug(
+                    f"Verification cache enabled (TTL={config.cache_ttl_seconds}s, "
+                    f"max={config.cache_max_entries} entries)"
+                )
+            except Exception as e:
+                self._logger.warning(f"Failed to initialize verification cache: {e}")
+
         self._processor = FileChangeProcessor(
-            self._event_queue, self._stop_event, self._logger, ruff_verifier, evidence_logger
+            self._event_queue,
+            self._stop_event,
+            self._logger,
+            ruff_verifier,
+            evidence_logger,
+            detector,
+            cache,
         )
         self._processor_thread: Optional[Thread] = None
 
@@ -1136,8 +1352,50 @@ Configuration:
         action="store_true",
         help="Disable evidence logging (overrides config file)",
     )
+    # Phase C: Cache control arguments
+    parser.add_argument(
+        "--disable-cache",
+        action="store_true",
+        help="Disable verification cache (Phase C)",
+    )
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear verification cache on startup (Phase C)",
+    )
+    parser.add_argument(
+        "--cache-stats",
+        action="store_true",
+        help="Show cache statistics and exit (Phase C)",
+    )
 
     args = parser.parse_args()
+
+    # Phase C: Handle cache-stats flag (early exit)
+    if args.cache_stats:
+        try:
+            from pathlib import Path
+
+            cache_dir = Path.cwd() / "RUNS" / ".cache"
+            if not cache_dir.exists():
+                print("Cache directory not found. No cache data available.")
+                sys.exit(0)
+
+            cache = VerificationCache(cache_dir=cache_dir)
+            stats = cache.stats()
+
+            print("\n" + "=" * 60)
+            print("Verification Cache Statistics")
+            print("=" * 60)
+            print(f"Cache size:        {stats['size']} / {stats['max_entries']} entries")
+            print(f"TTL:               {stats['ttl_seconds']}s")
+            print(f"Total cache hits:  {stats['total_hits']}")
+            print(f"Cache file:        {stats['cache_file']}")
+            print("=" * 60 + "\n")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Error reading cache statistics: {e}", file=sys.stderr)
+            sys.exit(1)
 
     try:
         # Load configuration from pyproject.toml
@@ -1149,6 +1407,19 @@ Configuration:
             print("Development Assistant is disabled in configuration.")
             sys.exit(0)
 
+        # Phase C: Handle clear-cache flag before starting
+        if args.clear_cache:
+            cache_dir = Path.cwd() / "RUNS" / ".cache"
+            cache_file = cache_dir / "verification_cache.json"
+            if cache_file.exists():
+                try:
+                    cache_file.unlink()
+                    print(f"[CACHE] Cleared verification cache: {cache_file}")
+                except Exception as e:
+                    print(f"[CACHE] Warning: Failed to clear cache: {e}", file=sys.stderr)
+            else:
+                print("[CACHE] No cache file found to clear.")
+
         # Merge with CLI arguments (CLI takes precedence)
         config = config_loader.merge_with_cli_args(
             config,
@@ -1157,6 +1428,8 @@ Configuration:
             log_level=args.log_level,
             no_ruff=args.no_ruff,
             no_evidence=args.no_evidence,
+            disable_cache=args.disable_cache,
+            clear_cache=args.clear_cache,
         )
 
         # Create and start assistant
