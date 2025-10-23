@@ -26,6 +26,135 @@
 
 ---
 
+## ⚖️ Constitution (헌법) - 시스템의 핵심
+
+**필독**: `NORTH_STAR.md` (1분 읽기, 방향성 상실 방지)
+
+### 이것은 무엇인가?
+
+**"실행형 자산 시스템 (Executable Knowledge Base)"**
+
+프로그램 개발 시 사용할 **Constitution(헌법) 기반 기준 체계 템플릿**입니다.
+
+이것은 코드 품질 도구가 **아닙니다**. Constitution을 중심으로 한 개발 체계 그 자체입니다.
+
+### 핵심 개념 3가지
+
+1. **문서가 곧 코드**
+   - YAML 계약서 작성 → TaskExecutor 실행 → 결과 자동 기록
+   - 모든 작업이 재실행 가능한 자산으로 축적
+
+2. **Constitution이 모든 것의 중심**
+   - 10개 조항 (P1-P10)이 개발의 법
+   - 모든 도구는 특정 조항을 강제하는 수단
+   - 대시보드는 "헌법 준수 현황판"
+
+3. **증거 기반 + 지식 자산화**
+   - 모든 실행 결과 자동 기록 (`RUNS/evidence/`)
+   - Obsidian 자동 동기화 (3초)
+   - 시간이 지날수록 지식이 축적
+
+### 7계층 아키텍처
+
+```
+Layer 1: Constitution (헌법) ← 모든 것의 중심!
+    ↓
+Layer 2: Execution (TaskExecutor, ConstitutionalValidator)
+    ↓
+Layer 3: Analysis (DeepAnalyzer, TeamStatsAggregator)
+    ↓
+Layer 4: Optimization (VerificationCache, CriticalFileDetector)
+    ↓
+Layer 5: Evidence Collection (자동 기록)
+    ↓
+Layer 6: Knowledge Asset (ObsidianBridge - 3초 동기화)
+    ↓
+Layer 7: Visualization (Streamlit Dashboard - 시각화만)
+```
+
+**중요**: 대시보드(Layer 7)는 단순 시각화 도구입니다. 검증은 DeepAnalyzer(Layer 3)가 수행합니다.
+
+### Constitution 13개 조항
+
+#### 개발 프로세스 조항 (P1-P10)
+
+| ID | 조항명 | 강제 도구 | Layer |
+|----|--------|----------|-------|
+| **P1** | YAML 계약서 우선 | TaskExecutor | 2 |
+| **P2** | 증거 기반 개발 | TaskExecutor | 2, 5 |
+| **P3** | 지식 자산화 | ObsidianBridge | 6 |
+| **P4** | SOLID 원칙 | **DeepAnalyzer** | 3 |
+| **P5** | 보안 우선 | **DeepAnalyzer** | 3 |
+| **P6** | 품질 게이트 | TeamStatsAggregator | 3 |
+| **P7** | Hallucination 방지 | DeepAnalyzer | 3 |
+| **P8** | 테스트 우선 | pytest | - |
+| **P9** | Conventional Commits | pre-commit | - |
+| **P10** | Windows 인코딩 | UTF-8 강제 | - |
+
+#### 거버넌스 조항 (P11-P13) - 새로 추가!
+
+| ID | 조항명 | 목적 | 강제 방식 |
+|----|--------|------|---------|
+| **P11** | 원칙 충돌 검증 | 새 기능이 과거 원칙과 충돌 시 리마인드 | AI 수동 |
+| **P12** | 트레이드오프 분석 의무 | 모든 결정에 양측 관점 + 근거 제시 | AI 수동 |
+| **P13** | 헌법 수정 검증 | Constitution 수정 시 타당성 검증 | 사용자 승인 |
+
+**효과**:
+- P11: 방향성 상실 방지 (ROI 267%)
+- P12: 객관적 의사결정 (AI 편향 차단)
+- P13: Constitution 비대화 방지 (최대 20개 조항 제한)
+
+**상세**: `config/constitution.yaml` 참조
+
+### 도구의 역할 (Tool-to-Article Mapping)
+
+| 도구 | 역할 | 강제하는 조항 | Layer |
+|------|------|-------------|-------|
+| **TaskExecutor** | YAML 계약서 실행 | P1, P2 | 2 |
+| **ConstitutionalValidator** | 헌법 준수 검증 | All + **P11, P13** | 2 |
+| **DeepAnalyzer** | SOLID, 보안 검증 | **P4, P5, P7** | 3 |
+| **TeamStatsAggregator** | 품질 점수 계산 | **P6** | 3 |
+| **VerificationCache** | 중복 검증 방지 | - | 4 |
+| **CriticalFileDetector** | 핵심 파일 식별 | - | 4 |
+| **ObsidianBridge** | 지식 자산화 | **P3** | 6 |
+| **Streamlit Dashboard** | 시각화 (검증 안 함) | - | 7 |
+
+### 핵심 워크플로우
+
+```
+1. YAML 계약서 작성 (P1)
+   ↓
+2. TaskExecutor 실행 (P2)
+   ↓
+3. DeepAnalyzer 검증 (P4, P5, P7)
+   ↓
+4. 증거 자동 기록 (P2)
+   ↓
+5. Obsidian 동기화 (P3, 3초)
+   ↓
+6. Dashboard로 확인 (P6 준수 현황)
+```
+
+### 우리가 만드는 것 vs 만들지 않는 것
+
+**우리가 만드는 것**:
+- ✅ Constitution 기반 개발 체계
+- ✅ 실행형 자산 시스템 (문서 = 코드)
+- ✅ 기준 체계 템플릿 (사용자가 커스터마이징)
+
+**우리가 만드는 것이 아닌 것**:
+- ❌ 코드 품질 대시보드 도구 (SonarQube 같은 것)
+- ❌ 독립적 분석 도구들의 모음
+- ❌ 완성된 프로덕트
+
+### 상세 문서
+
+- `config/constitution.yaml` - 헌법 전문 (800+ 줄)
+- `NORTH_STAR.md` - 1분 읽기, 방향성 재확인
+- `.github/TASK_TEMPLATE.md` - 작업 명세 템플릿
+
+---
+
 ## 🚀 빠른 시작 (5분)
 
 ### Option 1: Bash Wrapper (권장 - Linux/macOS/Git Bash)
