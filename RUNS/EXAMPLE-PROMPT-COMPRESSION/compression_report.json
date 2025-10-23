@@ -1,0 +1,29 @@
+{
+  "task_id": "EXAMPLE-PROMPT-COMPRESSION",
+  "timestamp": "2025-10-23T22:21:00.477374+00:00",
+  "summary": {
+    "prompts_compressed": 2,
+    "total_original_tokens": 36,
+    "total_compressed_tokens": 24,
+    "total_tokens_saved": 12,
+    "average_savings_pct": 33.44
+  },
+  "details": [
+    {
+      "command_id": "example-generation",
+      "context": "--prompt",
+      "original_tokens": 17,
+      "compressed_tokens": 11,
+      "savings_pct": 35.294117647058826,
+      "rules_applied": 9
+    },
+    {
+      "command_id": "another-example",
+      "context": "--message",
+      "original_tokens": 19,
+      "compressed_tokens": 13,
+      "savings_pct": 31.57894736842105,
+      "rules_applied": 6
+    }
+  ]
+}
