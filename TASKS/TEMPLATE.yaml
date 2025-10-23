@@ -17,6 +17,14 @@ acceptance_criteria:
   - "Criterion 2: Specific, measurable requirement"
   - "Criterion 3: Specific, measurable requirement"
 
+# Prompt Optimization (NEW - Optional)
+# Automatically compress AI prompts to reduce token usage by 30-50%
+prompt_optimization:
+  enabled: false  # Set to true to enable automatic compression
+  compression_level: medium  # Options: light, medium, aggressive
+  auto_learn: true           # Learn from successful compressions
+  report_path: RUNS/{task_id}/compression_report.json
+
 commands:
   - id: "01-setup"
     description: "Setup environment"

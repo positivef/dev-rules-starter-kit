@@ -29,6 +29,10 @@ from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
 from typing import Dict, List
 
+# Import prompt compression integration
+sys.path.insert(0, str(Path(__file__).parent))
+from prompt_task_integration import apply_compression, save_compression_report
+
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
     "python",
@@ -215,6 +219,35 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     state_file = runs_dir / ".state.json"
     locks_dir = root / "LOCKS"
 
+    # === PROMPT COMPRESSION (Step 1.5: After loading, before execution) ===
+    compression_config = contract.get("prompt_optimization", {})
+    compression_stats = []
+
+    if compression_config.get("enabled", False):
+        print("\n[COMPRESSION] Prompt optimization enabled")
+        print(f"   Level: {compression_config.get('compression_level', 'medium')}")
+
+        try:
+            contract, compression_stats = apply_compression(contract, compression_config)
+
+            if compression_stats:
+                total_original = sum(s.get("original_tokens", 0) for s in compression_stats)
+                total_compressed = sum(s.get("compressed_tokens", 0) for s in compression_stats)
+                avg_savings = sum(s.get("savings_pct", 0) for s in compression_stats) / len(compression_stats)
+
+                print(f"   Prompts compressed: {len(compression_stats)}")
+                print(f"   Total tokens: {total_original} -> {total_compressed}")
+                print(f"   Average savings: {avg_savings:.1f}%")
+
+                # Save compression report
+                report_path = compression_config.get("report_path", "RUNS/{task_id}/compression_report.json")
+                save_compression_report(compression_stats, report_path, task_id)
+                print(f"   Report: {report_path.replace('{task_id}', task_id)}")
+
+        except Exception as e:
+            print(f"   [WARN] Compression failed: {e}")
+            # Continue with uncompressed prompts
+
     # === 1. Budget gate (pre-check) ===
     estimated_cost = sum(float(cmd.get("cost_estimate_usd", 0)) for cmd in contract.get("commands", []))
     budget = float(contract.get("telemetry", {}).get("cost_budget_usd", 0))
@@ -222,7 +255,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     hard_limit = bool(contract.get("telemetry", {}).get("cost_hard_limit", True))
 
     if budget and warn_threshold and estimated_cost >= budget * warn_threshold:
-        print(f"⚠️  [WARN] Estimated cost ${estimated_cost:.2f} approaching budget ${budget:.2f}")
+        print(f"[WARN] Estimated cost ${estimated_cost:.2f} approaching budget ${budget:.2f}")
 
     if budget and hard_limit and estimated_cost > budget:
         raise BudgetExceededError(f"Budget exceeded: ${estimated_cost:.2f} > ${budget:.2f}")
@@ -244,7 +277,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
         print(f"\nEstimated Cost: ${estimated_cost:.2f}")
         print(f"Budget: ${budget:.2f}")
-        print(f"\n🔐 Plan Hash: {hash_val}")
+        print(f"\n[HASH] Plan Hash: {hash_val}")
         print("\nTo approve, run:")
         print(f"  echo '{hash_val}' > RUNS/{task_id}/.human_approved")
         return
@@ -262,7 +295,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         if actual_hash != expected_hash:
             raise SecurityError(f"Plan hash mismatch: {actual_hash} != {expected_hash}")
 
-        print(f"✅ Human approval verified: {expected_hash}")
+        print(f"[OK] Human approval verified: {expected_hash}")
 
     # === 4. Security checks ===
     ensure_secrets(contract.get("secrets_required"), ctx=task_id)
@@ -326,7 +359,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
             },
         )
 
-        print(f"\n✅ Task {task_id} completed successfully")
+        print(f"\n[OK] Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")
         print(f"   Provenance: RUNS/{task_id}/provenance.json")
 
@@ -356,19 +389,19 @@ def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status
         execution_result = {"status": status, "evidence_hashes": evidence_hashes, "git_commits": []}
 
         devlog_path = create_devlog(contract, execution_result)
-        print(f"   📝 Obsidian devlog: {devlog_path.name}")
+        print(f"   [NOTE] Obsidian devlog: {devlog_path.name}")
 
         if status == "success":
             append_evidence(task_id, list(evidence_hashes.keys()), evidence_hashes)
-            print("   📎 Evidence synced to Obsidian")
+            print("   [CLIP] Evidence synced to Obsidian")
 
         return True
 
     except ImportError as e:
-        print(f"   ⚠️  Obsidian bridge not available: {e}")
+        print(f"   [WARN] Obsidian bridge not available: {e}")
         return False
     except Exception as e:
-        print(f"   ⚠️  Obsidian sync failed: {e}")
+        print(f"   [WARN] Obsidian sync failed: {e}")
         return False
 
 
@@ -412,10 +445,10 @@ def execute_lite_mode():
         else:
             print("   Obsidian sync is disabled. Skipping.")
 
-        print(f"\n✅ Lite task '{task_title}' recorded successfully.")
+        print(f"\n[OK] Lite task '{task_title}' recorded successfully.")
 
     except Exception as e:
-        print(f"\n❌ Error in Lite Mode: {e}", file=sys.stderr)
+        print(f"\n[ERROR] Error in Lite Mode: {e}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -437,5 +470,5 @@ if __name__ == "__main__":
         try:
             execute_contract(args.contract, mode=mode)
         except Exception as e:
-            print(f"\n❌ Error: {e}", file=sys.stderr)
+            print(f"\n[ERROR] Error: {e}", file=sys.stderr)
             sys.exit(1)

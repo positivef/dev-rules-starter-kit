@@ -1,0 +1,66 @@
+task_id: EXAMPLE-PROMPT-COMPRESSION
+title: Example Task with Automatic Prompt Compression
+project: dev-rules-starter-kit
+tags:
+  - example
+  - prompt-compression
+  - automation
+
+description: |
+  This is an example YAML task demonstrating automatic prompt compression.
+
+  When prompt_optimization is enabled, all AI prompts in command arguments
+  will be automatically compressed to reduce token usage by 30-50%.
+
+# NEW: Prompt optimization configuration
+prompt_optimization:
+  enabled: true
+  compression_level: medium  # Options: light, medium, aggressive
+  auto_learn: true           # Learn from successful compressions
+  report_path: RUNS/{task_id}/compression_report.json
+
+commands:
+  - id: example-generation
+    exec:
+      cmd: echo
+      args:
+        - "Simulating AI command"
+        - --prompt
+        - "Please implement the comprehensive authentication feature for the web application with proper error handling and validation mechanisms"
+
+  - id: another-example
+    exec:
+      cmd: echo
+      args:
+        - "Another AI command"
+        - --message
+        - "Can you make sure that the database schema is properly designed with all necessary indexes and foreign key constraints"
+
+gates:
+  - id: ruff-check
+    description: Code quality verification
+    exec:
+      cmd: ruff
+      args:
+        - check
+        - scripts/prompt_task_integration.py
+        - tests/test_prompt_task_integration.py
+
+evidence:
+  - "RUNS/{task_id}/compression_report.json"
+  - "RUNS/{task_id}/.state.json"
+
+acceptance_criteria:
+  - Prompts are automatically compressed
+  - Compression report is generated
+  - 30-50% token savings achieved
+  - All tests pass
+
+provenance:
+  created_at: "2025-10-24T00:00:00Z"
+  created_by: Claude Code
+  purpose: Demonstrate automatic prompt compression feature
+  constitutional_compliance:
+    - P1 (YAML Contract Priority)
+    - P3 (Test-First Development)
+    - P6 (Observability)
