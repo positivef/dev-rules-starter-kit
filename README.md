@@ -152,10 +152,27 @@ Layer 7: Visualization (Streamlit Dashboard - 시각화만)
 - `config/constitution.yaml` - 헌법 전문 (800+ 줄)
 - `NORTH_STAR.md` - 1분 읽기, 방향성 재확인
 - `.github/TASK_TEMPLATE.md` - 작업 명세 템플릿
+- `docs/CONSTITUTION_ONBOARDING_GUIDE.md` - 헌법 온보딩 워크숍 로드맵
+- `docs/LAYER4_7_IMPLEMENTATION.md` - Layer 4~7 최적화·시각화 구현 예시
 
 ---
 
 ## 🚀 빠른 시작 (5분)
+
+### Step 0: 헌법 온보딩 & 거버넌스 세팅
+
+1. `docs/CONSTITUTION_ONBOARDING_GUIDE.md`와 `NORTH_STAR.md`를 읽고 팀 맞춤 체크리스트를 작성합니다.
+2. 거버넌스 템플릿 복사 및 편집:
+   ```bash
+   mkdir -p RUNS/drafts
+   cp templates/governance/p11-p13-checklist.yaml RUNS/drafts/DECISION-DEMO.yaml
+   # 편집 후 검증 및 Evidence 저장
+   python scripts/governance_gate.py \
+     --checklist RUNS/drafts/DECISION-DEMO.yaml \
+     --task-id DEMO-000 \
+     --output-dir RUNS/evidence
+   ```
+3. 거버넌스 Evidence (`RUNS/evidence/DEMO-000/governance.json`)가 생성되었는지 확인합니다.
 
 ### Option 1: Bash Wrapper (권장 - Linux/macOS/Git Bash)
 
@@ -219,6 +236,16 @@ python scripts/check_release_env.py  # 환경 진단 (문제 없으면 0으로 �
 npm install --no-fund --no-audit
 npm run release -- --dry-run
 # 참고: 루트에 `.nvmrc`(Node 20)를 제공하므로 `nvm use` 혹은 `corepack enable` 환경에서 맞춰 실행하세요.
+```
+
+### Step 4: ROI & 대시보드 초기화
+
+```bash
+# ROI 리포트 생성 및 최신 JSON 출력 저장
+python scripts/roi_report.py --governance-reviews 1 --compliance-rate 98.5
+
+# (선택) Streamlit 대시보드에서 활용
+streamlit run streamlit_app.py
 ```
 
 ---
@@ -323,6 +350,8 @@ projects:
 
 **브레이크이븐**: 3.2개월
 **연간 절감**: 264시간 (33일)
+
+> ROI 수치는 `scripts/roi_report.py`를 실행해 팀별 입력값으로 즉시 재계산할 수 있습니다.
 
 ---
 
