@@ -63,9 +63,11 @@ from pathlib import Path
 
 # MCP Obsidian 서버 사용 가정
 try:
-    from mcp_obsidian import ObsidianClient
+    import importlib.util
 
-    MCP_AVAILABLE = True
+    MCP_AVAILABLE = bool(importlib.util.find_spec("mcp_obsidian"))
+    if not MCP_AVAILABLE:
+        print("Warning: MCP Obsidian not available, using fallback mode")
 except ImportError:
     MCP_AVAILABLE = False
     print("Warning: MCP Obsidian not available, using fallback mode")

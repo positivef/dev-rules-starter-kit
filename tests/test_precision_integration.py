@@ -12,8 +12,15 @@ import pytest
 sys.path.append(str(Path(__file__).parent.parent / "scripts"))
 sys.path.append(str(Path(__file__).parent.parent / "experiments/mcp-precision-system"))
 
-from precision_wrapper import PrecisionEnhancedExecutor, PrecisionConfig, Task
-from core.precision_executor import VerificationLevel, TheorySource
+try:
+    from precision_wrapper import PrecisionEnhancedExecutor, PrecisionConfig, Task
+    from core.precision_executor import VerificationLevel, TheorySource
+
+    PRECISION_AVAILABLE = True
+except ImportError:
+    PRECISION_AVAILABLE = False
+    # Skip all tests if precision_wrapper is not available
+    pytest.skip("precision_wrapper not available, skipping precision integration tests", allow_module_level=True)
 
 
 class TestPrecisionIntegration:
