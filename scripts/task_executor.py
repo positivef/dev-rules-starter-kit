@@ -29,9 +29,10 @@ from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
 from typing import Dict, List
 
-# Import prompt compression integration
+# Import prompt compression integration and progress tracking
 sys.path.insert(0, str(Path(__file__).parent))
 from prompt_task_integration import apply_compression, save_compression_report
+from progress_tracker import create_progress_tracker
 
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
@@ -50,6 +51,7 @@ ALLOWED_CMDS = {
     "make",
     "node",
     "npm",
+    "echo",  # For demonstration purposes
 }
 
 DANGEROUS_PATTERNS = [
@@ -282,6 +284,11 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         print(f"  echo '{hash_val}' > RUNS/{task_id}/.human_approved")
         return
 
+    # === PROGRESS TRACKING (Initialize) ===
+    # Calculate total steps: commands + gates + evidence collection
+    total_steps = len(contract.get("commands", [])) + len(contract.get("gates", [])) + 1  # +1 for evidence
+    progress = create_progress_tracker(total_steps, task_id)
+
     # === 3. Human approval verification ===
     approved_file = runs_dir / ".human_approved"
     need_human = any(g.get("id") == "human-review" for g in contract.get("gates", []))
@@ -315,31 +322,54 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         )
 
         for cmd in contract.get("commands", []):
+            # Progress: Start command
+            cmd_desc = cmd.get("description", cmd["id"])
+            progress.start_step(f"Command: {cmd_desc}")
+
             atomic_write_json(state_file, {"status": "running", "step": f"commands:{cmd['id']}"})
 
-            exec_info = cmd.get("exec", {})
-            run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+            try:
+                exec_info = cmd.get("exec", {})
+                run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+                progress.complete_step(success=True)
+            except Exception:
+                progress.complete_step(success=False)
+                raise
 
         # === 6. Quality gates ===
         for gate in contract.get("gates", []):
             gate_id = gate.get("id", "unknown")
+            gate_desc = gate.get("description", gate_id)
+
+            # Progress: Start gate
+            progress.start_step(f"Gate: {gate_desc}")
+
             atomic_write_json(state_file, {"status": "running", "step": f"gates:{gate_id}"})
 
-            if gate_id == "human-review":
-                # Already verified
-                pass
-            else:
-                exec_info = gate.get("exec")
-                if exec_info:
-                    run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+            try:
+                if gate_id == "human-review":
+                    # Already verified
+                    pass
+                else:
+                    exec_info = gate.get("exec")
+                    if exec_info:
+                        run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+                progress.complete_step(success=True)
+            except Exception:
+                progress.complete_step(success=False)
+                raise
 
         # === 7. Evidence collection + SHA-256 hashing ===
+        progress.start_step("Collecting evidence and generating hashes")
+
         evidence_hashes = {}
         for pattern in contract.get("evidence", []):
             for filepath in glob_module.glob(pattern):
                 path = Path(filepath)
                 if path.exists() and path.is_file():
                     evidence_hashes[str(path)] = sha256_file(path)
+
+        progress.complete_step(success=True)
 
         # === 8. Provenance recording ===
         provenance = contract.get("provenance", {}).copy()
@@ -358,6 +388,9 @@ def execute_contract(contract_path: str, mode: str = "execute"):
                 "evidence_count": len(evidence_hashes),
             },
         )
+
+        # Progress summary
+        progress.summary()
 
         print(f"\n[OK] Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")
