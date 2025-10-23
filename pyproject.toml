@@ -29,6 +29,7 @@ dependencies = [
     "pyyaml>=6.0",
     "ruff>=0.1.0",
     "tomli>=2.0.0; python_version<'3.11'",
+    "click>=8.0.0",
 ]
 
 [project.optional-dependencies]
@@ -36,6 +37,9 @@ dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
 ]
+
+[project.scripts]
+dev-rules = "scripts.dev_rules_cli:main"
 
 [tool.dev-assistant]
 # Development Assistant Configuration
