@@ -100,3 +100,35 @@ venv.bak/
 # OS-specific
 .DS_Store
 Thumbs.db
+
+# Sensitive files (Security)
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.yaml
+credentials.json
+.secrets/
+
+# Node modules (semantic-release)
+node_modules/
+package-lock.json
+
+# Local configuration
+.claude/settings.local.json
+config/local.yaml
+
+# RUNS directory (evidence logs - can be large)
+RUNS/*/evidence.json
+RUNS/*/verification.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Backup files
+backup/
+*.bak
+*.backup

@@ -517,13 +517,81 @@ python scripts/dev_assistant.py --debounce 1000
 
 ---
 
+## 🤝 기여하기 (Contributing)
+
+이 프로젝트는 오픈소스입니다! 기여를 환영합니다.
+
+### 기여 방법
+
+1. **Issue 생성**
+   - 버그 리포트, 기능 제안, 질문 등
+   - Template: `.github/ISSUE_TEMPLATE.md` (작성 예정)
+
+2. **Pull Request**
+   - Fork → Branch → Commit → PR
+   - Conventional Commits 준수 필수
+   - Pre-commit hooks가 자동으로 검증합니다
+
+3. **Constitution 개선**
+   - P11-P13 적용 사례 공유
+   - 새 조항 제안 (P13 프로세스 적용)
+   - NORTH_STAR.md 피드백
+
+### 기여 가이드라인
+
+**코드 품질**:
+- `ruff check` 통과 필수
+- `pytest` 테스트 작성
+- Coverage ≥ 90%
+
+**커밋 메시지**:
+```bash
+feat(scope): 새 기능 추가
+fix(scope): 버그 수정
+docs(scope): 문서 업데이트
+```
+
+**Pull Request 체크리스트**:
+- [ ] Constitution 조항과 연결 (어느 조항 강화?)
+- [ ] 7계층 아키텍처 위치 명시
+- [ ] NORTH_STAR.md 참조 (방향성 확인)
+- [ ] 테스트 추가/업데이트
+- [ ] CHANGELOG.md 업데이트
+
+### 커뮤니티
+
+- **Discussions**: 질문, 아이디어 공유
+- **Issues**: 버그, 기능 요청
+- **Wiki**: 사용 사례, 튜토리얼 (작성 예정)
+
+---
+
 ## 📝 라이선스
 
-MIT License - 자유롭게 사용, 수정, 재배포 가능
+**MIT License** - 자유롭게 사용, 수정, 재배포 가능
+
+상세 내용: [LICENSE](LICENSE)
+
+### 저작권
+
+Copyright (c) 2025 positivef
+
+### 사용 허가
+
+- ✅ 상업적 사용
+- ✅ 수정
+- ✅ 배포
+- ✅ 개인 사용
+
+**조건**: 원작자 표시 및 라이선스 고지 포함
 
 ---
 
 ## 🙏 크레디트
+
+**원작자**: positivef
+**프로젝트**: Dev Rules Starter Kit
+**GitHub**: https://github.com/positivef/dev-rules-starter-kit
 
 이 스타터 킷은 DoubleDiver 프로젝트의 개발 규칙 시스템을 기반으로 하며,
 다음 시스템들의 best practice를 통합했습니다:
@@ -534,6 +602,22 @@ MIT License - 자유롭게 사용, 수정, 재배포 가능
 - Commitlint + Semantic Release
 - Obsidian Automation 2025
 
-**버전**: 1.0.0
+### 영감을 받은 프로젝트
+
+- **Linux**: 오픈소스 거버넌스 모델
+- **React**: 커뮤니티 기반 개발
+- **Python**: 명확한 철학 (PEP 20 - Zen of Python)
+
+---
+
+## 📊 프로젝트 현황
+
+**버전**: 1.1.0
+**상태**: 활발히 개발 중
 **생성일**: 2025-10-18
-**최종 업데이트**: 2025-10-18
+**최종 업데이트**: 2025-10-24
+
+**통계**:
+- Constitution 조항: 13개 (P1-P13)
+- 7계층 아키텍처
+- ROI: 2,150% (1년), 11,150% (5년)
