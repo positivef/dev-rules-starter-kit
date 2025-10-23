@@ -188,7 +188,7 @@ def compress(text: str, level: str, output_json: bool):
 
 
 @prompt.command()
-def stats():
+def info():
     """Show compression statistics and learned patterns"""
     compressor = PromptCompressor()
     stats = compressor.get_stats()
@@ -231,6 +231,150 @@ def demo():
     click.echo(f"  Level: {stats['compression_level']}")
     click.echo(f"  Abbreviations: {stats['abbreviations_count']}")
     click.echo(f"  Rules: {stats['compression_rules_count']}")
+
+
+# ============================================================================
+# Statistics Commands
+# ============================================================================
+
+
+@cli.group()
+def stats():
+    """View project statistics and metrics"""
+    pass
+
+
+@stats.command(name="compression")
+def stats_compression():
+    """Show prompt compression statistics across all tasks"""
+    import json
+    from pathlib import Path
+
+    runs_dir = Path("RUNS")
+
+    if not runs_dir.exists():
+        click.echo("[WARN] No RUNS directory found")
+        return
+
+    # Find all compression reports
+    reports = list(runs_dir.glob("*/compression_report.json"))
+
+    if not reports:
+        click.echo("[INFO] No compression reports found")
+        click.echo("       Enable prompt compression in your YAML tasks:")
+        click.echo("       prompt_optimization:")
+        click.echo("         enabled: true")
+        return
+
+    # Aggregate statistics
+    total_prompts = 0
+    total_original = 0
+    total_compressed = 0
+    tasks_with_compression = []
+
+    for report_path in reports:
+        try:
+            with open(report_path, "r", encoding="utf-8") as f:
+                report = json.load(f)
+
+            summary = report.get("summary", {})
+            total_prompts += summary.get("prompts_compressed", 0)
+            total_original += summary.get("total_original_tokens", 0)
+            total_compressed += summary.get("total_compressed_tokens", 0)
+
+            tasks_with_compression.append(
+                {
+                    "task_id": report.get("task_id"),
+                    "prompts": summary.get("prompts_compressed", 0),
+                    "savings_pct": summary.get("average_savings_pct", 0),
+                }
+            )
+        except Exception:
+            continue
+
+    # Display summary
+    click.echo("\n[COMPRESSION STATS] Across All Tasks\n")
+    click.echo(f"Tasks with compression: {len(tasks_with_compression)}")
+    click.echo(f"Total prompts compressed: {total_prompts}")
+    click.echo(f"Total original tokens: {total_original}")
+    click.echo(f"Total compressed tokens: {total_compressed}")
+
+    if total_original > 0:
+        total_savings = ((total_original - total_compressed) / total_original) * 100
+        click.echo(f"Total tokens saved: {total_original - total_compressed}")
+        click.echo(f"Average savings: {total_savings:.1f}%\n")
+
+        # Show per-task breakdown
+        click.echo("[PER-TASK BREAKDOWN]")
+        for task in sorted(tasks_with_compression, key=lambda x: x["savings_pct"], reverse=True):
+            click.echo(f"  {task['task_id']}: {task['prompts']} prompts, {task['savings_pct']:.1f}% savings")
+
+
+@stats.command(name="tasks")
+def stats_tasks():
+    """Show task execution statistics"""
+    from pathlib import Path
+    import json
+
+    runs_dir = Path("RUNS")
+
+    if not runs_dir.exists():
+        click.echo("[WARN] No RUNS directory found")
+        return
+
+    # Find all state files
+    state_files = list(runs_dir.glob("*/.state.json"))
+
+    if not state_files:
+        click.echo("[INFO] No task execution data found")
+        return
+
+    # Aggregate statistics
+    total_tasks = 0
+    successful = 0
+    failed = 0
+
+    task_summary = []
+
+    for state_file in state_files:
+        try:
+            with open(state_file, "r", encoding="utf-8") as f:
+                state = json.load(f)
+
+            total_tasks += 1
+            status = state.get("status", "unknown")
+
+            if status == "success":
+                successful += 1
+            elif status == "failed":
+                failed += 1
+
+            task_id = state_file.parent.name
+            task_summary.append(
+                {
+                    "task_id": task_id,
+                    "status": status,
+                    "evidence_count": state.get("evidence_count", 0),
+                }
+            )
+        except Exception:
+            continue
+
+    # Display summary
+    click.echo("\n[TASK STATS] Execution Summary\n")
+    click.echo(f"Total tasks: {total_tasks}")
+    click.echo(f"Successful: {successful}")
+    click.echo(f"Failed: {failed}")
+
+    if total_tasks > 0:
+        success_rate = (successful / total_tasks) * 100
+        click.echo(f"Success rate: {success_rate:.1f}%\n")
+
+        # Show recent tasks
+        click.echo("[RECENT TASKS]")
+        for task in task_summary[-10:]:  # Last 10 tasks
+            status_icon = "[OK]" if task["status"] == "success" else "[FAIL]"
+            click.echo(f"  {status_icon} {task['task_id']} ({task['evidence_count']} evidence files)")
 
 
 # ============================================================================
