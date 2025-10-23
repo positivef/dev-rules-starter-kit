@@ -1,0 +1,9 @@
+{
+  "810dc6b6": {
+    "before": "Test prompt",
+    "after": "Compressed",
+    "success_count": 3,
+    "total_count": 3,
+    "success_rate": 100.0
+  }
+}

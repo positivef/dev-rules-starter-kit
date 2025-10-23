@@ -1,0 +1,93 @@
+task_id: FEAT-2025-10-24-01
+description: |
+  Integrate PromptTracker and PromptCompressor into TaskExecutor and EnhancedTaskExecutor
+  for automated prompt quality tracking and token optimization.
+
+  Goals:
+  1. Reduce token usage by 30-50% through intelligent compression
+  2. Track prompt effectiveness (success rate, token usage, cost)
+  3. Build library of effective prompt patterns
+  4. Ensure constitutional compliance (P1-P10)
+
+markers:
+  - "[P1] YAML Contract Priority - This task spec drives implementation"
+  - "[P2] CLI Interface Mandate - Add CLI for prompt analysis"
+  - "[P3] Test-First Development - Tests written before implementation"
+  - "[P5] Windows UTF-8 - No emoji in code/YAML"
+  - "[P6] Observability - JSON logs for prompt tracking"
+  - "[P10] Conventional Commits - feat: for new integration"
+
+acceptance_criteria:
+  - "PromptCompressor reduces tokens by 30%+ on test prompts"
+  - "TaskExecutor automatically tracks all YAML task executions"
+  - "EnhancedTaskExecutor tracks trust score correlation with prompt quality"
+  - "CLI interface exposes prompt stats and compression"
+  - "All tests pass with 90%+ coverage"
+  - "No emoji in code (P5 compliance)"
+  - "JSON-formatted logs (P6 compliance)"
+
+commands:
+  - cmd: pytest
+    args:
+      - tests/test_prompt_compressor.py
+      - tests/test_prompt_integration.py
+      - -v
+      - --cov=scripts.prompt_compressor
+      - --cov=scripts.prompt_tracker
+      - --cov-report=term-missing
+    description: "Run prompt system tests"
+
+  - cmd: ruff
+    args:
+      - check
+      - scripts/prompt_compressor.py
+      - scripts/task_executor.py
+      - scripts/enhanced_task_executor.py
+    description: "Lint modified files"
+
+  - cmd: python
+    args:
+      - scripts/prompt_compressor.py
+    description: "Run prompt compressor demo"
+
+gates:
+  tests:
+    - path: tests/test_prompt_compressor.py
+      min_coverage: 90
+    - path: tests/test_prompt_integration.py
+      min_coverage: 85
+
+  performance:
+    - metric: compression_ratio
+      min_value: 30
+      description: "Minimum 30% token reduction"
+    - metric: compression_speed_ms
+      max_value: 100
+      description: "Compression must be <100ms"
+
+  security:
+    - check: no_emoji_in_code
+      files:
+        - scripts/prompt_compressor.py
+        - scripts/task_executor.py
+    - check: no_secrets
+      tool: gitleaks
+
+dependencies:
+  - scripts/prompt_tracker.py
+  - scripts/task_executor.py
+  - scripts/enhanced_task_executor.py
+
+evidence:
+  - type: test_results
+    path: RUNS/test_results_prompt_integration.json
+  - type: compression_metrics
+    path: RUNS/compression_metrics.json
+  - type: prompt_quality_report
+    path: RUNS/prompt_quality_report.md
+
+tags:
+  - prompt-engineering
+  - token-optimization
+  - ai-integration
+  - phase-1
