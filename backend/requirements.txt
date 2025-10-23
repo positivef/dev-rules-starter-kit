@@ -1,0 +1,15 @@
+# Backend Requirements for Dev Rules Dashboard
+# Phase D Week 1
+
+# Web Framework
+Flask==3.0.0
+flask-cors==4.0.0
+
+# WebSocket
+flask-socketio==5.3.5
+python-socketio==5.10.0
+
+# 기존 의존성 (프로젝트 루트 requirements.txt에서 재사용)
+# ruff
+# pytest
+# watchdog (파일 감시용, Week 2에 추가 예정)

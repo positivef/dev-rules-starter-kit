@@ -147,8 +147,8 @@ class ConstitutionalValidator:
         violations = []
 
         # Find all task IDs
-        task_pattern = r"- \[ \] (T\d+)(?:\s+\[P\])?\s+(?:\[US\d+\])?\s+(.+)"
-        tasks = re.findall(task_pattern, content)
+        task_pattern = r"^\s*-\s*\[\s*\]\s+(T\d+)(?:\s+\[P\])?\s+(?:\[US\d+\]\s+)?(.+)"
+        tasks = re.findall(task_pattern, content, flags=re.MULTILINE)
 
         # Separate test and implementation tasks
         test_tasks = []
@@ -255,8 +255,8 @@ class ConstitutionalValidator:
         violations = []
 
         # Count distinct projects/directories
-        project_pattern = r"(?:in|at|create)\s+([a-zA-Z0-9_-]+/[a-zA-Z0-9_/-]+)"
-        projects = set(re.findall(project_pattern, content))
+        project_pattern = r"(?:in|at|create|to)\s+([a-zA-Z0-9_-]+/[a-zA-Z0-9_/-]+)"
+        projects = set(re.findall(project_pattern, content, flags=re.IGNORECASE))
 
         # Extract top-level directories
         top_level = {p.split("/")[0] for p in projects}

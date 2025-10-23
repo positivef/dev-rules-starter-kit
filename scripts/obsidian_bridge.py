@@ -19,9 +19,8 @@ Usage:
 """
 
 import os
-import json
 import yaml
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -34,7 +33,7 @@ class ObsidianBridge:
         Args:
             vault_path: Obsidian Vault path (default: from environment)
         """
-        self.vault_path = vault_path or Path(os.getenv('OBSIDIAN_VAULT_PATH', '.'))
+        self.vault_path = vault_path or Path(os.getenv("OBSIDIAN_VAULT_PATH", "."))
         self.devlog_dir = self.vault_path / "개발일지"
         self.tasks_dir = self.vault_path / "TASKS"
         self.moc_path = self.vault_path / "MOCs" / "PROJECT_NAME_개발_지식맵.md"
@@ -50,59 +49,44 @@ class ObsidianBridge:
         Returns:
             Path to generated dev log
         """
-        task_id = task_contract['task_id']
-        title = task_contract['title']
-        status = execution_result.get('status', 'unknown')
-        today = datetime.now().strftime('%Y-%m-%d')
+        task_id = task_contract["task_id"]
+        title = task_contract["title"]
+        status = execution_result.get("status", "unknown")
+        today = datetime.now().strftime("%Y-%m-%d")
 
         # Generate filename
-        safe_title = title.replace(' ', '_').replace('/', '_')
+        safe_title = title.replace(" ", "_").replace("/", "_")
         filename = f"{today}_{safe_title}.md"
         filepath = self.devlog_dir / filename
 
         # Generate frontmatter
         frontmatter = {
-            'date': today,
-            'project': '[[PROJECT_NAME Development]]',
-            'tags': [
-                'devlog',
-                task_contract.get('tags', []),
-                f"task-{task_id}",
-                f"status-{status}"
-            ],
-            'status': status,
-            'task_id': task_id,
-            'type': task_contract.get('type', 'feature'),
-            'impact': task_contract.get('priority', 'medium'),
-            'git_commits': execution_result.get('git_commits', []),
-            'related': [
-                '[[PROJECT_NAME Development]]',
-                f"[[{task_id}]]"
-            ]
+            "date": today,
+            "project": "[[PROJECT_NAME Development]]",
+            "tags": ["devlog", task_contract.get("tags", []), f"task-{task_id}", f"status-{status}"],
+            "status": status,
+            "task_id": task_id,
+            "type": task_contract.get("type", "feature"),
+            "impact": task_contract.get("priority", "medium"),
+            "git_commits": execution_result.get("git_commits", []),
+            "related": ["[[PROJECT_NAME Development]]", f"[[{task_id}]]"],
         }
 
         # Flatten tags
         tags = []
-        for tag in frontmatter['tags']:
+        for tag in frontmatter["tags"]:
             if isinstance(tag, list):
                 tags.extend(tag)
             else:
                 tags.append(tag)
-        frontmatter['tags'] = list(set(tags))
+        frontmatter["tags"] = list(set(tags))
 
         # Generate content
-        content = self._generate_devlog_content(
-            task_contract,
-            execution_result,
-            frontmatter
-        )
+        content = self._generate_devlog_content(task_contract, execution_result, frontmatter)
 
         # Write file
         self.devlog_dir.mkdir(parents=True, exist_ok=True)
-        filepath.write_text(
-            self._format_markdown(frontmatter, content),
-            encoding='utf-8'
-        )
+        filepath.write_text(self._format_markdown(frontmatter, content), encoding="utf-8")
 
         return filepath
 
@@ -131,23 +115,15 @@ class ObsidianBridge:
         if not self.moc_path.exists():
             return
 
-        content = self.moc_path.read_text(encoding='utf-8')
+        content = self.moc_path.read_text(encoding="utf-8")
 
         # Update date
-        today = datetime.now().strftime('%Y-%m-%d')
-        content = content.replace(
-            f"updated: {datetime.now().strftime('%Y-%m-%d')}",
-            f"updated: {today}"
-        )
+        today = datetime.now().strftime("%Y-%m-%d")
+        content = content.replace(f"updated: {datetime.now().strftime('%Y-%m-%d')}", f"updated: {today}")
 
-        self.moc_path.write_text(content, encoding='utf-8')
+        self.moc_path.write_text(content, encoding="utf-8")
 
-    def append_evidence_to_contract(
-        self,
-        task_id: str,
-        evidence_files: List[str],
-        evidence_hashes: Dict[str, str]
-    ):
+    def append_evidence_to_contract(self, task_id: str, evidence_files: List[str], evidence_hashes: Dict[str, str]):
         """
         Append evidence to task contract
 
@@ -163,40 +139,32 @@ class ObsidianBridge:
             return
 
         contract_file = contract_files[0]
-        contract = yaml.safe_load(contract_file.read_text(encoding='utf-8'))
+        contract = yaml.safe_load(contract_file.read_text(encoding="utf-8"))
 
         # Update provenance
-        if 'provenance' not in contract:
-            contract['provenance'] = {}
+        if "provenance" not in contract:
+            contract["provenance"] = {}
 
-        contract['provenance']['evidence_sha256'] = evidence_hashes
-        contract['provenance']['executed_at'] = datetime.utcnow().isoformat()
-        contract['provenance']['executor'] = 'TaskExecutor-v3.2.1'
+        contract["provenance"]["evidence_sha256"] = evidence_hashes
+        contract["provenance"]["executed_at"] = datetime.now(timezone.utc).isoformat()
+        contract["provenance"]["executor"] = "TaskExecutor-v3.2.1"
 
         # Update status
-        contract['status'] = 'completed'
-        contract['completion_date'] = datetime.now().strftime('%Y-%m-%d')
+        contract["status"] = "completed"
+        contract["completion_date"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
         # Write file
-        contract_file.write_text(
-            yaml.dump(contract, allow_unicode=True, sort_keys=False),
-            encoding='utf-8'
-        )
+        contract_file.write_text(yaml.dump(contract, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
-    def _generate_devlog_content(
-        self,
-        contract: Dict,
-        result: Dict,
-        frontmatter: Dict
-    ) -> str:
+    def _generate_devlog_content(self, contract: Dict, result: Dict, frontmatter: Dict) -> str:
         """Generate dev log content"""
-        task_id = contract['task_id']
-        title = contract['title']
-        status = result.get('status', 'unknown')
+        task_id = contract["task_id"]
+        title = contract["title"]
+        status = result.get("status", "unknown")
 
         status_icon = "✅" if status == "success" else "❌"
 
-        content = f"""# {datetime.now().strftime('%Y-%m-%d')} {title}
+        content = f"""# {datetime.now(timezone.utc).strftime('%Y-%m-%d')} {title}
 
 ## 📌 Today's Summary
 
@@ -210,17 +178,17 @@ class ObsidianBridge:
 ## ✅ Acceptance Criteria
 
 """
-        for criterion in contract.get('acceptance_criteria', []):
+        for criterion in contract.get("acceptance_criteria", []):
             content += f"- [ ] {criterion}\n"
 
-        content += f"""
+        content += """
 ## 🔧 Execution Details
 
 ### Commands
 ```bash
 """
-        for cmd in contract.get('commands', []):
-            exec_info = cmd.get('exec', {})
+        for cmd in contract.get("commands", []):
+            exec_info = cmd.get("exec", {})
             content += f"# {cmd['id']}\n"
             content += f"{exec_info.get('cmd')} {' '.join(exec_info.get('args', []))}\n"
 
@@ -228,20 +196,20 @@ class ObsidianBridge:
 
 ### Quality Gates
 """
-        for gate in contract.get('gates', []):
+        for gate in contract.get("gates", []):
             content += f"- [{'x' if status == 'success' else ' '}] {gate['id']}\n"
 
         # Evidence files
-        evidence_hashes = result.get('evidence_hashes', {})
+        evidence_hashes = result.get("evidence_hashes", {})
         if evidence_hashes:
             content += "\n## 📊 Evidence Files\n\n"
             for file_path, hash_value in evidence_hashes.items():
                 content += f"- `{file_path}`: `{hash_value[:16]}...`\n"
 
         # Git commits
-        if result.get('git_commits'):
+        if result.get("git_commits"):
             content += "\n## 📝 Git Commits\n\n"
-            for commit in result['git_commits']:
+            for commit in result["git_commits"]:
                 content += f"- `{commit}`\n"
 
         content += f"""
@@ -263,34 +231,31 @@ class ObsidianBridge:
         filepath = self.tasks_dir / f"{task_id}.md"
 
         frontmatter = {
-            'project': '[[PROJECT_NAME Development]]',
-            'created': datetime.now().strftime('%Y-%m-%d'),
-            'status': data.get('status', 'pending'),
-            'task_id': task_id,
-            'tags': ['task', task_id.split('-')[0].lower()]
+            "project": "[[PROJECT_NAME Development]]",
+            "created": datetime.now().strftime("%Y-%m-%d"),
+            "status": data.get("status", "pending"),
+            "task_id": task_id,
+            "tags": ["task", task_id.split("-")[0].lower()],
         }
 
         content = f"# {task_id}\n\n{data.get('description', '')}\n"
 
-        filepath.write_text(
-            self._format_markdown(frontmatter, content),
-            encoding='utf-8'
-        )
+        filepath.write_text(self._format_markdown(frontmatter, content), encoding="utf-8")
 
     def _update_task_file(self, filepath: Path, updates: Dict):
         """Update existing task file"""
-        content = filepath.read_text(encoding='utf-8')
+        content = filepath.read_text(encoding="utf-8")
 
         # Simple checkbox update
         for key, value in updates.items():
-            if key.startswith('checkbox_'):
-                pattern = key.replace('checkbox_', '')
+            if key.startswith("checkbox_"):
+                pattern = key.replace("checkbox_", "")
                 if value:
                     content = content.replace(f"- [ ] {pattern}", f"- [x] {pattern}")
                 else:
                     content = content.replace(f"- [x] {pattern}", f"- [ ] {pattern}")
 
-        filepath.write_text(content, encoding='utf-8')
+        filepath.write_text(content, encoding="utf-8")
 
 
 # Global instance

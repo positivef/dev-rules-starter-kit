@@ -1,0 +1,44 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect release configuration
+        id: config
+        run: |
+          if [ -f release.config.js ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ -f .releaserc ] && [ -f package.json ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ -f .releaserc.json ] && [ -f package.json ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Skip when configuration is missing
+        if: steps.config.outputs.present == 'false'
+        run: echo "Release configuration not found. Skipping semantic-release run."
+      - name: Set up Node.js
+        if: steps.config.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        if: steps.config.outputs.present == 'true'
+        run: npm install --no-fund --no-audit
+      - name: Run semantic-release
+        if: steps.config.outputs.present == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

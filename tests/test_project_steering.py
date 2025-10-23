@@ -11,6 +11,7 @@ from pathlib import Path
 import json
 import tempfile
 import shutil
+import sys
 
 
 class TestProjectSteering:
@@ -213,11 +214,12 @@ class TestSteeringCLI:
         """Test: CLI shows help message"""
         import subprocess
 
+        repo_root = Path(__file__).resolve().parents[1]
         result = subprocess.run(
-            ["python", "scripts/project_steering.py", "--help"],
+            [sys.executable, "scripts/project_steering.py", "--help"],
             capture_output=True,
             text=True,
-            cwd="C:/Users/user/Documents/GitHub/dev-rules-starter-kit",
+            cwd=str(repo_root),
         )
 
         assert result.returncode == 0
@@ -228,8 +230,8 @@ class TestSteeringCLI:
         import subprocess
         import sys
 
-        # Use absolute path to project_steering.py
-        script_path = Path("C:/Users/user/Documents/GitHub/dev-rules-starter-kit/scripts/project_steering.py")
+        repo_root = Path(__file__).resolve().parents[1]
+        script_path = repo_root / "scripts" / "project_steering.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), "--dry-run", "--project-root", str(temp_project)],

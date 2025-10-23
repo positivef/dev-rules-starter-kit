@@ -7,12 +7,18 @@ Tests guard validation against actual task execution scenarios.
 import pytest
 from pathlib import Path
 import yaml
-from scripts.constitutional_guards import (
+import sys
+
+# Add project root to the Python path
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
+
+from scripts.constitutional_guards import (  # noqa: E402
     ConstitutionalGuard,
     Task,
     ConstitutionalViolationError,
     validate_task_list,
-)
+)  # noqa: E402
 
 
 class TestGuardsIntegration:

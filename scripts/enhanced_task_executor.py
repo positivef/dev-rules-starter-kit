@@ -23,7 +23,7 @@ Usage:
 import os
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -209,7 +209,7 @@ class EnhancedTaskExecutor:
         try:
             atomic_write_json(
                 state_file,
-                {"status": "running", "started_at": datetime.utcnow().isoformat()},
+                {"status": "running", "started_at": datetime.now(timezone.utc).isoformat()},
             )
 
             for phase in phases:
@@ -247,7 +247,7 @@ class EnhancedTaskExecutor:
             provenance = {
                 "task_file": str(tasks_file),
                 "executor": "EnhancedTaskExecutor-v1.1.0",
-                "executed_at": datetime.utcnow().isoformat(),
+                "executed_at": datetime.now(timezone.utc).isoformat(),
                 "constitutional_validation": not skip_constitutional,
                 "evidence_sha256": evidence_hashes,
                 "phases_executed": [p.name for p in phases],
@@ -271,7 +271,7 @@ class EnhancedTaskExecutor:
                 state_file,
                 {
                     "status": "success",
-                    "finished_at": datetime.utcnow().isoformat(),
+                    "finished_at": datetime.now(timezone.utc).isoformat(),
                     "evidence_count": len(evidence_hashes),
                 },
             )
@@ -302,7 +302,7 @@ class EnhancedTaskExecutor:
                 {
                     "status": "failed",
                     "error": str(e),
-                    "failed_at": datetime.utcnow().isoformat(),
+                    "failed_at": datetime.now(timezone.utc).isoformat(),
                 },
             )
 
@@ -532,7 +532,7 @@ class EnhancedTaskExecutor:
         """Generate task ID from file path"""
         # Extract feature name from path (e.g., specs/feat-example/tasks.md -> feat-example)
         feature_name = tasks_file.parent.name
-        timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
         return f"{feature_name}-{timestamp}"
 
     def _sync_to_obsidian(self, tasks_file: Path, task_id: str, evidence_hashes: Dict, status: str):

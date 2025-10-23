@@ -1,0 +1,38 @@
+[
+  {
+    "file_path": "C:\\Users\\user\\Documents\\GitHub\\dev-rules-starter-kit\\scripts\\verification_cache.py",
+    "total_checks": 1,
+    "passed_checks": 0,
+    "failed_checks": 1,
+    "avg_quality_score": 9.8,
+    "total_violations": 1,
+    "total_security_issues": 0,
+    "total_solid_violations": 0,
+    "last_checked": "2025-10-22T10:17:22.518187",
+    "analysis_mode": "fast"
+  },
+  {
+    "file_path": "C:\\Users\\user\\Documents\\GitHub\\dev-rules-starter-kit\\scripts\\dev_assistant.py",
+    "total_checks": 1,
+    "passed_checks": 0,
+    "failed_checks": 1,
+    "avg_quality_score": 9.8,
+    "total_violations": 1,
+    "total_security_issues": 0,
+    "total_solid_violations": 0,
+    "last_checked": "2025-10-22T10:17:22.523749",
+    "analysis_mode": "fast"
+  },
+  {
+    "file_path": "C:\\Users\\user\\Documents\\GitHub\\dev-rules-starter-kit\\scripts\\critical_file_detector.py",
+    "total_checks": 1,
+    "passed_checks": 1,
+    "failed_checks": 0,
+    "avg_quality_score": 10.0,
+    "total_violations": 0,
+    "total_security_issues": 0,
+    "total_solid_violations": 0,
+    "last_checked": "2025-10-22T10:15:29.355177",
+    "analysis_mode": "fast"
+  }
+]

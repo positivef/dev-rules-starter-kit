@@ -7,7 +7,7 @@ dev-rules-starter-kit을 새 프로젝트에 적용하는 완전한 가이드입
 ## 📋 Prerequisites
 
 - Git installed
-- Python 3.8+ OR Node.js 16+ (depending on your project)
+- Python 3.8+ OR Node.js 20+ (depending on your project)
 - 15 minutes of your time
 
 ---
@@ -326,6 +326,26 @@ chmod +x scripts/task_executor.py
 
 # 권한 확인
 chmod +x setup.sh
+```
+
+---
+
+## 🚀 Step 6: 릴리스 자동화 준비 (선택)
+
+```bash
+# 1. Node 20 환경 정렬 및 사전 점검
+nvm use  # Windows PowerShell이라면 `fnm use` 또는 corepack을 활용하세요.
+python scripts/check_release_env.py
+
+# 2. Semantic Release 플러그인 설치
+npm install --no-fund --no-audit
+
+# 3. 로컬에서 드라이런으로 검증
+npm run release -- --dry-run
+
+# 4. main 브랜치로 푸시하면 GitHub Actions의 semantic-release 워크플로우가
+#    루트 `package.json`과 `.releaserc.json`에 정의된 전략을 사용해 버전을 산출합니다.
+git push origin main
 ```
 
 ---

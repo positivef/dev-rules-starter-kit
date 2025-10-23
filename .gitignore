@@ -132,3 +132,8 @@ RUNS/*/verification.log
 backup/
 *.bak
 *.backup
+
+# Temporary folders (do not commit)
+C:/
+새 폴더/
+=3.0.0

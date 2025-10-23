@@ -1,0 +1,7 @@
+{
+  "evidence_sha256": {
+    "docs/SEMANTIC_RELEASE_FOR_BEGinners.md": "60c394ab29c8a41789100f629c095c2b4aee06ef89739dab7a363887a7e615c0"
+  },
+  "executed_at": "2025-10-20T21:18:44.297693+00:00",
+  "executor": "TaskExecutor-v3.2.1"
+}

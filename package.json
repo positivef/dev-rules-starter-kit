@@ -1,0 +1,22 @@
+{
+  "name": "dev-rules-starter-kit",
+  "version": "0.0.0-development",
+  "private": true,
+  "description": "Semantic-release bridge for the Dev Rules Starter Kit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/placeholder/dev-rules-starter-kit.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.3",
+    "@semantic-release/release-notes-generator": "^12.1.0",
+    "semantic-release": "^23.0.2"
+  }
+}

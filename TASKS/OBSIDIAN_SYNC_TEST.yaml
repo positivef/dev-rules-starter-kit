@@ -1,0 +1,31 @@
+task_id: "OBSIDIAN-SYNC-TEST"
+title: "Sync docs memo"
+project: "DevRulesStarter"
+priority: "low"
+type: "docs"
+tags: [documentation, obsidian]
+status: "pending"
+
+description: |
+  Trigger Obsidian Bridge to capture the latest documentation memo.
+
+acceptance_criteria:
+  - "TaskExecutor finishes without error"
+  - "Obsidian Bridge stores provenance"
+
+commands:
+  - id: "noop"
+    description: "No-op command"
+    exec:
+      cmd: "python3"
+      args: ["-c", "print('sync test')"]
+
+gates: []
+
+evidence:
+  - "docs/SEMANTIC_RELEASE_FOR_BEGinners.md"
+
+provenance:
+  evidence_sha256: {}
+  executed_at: ""
+  executor: "TaskExecutor-v3.2.1"

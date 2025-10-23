@@ -26,57 +26,82 @@ import sys
 import glob as glob_module
 from pathlib import Path
 from subprocess import run, CalledProcessError, TimeoutExpired
-from datetime import datetime
-from typing import Dict, List, Optional
+from datetime import datetime, timezone
+from typing import Dict, List
 
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
-    "python", "python3", "pytest", "ruff", "mypy", "black", "isort",
-    "gitleaks", "git", "curl", "npx", "pip", "make", "node", "npm"
+    "python",
+    "python3",
+    "pytest",
+    "ruff",
+    "mypy",
+    "black",
+    "isort",
+    "gitleaks",
+    "git",
+    "curl",
+    "npx",
+    "pip",
+    "make",
+    "node",
+    "npm",
 }
 
 DANGEROUS_PATTERNS = [
-    r"rm\s+-rf\s+/",      # Dangerous root deletion
-    r"\beval\b",          # Code injection risk
-    r"\bexec\b",          # Code injection risk
-    r">\s*/dev/",         # Device overwrite
-    r"\$\(",              # Command substitution
-    r"`",                 # Command substitution (backticks)
-    r"&&\s*rm",           # Chained deletion
-    r";\s*rm",            # Sequential deletion
-    r"chmod\s+777",       # Overly permissive permissions
-    r"__import__",        # Dynamic imports (Python)
-    r"curl.*\|\s*sh",     # Pipe to shell (curl)
-    r"wget.*\|\s*sh",     # Pipe to shell (wget)
-    r"mktemp.*\|\s*sh",   # Temp file to shell
-    r"nc\s+-e",           # Netcat backdoor
-    r"dd\s+if=/dev/zero", # Disk wipe
+    r"rm\s+-rf\s+/",  # Dangerous root deletion
+    r"\beval\b",  # Code injection risk
+    r"\bexec\b",  # Code injection risk
+    r">\s*/dev/",  # Device overwrite
+    r"\$\(",  # Command substitution
+    r"`",  # Command substitution (backticks)
+    r"&&\s*rm",  # Chained deletion
+    r";\s*rm",  # Sequential deletion
+    r"chmod\s+777",  # Overly permissive permissions
+    r"__import__",  # Dynamic imports (Python)
+    r"curl.*\|\s*sh",  # Pipe to shell (curl)
+    r"wget.*\|\s*sh",  # Pipe to shell (wget)
+    r"mktemp.*\|\s*sh",  # Temp file to shell
+    r"nc\s+-e",  # Netcat backdoor
+    r"dd\s+if=/dev/zero",  # Disk wipe
 ]
 
 # Environment variable allowlist - customize for your secrets
 ENV_ALLOWLIST = {
-    "PATH", "HOME", "USER", "LANG", "PYTHONPATH", "NODE_ENV",
-    "GITHUB_TOKEN", "SECRET_KEY", "API_KEY", "API_SECRET"
+    "PATH",
+    "HOME",
+    "USER",
+    "LANG",
+    "PYTHONPATH",
+    "NODE_ENV",
+    "GITHUB_TOKEN",
+    "SECRET_KEY",
+    "API_KEY",
+    "API_SECRET",
 }
 
 
 class TaskExecutorError(Exception):
     """TaskExecutor base exception"""
+
     pass
 
 
 class SecurityError(TaskExecutorError):
     """Security violation exception"""
+
     pass
 
 
 class BudgetExceededError(TaskExecutorError):
     """Budget exceeded exception"""
+
     pass
 
 
 class GateFailedError(TaskExecutorError):
     """Gate failed exception"""
+
     pass
 
 
@@ -84,7 +109,7 @@ def atomic_write_json(path: Path, data: Dict):
     """Atomic JSON file write"""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding='utf-8')
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     os.replace(str(tmp), str(path))
 
 
@@ -102,11 +127,9 @@ def plan_hash(contract: Dict) -> str:
     focus = {
         "commands": contract.get("commands", []),
         "gates": contract.get("gates", []),
-        "acceptance_criteria": contract.get("acceptance_criteria", [])
+        "acceptance_criteria": contract.get("acceptance_criteria", []),
     }
-    return hashlib.sha256(
-        json.dumps(focus, sort_keys=True).encode()
-    ).hexdigest()[:16]
+    return hashlib.sha256(json.dumps(focus, sort_keys=True).encode()).hexdigest()[:16]
 
 
 def ports_free(ports: List[int]):
@@ -166,15 +189,7 @@ def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout:
     # 3. Execute with exec array (shell=False)
     print(f"[EXEC] {cmd} {' '.join(args)}")
     try:
-        result = run(
-            [cmd] + args,
-            cwd=str(cwd),
-            env=env,
-            capture_output=True,
-            shell=False,
-            check=False,
-            timeout=timeout
-        )
+        result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
 
         if result.returncode != 0:
             print(f"[ERROR] Command failed with code {result.returncode}")
@@ -191,7 +206,7 @@ def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout:
 def execute_contract(contract_path: str, mode: str = "execute"):
     """Execute task contract"""
     root = Path(".").resolve()
-    contract = yaml.safe_load(Path(contract_path).read_text(encoding='utf-8'))
+    contract = yaml.safe_load(Path(contract_path).read_text(encoding="utf-8"))
 
     task_id = contract["task_id"]
     runs_dir = root / "RUNS" / task_id
@@ -215,7 +230,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     # === 2. Plan mode (human approval hash) ===
     if mode == "plan":
         hash_val = plan_hash(contract)
-        print(f"\n=== Execution Plan ===")
+        print("\n=== Execution Plan ===")
         print(f"Task ID: {task_id}")
         print(f"Title: {contract.get('title')}")
         print(f"\nCommands ({len(contract.get('commands', []))}):")
@@ -230,7 +245,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         print(f"\nEstimated Cost: ${estimated_cost:.2f}")
         print(f"Budget: ${budget:.2f}")
         print(f"\n🔐 Plan Hash: {hash_val}")
-        print(f"\nTo approve, run:")
+        print("\nTo approve, run:")
         print(f"  echo '{hash_val}' > RUNS/{task_id}/.human_approved")
         return
 
@@ -241,7 +256,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     if need_human:
         expected_hash = plan_hash(contract)
         if not approved_file.exists():
-            raise SecurityError(f"Human approval required. Run with --plan first.")
+            raise SecurityError("Human approval required. Run with --plan first.")
 
         actual_hash = approved_file.read_text().strip()
         if actual_hash != expected_hash:
@@ -262,33 +277,20 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         env = build_env()
 
         # === 5. Command execution ===
-        atomic_write_json(state_file, {
-            "status": "running",
-            "step": "commands:begin",
-            "at": datetime.utcnow().isoformat()
-        })
+        atomic_write_json(
+            state_file, {"status": "running", "step": "commands:begin", "at": datetime.now(timezone.utc).isoformat()}
+        )
 
         for cmd in contract.get("commands", []):
-            atomic_write_json(state_file, {
-                "status": "running",
-                "step": f"commands:{cmd['id']}"
-            })
+            atomic_write_json(state_file, {"status": "running", "step": f"commands:{cmd['id']}"})
 
             exec_info = cmd.get("exec", {})
-            run_exec(
-                exec_info["cmd"],
-                exec_info.get("args", []),
-                root,
-                env
-            )
+            run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
 
         # === 6. Quality gates ===
         for gate in contract.get("gates", []):
             gate_id = gate.get("id", "unknown")
-            atomic_write_json(state_file, {
-                "status": "running",
-                "step": f"gates:{gate_id}"
-            })
+            atomic_write_json(state_file, {"status": "running", "step": f"gates:{gate_id}"})
 
             if gate_id == "human-review":
                 # Already verified
@@ -296,12 +298,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
             else:
                 exec_info = gate.get("exec")
                 if exec_info:
-                    run_exec(
-                        exec_info["cmd"],
-                        exec_info.get("args", []),
-                        root,
-                        env
-                    )
+                    run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
 
         # === 7. Evidence collection + SHA-256 hashing ===
         evidence_hashes = {}
@@ -314,17 +311,20 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         # === 8. Provenance recording ===
         provenance = contract.get("provenance", {}).copy()
         provenance["evidence_sha256"] = evidence_hashes
-        provenance["executed_at"] = datetime.utcnow().isoformat()
+        provenance["executed_at"] = datetime.now(timezone.utc).isoformat()
         provenance["executor"] = "TaskExecutor-v3.2.1"
 
         atomic_write_json(runs_dir / "provenance.json", provenance)
 
         # === 9. Success state ===
-        atomic_write_json(state_file, {
-            "status": "success",
-            "finished_at": datetime.utcnow().isoformat(),
-            "evidence_count": len(evidence_hashes)
-        })
+        atomic_write_json(
+            state_file,
+            {
+                "status": "success",
+                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "evidence_count": len(evidence_hashes),
+            },
+        )
 
         print(f"\n✅ Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")
@@ -336,11 +336,9 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
     except Exception as e:
         # Failure state
-        atomic_write_json(state_file, {
-            "status": "failed",
-            "error": str(e),
-            "failed_at": datetime.utcnow().isoformat()
-        })
+        atomic_write_json(
+            state_file, {"status": "failed", "error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}
+        )
         raise
 
     finally:
@@ -355,18 +353,14 @@ def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status
         sys.path.insert(0, str(Path(__file__).parent))
         from obsidian_bridge import create_devlog, append_evidence
 
-        execution_result = {
-            "status": status,
-            "evidence_hashes": evidence_hashes,
-            "git_commits": []
-        }
+        execution_result = {"status": status, "evidence_hashes": evidence_hashes, "git_commits": []}
 
         devlog_path = create_devlog(contract, execution_result)
         print(f"   📝 Obsidian devlog: {devlog_path.name}")
 
         if status == "success":
             append_evidence(task_id, list(evidence_hashes.keys()), evidence_hashes)
-            print(f"   📎 Evidence synced to Obsidian")
+            print("   📎 Evidence synced to Obsidian")
 
         return True
 
@@ -381,7 +375,7 @@ def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status
 def execute_lite_mode():
     """Handles simple, YAML-less task execution for quick jobs."""
     print("Entering Lite Mode for quick tasks...")
-    
+
     try:
         # 1. Get user input for the task title
         task_title = input(">> What did you accomplish? (e.g., fix: Corrected a typo in README): ")
@@ -392,8 +386,8 @@ def execute_lite_mode():
         # 2. Auto-collect evidence from git
         print(">> Collecting evidence from `git status`...")
         result = run(["git", "status", "--porcelain"], capture_output=True, text=True, check=True)
-        changed_files = [line.strip().split(" ", 1)[1] for line in result.stdout.strip().split('\n') if line.strip()]
-        
+        changed_files = [line.strip().split(" ", 1)[1] for line in result.stdout.strip().split("\n") if line.strip()]
+
         if not changed_files:
             print("No changed files detected. Nothing to record. Aborting.")
             return
@@ -401,11 +395,11 @@ def execute_lite_mode():
         print(f"   Found {len(changed_files)} changed file(s).")
 
         # 3. Create a lightweight, in-memory contract
-        task_id = f"LITE-{datetime.now(datetime.UTC).strftime('%Y%m%d-%H%M%S')}"
+        task_id = f"LITE-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
         lite_contract = {
             "task_id": task_id,
             "title": task_title,
-            "project": "PROJECT_NAME", # This will be replaced by setup.py
+            "project": "PROJECT_NAME",  # This will be replaced by setup.py
             "tags": ["lite-mode"],
         }
 
@@ -429,7 +423,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="TaskExecutor v3.2.1")
-    parser.add_argument("contract", nargs='?', default=None, help="Path to YAML contract file. If omitted, runs in Lite Mode.")
+    help_text = "Path to YAML contract file. If omitted, runs in Lite Mode."
+    parser.add_argument("contract", nargs="?", default=None, help=help_text)
     parser.add_argument("--plan", action="store_true", help="Show plan and generate approval hash")
     args = parser.parse_args()
 
