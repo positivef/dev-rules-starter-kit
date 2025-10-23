@@ -29,10 +29,11 @@ from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
 from typing import Dict, List
 
-# Import prompt compression integration and progress tracking
+# Import prompt compression integration, progress tracking, and error handling
 sys.path.insert(0, str(Path(__file__).parent))
 from prompt_task_integration import apply_compression, save_compression_report
 from progress_tracker import create_progress_tracker
+from error_handler import ErrorCatalog
 
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
@@ -184,7 +185,9 @@ def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout:
     """Safe command execution (exec array, shell=False)"""
     # 1. Command allowlist check
     if cmd not in ALLOWED_CMDS:
-        raise SecurityError(f"Command not in allowlist: {cmd}")
+        error = ErrorCatalog.command_not_allowed(cmd)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise SecurityError(error.message)
 
     # 2. Dangerous pattern check
     full_cmd = f"{cmd} {' '.join(args)}"
@@ -198,9 +201,9 @@ def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout:
         result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
 
         if result.returncode != 0:
-            print(f"[ERROR] Command failed with code {result.returncode}")
-            print(f"STDOUT: {result.stdout.decode('utf-8', errors='ignore')}")
-            print(f"STDERR: {result.stderr.decode('utf-8', errors='ignore')}")
+            stderr = result.stderr.decode("utf-8", errors="ignore")
+            error = ErrorCatalog.command_failed(cmd, result.returncode, stderr)
+            print(f"\n{error.format()}", file=sys.stderr)
             raise CalledProcessError(result.returncode, [cmd] + args)
 
         return result
@@ -212,7 +215,21 @@ def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout:
 def execute_contract(contract_path: str, mode: str = "execute"):
     """Execute task contract"""
     root = Path(".").resolve()
-    contract = yaml.safe_load(Path(contract_path).read_text(encoding="utf-8"))
+    contract_file = Path(contract_path)
+
+    # Check if file exists
+    if not contract_file.exists():
+        error = ErrorCatalog.file_not_found(contract_path)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise FileNotFoundError(error.message)
+
+    # Parse YAML
+    try:
+        contract = yaml.safe_load(contract_file.read_text(encoding="utf-8"))
+    except Exception as e:
+        error = ErrorCatalog.yaml_parse_error(contract_path, e)
+        print(f"\n{error.format(include_traceback=True)}", file=sys.stderr)
+        raise
 
     task_id = contract["task_id"]
     runs_dir = root / "RUNS" / task_id
@@ -247,7 +264,8 @@ def execute_contract(contract_path: str, mode: str = "execute"):
                 print(f"   Report: {report_path.replace('{task_id}', task_id)}")
 
         except Exception as e:
-            print(f"   [WARN] Compression failed: {e}")
+            error = ErrorCatalog.compression_failed(e)
+            print(f"\n{error.format()}", file=sys.stderr)
             # Continue with uncompressed prompts
 
     # === 1. Budget gate (pre-check) ===
@@ -260,7 +278,9 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         print(f"[WARN] Estimated cost ${estimated_cost:.2f} approaching budget ${budget:.2f}")
 
     if budget and hard_limit and estimated_cost > budget:
-        raise BudgetExceededError(f"Budget exceeded: ${estimated_cost:.2f} > ${budget:.2f}")
+        error = ErrorCatalog.budget_exceeded(estimated_cost, budget)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise BudgetExceededError(error.message)
 
     # === 2. Plan mode (human approval hash) ===
     if mode == "plan":
