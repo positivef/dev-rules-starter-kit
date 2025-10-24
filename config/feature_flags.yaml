@@ -1,52 +1,44 @@
-# Feature Flags for Tier 1 Integration
-# Granular control with emergency disable capability
-# Compliant with P1 (YAML-First) and P10 (Windows encoding)
-
 tier1_integration:
   enabled: true
-
   tools:
     spec_builder:
       enabled: true
       quick_mode_available: true
-      template_dir: "templates/specs"
-      default_template: "feature"
-
+      template_dir: templates/specs
+      default_template: feature
     tdd_enforcer:
       enabled: true
       quick_mode_available: true
       coverage_threshold: 85.0
       strict_mode: false
-
     tag_tracer:
       enabled: true
       chain_validation: true
       auto_tag_suggestion: true
-
+    tag_extractor:
+      enabled: true
+      skip_hidden_dirs: true
+      skip_node_modules: true
   mitigation:
     tutorial:
       enabled: true
       show_on_first_use: true
-      tutorial_dir: "docs/tutorials"
-
+      tutorial_dir: docs/tutorials
     usage_tracking:
       enabled: true
       track_time_saved: true
       cumulative_display: true
-      evidence_dir: "RUNS/evidence"
-
+      evidence_dir: RUNS/evidence
     quick_mode:
       enabled: true
       bypass_spec_creation: false
       warning_only: true
-
     weekly_report:
       enabled: true
-      schedule: "friday"
+      schedule: friday
       email_enabled: false
       console_output: true
-
   emergency:
     disable_all_tier1: false
     rollback_to_baseline: false
-    last_emergency_datetime: null
+    last_emergency_datetime: '2025-10-24T10:41:44.295144'
