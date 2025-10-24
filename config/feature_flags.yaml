@@ -19,6 +19,10 @@ tier1_integration:
       enabled: true
       skip_hidden_dirs: true
       skip_node_modules: true
+    tag_sync_bridge:
+      enabled: true
+      auto_sync: false
+      generate_traceability_maps: true
   mitigation:
     tutorial:
       enabled: true
@@ -41,4 +45,4 @@ tier1_integration:
   emergency:
     disable_all_tier1: false
     rollback_to_baseline: false
-    last_emergency_datetime: '2025-10-24T10:41:44.295144'
+    last_emergency_datetime: '2025-10-24T13:13:16.334902'
