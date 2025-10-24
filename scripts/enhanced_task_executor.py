@@ -37,12 +37,14 @@ from task_executor import (
     build_env,
     TaskExecutorError,
     SecurityError,
+    run_validation_commands,
 )
 
 # Import v1.1.0 components (Trust Score 8.0+ patterns)
 from project_steering import ProjectSteering
 from automatic_evidence_tracker import AutomaticEvidenceTracker
 from context_aware_loader import ContextAwareConstitutionalLoader
+from orchestration_policy import OrchestrationPolicy
 
 
 @dataclass
@@ -281,6 +283,15 @@ class EnhancedTaskExecutor:
             self.log(f"{'='*60}")
             self.log(f"Evidence files: {len(evidence_hashes)}")
             self.log(f"Provenance: RUNS/{task_id}/provenance.json\n")
+
+            try:
+                validation_commands = OrchestrationPolicy().get_validation_commands()
+            except FileNotFoundError:
+                validation_commands = []
+
+            if validation_commands:
+                self.log("[STEP 6] Running validation commands after Enhanced execution...")
+                run_validation_commands(validation_commands, self.root, task_id)
 
             # === 10. Obsidian Sync ===
             if os.getenv("OBSIDIAN_ENABLED", "false").lower() == "true":

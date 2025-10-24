@@ -1,0 +1,146 @@
+# Tier 1 Integration System - Configuration Presets
+# Simple presets for common use cases
+
+presets:
+  # Beginner preset - Conservative settings for getting started
+  beginner:
+    name: "Beginner"
+    description: "Safe defaults for new users"
+    settings:
+      tier1_integration:
+        enabled: true
+        tools:
+          spec_builder:
+            enabled: true
+            quick_mode_available: true
+          tdd_enforcer:
+            enabled: true
+            coverage_threshold: 70.0  # Lower threshold for beginners
+            strict_mode: false
+          tag_tracer:
+            enabled: true
+            chain_validation: false  # Simplified validation
+            auto_tag_suggestion: true
+        parallel_processing:
+          enabled: false  # Disabled for simplicity
+        risk_assessment:
+          mode: "zen"  # Most conservative
+          confidence_threshold: 0.7
+        mitigation:
+          quick_mode:
+            enabled: true
+
+  # Standard preset - Balanced for most projects
+  standard:
+    name: "Standard"
+    description: "Balanced settings for typical development"
+    settings:
+      tier1_integration:
+        enabled: true
+        tools:
+          spec_builder:
+            enabled: true
+            quick_mode_available: true
+          tdd_enforcer:
+            enabled: true
+            coverage_threshold: 85.0
+            strict_mode: false
+          tag_tracer:
+            enabled: true
+            chain_validation: true
+            auto_tag_suggestion: true
+        parallel_processing:
+          enabled: true
+          max_workers: 4
+        risk_assessment:
+          mode: "sequential"
+          confidence_threshold: 0.8
+        mitigation:
+          quick_mode:
+            enabled: true
+
+  # Advanced preset - For experienced teams
+  advanced:
+    name: "Advanced"
+    description: "Full features for experienced teams"
+    settings:
+      tier1_integration:
+        enabled: true
+        tools:
+          spec_builder:
+            enabled: true
+            quick_mode_available: false  # Enforce thorough specs
+          tdd_enforcer:
+            enabled: true
+            coverage_threshold: 90.0
+            strict_mode: true
+          tag_tracer:
+            enabled: true
+            chain_validation: true
+            auto_tag_suggestion: true
+        parallel_processing:
+          enabled: true
+          max_workers: 8
+        risk_assessment:
+          mode: "manual"  # Full control
+          confidence_threshold: 0.9
+        security:
+          path_validation: true
+          secure_file_lock: true
+          memory_protection: true
+        mitigation:
+          quick_mode:
+            enabled: false  # No shortcuts
+
+  # CI/CD preset - Optimized for automated pipelines
+  cicd:
+    name: "CI/CD"
+    description: "Optimized for continuous integration"
+    settings:
+      tier1_integration:
+        enabled: true
+        tools:
+          spec_builder:
+            enabled: false  # Skip in CI
+          tdd_enforcer:
+            enabled: true
+            coverage_threshold: 85.0
+            strict_mode: true  # Fail builds on low coverage
+          tag_tracer:
+            enabled: false  # Skip in CI
+        parallel_processing:
+          enabled: true
+          max_workers: 16  # Maximum parallelization
+        risk_assessment:
+          mode: "zen"  # Fastest mode
+          confidence_threshold: 0.8
+        notifications:
+          slack:
+            enabled: true
+            critical_only: true
+        mitigation:
+          quick_mode:
+            enabled: false
+
+  # Minimal preset - Bare minimum for quick prototyping
+  minimal:
+    name: "Minimal"
+    description: "Bare minimum for rapid prototyping"
+    settings:
+      tier1_integration:
+        enabled: true
+        tools:
+          spec_builder:
+            enabled: false
+          tdd_enforcer:
+            enabled: false
+          tag_tracer:
+            enabled: false
+        parallel_processing:
+          enabled: false
+        risk_assessment:
+          mode: "zen"
+          confidence_threshold: 0.5
+        mitigation:
+          quick_mode:
+            enabled: true

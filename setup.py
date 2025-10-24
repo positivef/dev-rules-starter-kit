@@ -1,11 +1,17 @@
 import argparse
 import glob
+import json
 import os
 import subprocess
 import sys
 
 import shutil
 from pathlib import Path
+
+try:
+    from jsonschema import validate
+except ImportError:  # pragma: no cover - setup guards are best-effort
+    validate = None
 
 # 기본 설정
 DEFAULT_PROJECT_NAME = "PROJECT_NAME"
@@ -65,6 +71,25 @@ def run_command(command, description):
         print(f"[ERROR] Command not found: {missing}", file=sys.stderr)
         print("Please ensure the command is installed and in your PATH.", file=sys.stderr)
         sys.exit(1)
+
+
+def validate_config():
+    """Validate master_config.json against its JSON Schema."""
+    if validate is None:
+        print("[WARN] jsonschema is not installed. Skipping config validation.")
+        return
+
+    config_path = Path("config/master_config.json")
+    schema_path = Path("config/master_config.schema.json")
+
+    if not config_path.exists() or not schema_path.exists():
+        raise FileNotFoundError("master_config.json or its schema is missing. Run validation after generating both files.")
+
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+
+    validate(instance=config, schema=schema)
+    print("[SUCCESS] master_config.json matches master_config.schema.json")
 
 
 def replace_project_name(project_name):
@@ -127,7 +152,16 @@ def main():
         help="The name of the new project (e.g., 'MyAwesomeProject').",
     )
     parser.add_argument("--framework", default=None, help="Optional: The framework to scaffold for (e.g., 'fastapi').")
+    parser.add_argument(
+        "--validate-config",
+        action="store_true",
+        help="Validate config/master_config.json against its JSON Schema and exit.",
+    )
     args = parser.parse_args()
+
+    if args.validate_config:
+        validate_config()
+        return
 
     print("=============================================")
     print("[SETUP] Dev Rules Starter Kit Setup Initializing")

@@ -26,6 +26,39 @@
       "focus": "plan validation"
     }
   },
+  "tier1_integration": {
+    "enabled": true,
+    "modules": {
+      "tag_extractor": {
+        "enabled": true,
+        "file_extensions": [".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".cpp", ".c", ".h", ".go"],
+        "ignored_dirs": ["node_modules", "__pycache__", ".git", ".venv", "venv", "dist", "build"],
+        "max_workers": 4
+      },
+      "security": {
+        "enabled": true,
+        "path_validation": true,
+        "file_locking": true,
+        "memory_management": true,
+        "lock_timeout": 30
+      },
+      "performance": {
+        "parallel_processing": true,
+        "max_workers": 8,
+        "batch_size": 100,
+        "cache_enabled": true
+      },
+      "error_handling": {
+        "enabled": true,
+        "retry_enabled": true,
+        "max_retries": 3,
+        "backoff_base": 2,
+        "circuit_breaker_enabled": true,
+        "failure_threshold": 5,
+        "recovery_timeout": 60
+      }
+    }
+  },
   "sync": {
     "context_schema_version": "c7-sync-1.0",
     "required_env_keys": [

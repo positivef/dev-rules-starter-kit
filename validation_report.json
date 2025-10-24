@@ -1,0 +1,126 @@
+{
+  "timestamp": "2025-10-24T21:34:31.728392",
+  "overall_rate": 94.11764705882352,
+  "all_passed": false,
+  "results": [
+    {
+      "category": "Core Modules",
+      "test": "Module Imports",
+      "passed": true,
+      "message": "All core modules imported successfully",
+      "duration_ms": 437.45600001420826
+    },
+    {
+      "category": "Core Modules",
+      "test": "TAG Extraction",
+      "passed": true,
+      "message": "Extracted 67 TAGs",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Security",
+      "test": "Path Validation",
+      "passed": true,
+      "message": "Path traversal protection working",
+      "duration_ms": 11.212600045837462
+    },
+    {
+      "category": "Security",
+      "test": "File Locking",
+      "passed": true,
+      "message": "Cross-platform locking operational",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Security",
+      "test": "Memory Management",
+      "passed": true,
+      "message": "Resource cleanup working",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Performance",
+      "test": "Parallel Processing",
+      "passed": true,
+      "message": "Processed 10/10 tasks in 8.40ms",
+      "duration_ms": 8.395400014705956
+    },
+    {
+      "category": "Performance",
+      "test": "Performance Metrics",
+      "passed": true,
+      "message": "Success rate: 100.0%",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Integration",
+      "test": "Error System",
+      "passed": true,
+      "message": "Error handling operational (1 errors tracked)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Integration",
+      "test": "Error Recovery",
+      "passed": true,
+      "message": "Recovery strategies available",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Documentation",
+      "test": "Main documentation",
+      "passed": true,
+      "message": "Present (9,518 bytes)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Documentation",
+      "test": "Performance report",
+      "passed": true,
+      "message": "Present (9,221 bytes)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Documentation",
+      "test": "CI/CD pipeline",
+      "passed": true,
+      "message": "Present (7,605 bytes)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Documentation",
+      "test": "Docker configuration",
+      "passed": true,
+      "message": "Present (2,112 bytes)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Documentation",
+      "test": "Docker Compose",
+      "passed": true,
+      "message": "Present (3,446 bytes)",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Deployment",
+      "test": "Dependencies",
+      "passed": true,
+      "message": "6 dependencies defined",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Deployment",
+      "test": "Test Suite",
+      "passed": false,
+      "message": "Unable to count tests",
+      "duration_ms": 0.0
+    },
+    {
+      "category": "Deployment",
+      "test": "Python Version",
+      "passed": true,
+      "message": "Python 3.13.0",
+      "duration_ms": 0.0
+    }
+  ]
+}

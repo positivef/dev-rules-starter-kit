@@ -34,6 +34,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from prompt_task_integration import apply_compression, save_compression_report
 from progress_tracker import create_progress_tracker
 from error_handler import ErrorCatalog
+from notification_utils import send_slack_notification
+from orchestration_policy import OrchestrationPolicy
 
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
@@ -181,6 +183,29 @@ def release_lock(lock_path: Path):
         pass
 
 
+def run_validation_commands(commands: List[str], cwd: Path, task_id: str):
+    """Execute post-run validation commands.
+
+    Successful commands are silent; failures raise ``GateFailedError`` and
+    optionally trigger Slack notifications when a webhook is configured.
+    """
+
+    if not commands:
+        return
+
+    for command in commands:
+        cmd = command.strip()
+        if not cmd:
+            continue
+
+        print(f"[VALIDATE] {cmd}")
+        result = run(cmd, shell=True, cwd=str(cwd))
+        if result.returncode != 0:
+            message = f"Validation failed for {task_id}: {cmd}"
+            send_slack_notification(f":warning: {message}")
+            raise GateFailedError(message)
+
+
 def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout: int = 300):
     """Safe command execution (exec array, shell=False)"""
     # 1. Command allowlist check
@@ -304,6 +329,18 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         print(f"  echo '{hash_val}' > RUNS/{task_id}/.human_approved")
         return
 
+    policy_engine = OrchestrationPolicy()
+    metadata = policy_engine.build_metadata(contract)
+    use_zen = policy_engine.should_use_zen(metadata)
+    execution_label = "Zen MCP" if use_zen else "Sequential MCP"
+    print(f"[POLICY] Execution mode: {execution_label} ({metadata.summary()})")
+    validation_commands = policy_engine.get_validation_commands()
+
+    if not use_zen and validation_commands:
+        print("[NOTICE] Sequential mode requested. Validation commands must be reviewed manually:")
+        for cmd in validation_commands:
+            print(f"         - {cmd}")
+
     # === PROGRESS TRACKING (Initialize) ===
     # Calculate total steps: commands + gates + evidence collection
     total_steps = len(contract.get("commands", [])) + len(contract.get("gates", [])) + 1  # +1 for evidence
@@ -411,6 +448,10 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
         # Progress summary
         progress.summary()
+
+        if use_zen and validation_commands:
+            print("\n[POLICY] Running post-execution validation commands...")
+            run_validation_commands(validation_commands, root, task_id)
 
         print(f"\n[OK] Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")

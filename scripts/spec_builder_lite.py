@@ -20,7 +20,6 @@ Example:
     $ python scripts/spec_builder_lite.py "Fix login timeout" -t bugfix
 """
 
-import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -30,14 +29,10 @@ import yaml
 
 try:
     from feature_flags import FeatureFlags
+    from security_utils import SecurePathValidator, SecureFileLock, SecureConfig
 except ImportError:
     from scripts.feature_flags import FeatureFlags
-
-# Platform-specific file locking
-if os.name == "nt":  # Windows
-    import msvcrt
-else:  # Unix/Linux/Mac
-    import fcntl
+    from scripts.security_utils import SecurePathValidator, SecureFileLock
 
 
 class SpecBuilderLite:
@@ -88,29 +83,16 @@ class SpecBuilderLite:
         key_word = next((w for w in words if w.lower() not in ["add", "fix", "update", "refactor"]), "FEATURE")
         key_word = key_word.upper()[:4]
 
-        # Use file lock to prevent race conditions
+        # Use secure file lock to prevent race conditions
         lock_file = self.contracts_dir / ".req_id.lock"
-        lock_file.touch(exist_ok=True)
 
-        with open(lock_file, "r+", encoding="utf-8") as lock:
-            # Platform-specific file locking
-            if os.name == "nt":  # Windows
-                msvcrt.locking(lock.fileno(), msvcrt.LK_LOCK, 1)
-            else:  # Unix/Linux/Mac
-                fcntl.flock(lock, fcntl.LOCK_EX)
+        with SecureFileLock(lock_file):
+            # Count existing contracts with same prefix (while holding lock)
+            prefix = f"REQ-{key_word}"
+            existing = list(self.contracts_dir.glob(f"{prefix}-*.yaml"))
+            next_num = len(existing) + 1
 
-            try:
-                # Count existing contracts with same prefix (while holding lock)
-                prefix = f"REQ-{key_word}"
-                existing = list(self.contracts_dir.glob(f"{prefix}-*.yaml"))
-                next_num = len(existing) + 1
-
-                return f"{prefix}-{next_num:03d}"
-            finally:
-                # Release lock
-                if os.name == "nt":  # Windows
-                    msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
-                # Unix lock is automatically released when file is closed
+            return f"{prefix}-{next_num:03d}"
 
     def parse_request(self, request: str) -> Dict[str, str]:
         """Parse natural language request into EARS components.
@@ -173,21 +155,20 @@ class SpecBuilderLite:
             FileNotFoundError: If template file not found.
             ValueError: If template type contains invalid characters.
         """
-        # Sanitize template_type to prevent path traversal
-        safe_type = re.sub(r"[^a-zA-Z0-9_-]", "", self.template_type)
+        # Use secure path validation
+        validator = SecurePathValidator()
+
+        # Sanitize template_type
+        safe_type = validator.sanitize_filename(self.template_type)
         if safe_type != self.template_type:
             raise ValueError(f"Invalid template type: {self.template_type}")
 
         template_path = self.templates_dir / f"{safe_type}.yaml"
 
-        # Verify resolved path is within templates_dir
+        # Secure path validation (prevents symlink attacks)
         try:
-            template_path_resolved = template_path.resolve()
-            templates_dir_resolved = self.templates_dir.resolve()
-            if not template_path_resolved.is_relative_to(templates_dir_resolved):
-                raise ValueError(f"Path traversal detected: {self.template_type}")
-        except ValueError as e:
-            # is_relative_to raises ValueError on path traversal
+            validator.validate_path(self.templates_dir, template_path)
+        except Exception as e:
             raise ValueError(f"Path traversal detected: {self.template_type}") from e
 
         if not template_path.exists():

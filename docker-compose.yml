@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  tier1-integration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=3.11
+    image: tier1-integration:latest
+    container_name: tier1-system
+    hostname: tier1
+
+    environment:
+      - PYTHONPATH=/app
+      - OBSIDIAN_VAULT_PATH=/data/vault
+      - TIER1_MAX_WORKERS=4
+      - TIER1_BATCH_SIZE=100
+      - TIER1_LOCK_TIMEOUT=30
+      - LOG_LEVEL=INFO
+
+    volumes:
+      # Obsidian vault persistence
+      - vault_data:/data/vault
+      # Contracts persistence
+      - contracts_data:/app/contracts
+      # Logs persistence
+      - logs_data:/logs
+      # Development mode: mount source code
+      - ./scripts:/app/scripts:ro
+      - ./tests:/app/tests:ro
+
+    ports:
+      # API port if needed in future
+      - "8080:8080"
+
+    networks:
+      - tier1-network
+
+    restart: unless-stopped
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "from scripts.tag_extractor_lite import TagExtractorLite; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Optional: Obsidian sync service
+  obsidian-sync:
+    image: nginx:alpine
+    container_name: obsidian-sync
+    volumes:
+      - vault_data:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8081:80"
+    networks:
+      - tier1-network
+    depends_on:
+      - tier1-integration
+    restart: unless-stopped
+
+  # Optional: Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: tier1-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    networks:
+      - tier1-network
+    restart: unless-stopped
+
+  # Optional: Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: tier1-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - tier1-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Development tools container
+  dev-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: tier1-dev:latest
+    container_name: tier1-dev
+    volumes:
+      - .:/workspace
+      - vault_data:/data/vault
+    working_dir: /workspace
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    networks:
+      - tier1-network
+    profiles:
+      - dev
+
+volumes:
+  vault_data:
+    name: tier1_vault_data
+  contracts_data:
+    name: tier1_contracts_data
+  logs_data:
+    name: tier1_logs_data
+  prometheus_data:
+    name: tier1_prometheus_data
+  grafana_data:
+    name: tier1_grafana_data
+
+networks:
+  tier1-network:
+    name: tier1_network
+    driver: bridge

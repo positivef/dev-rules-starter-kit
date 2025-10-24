@@ -1,0 +1,60 @@
+# EARS Template: Bug Fix
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "{{req_id}}"
+  title: "{{title}}"
+  type: bugfix
+  priority: high
+  status: draft
+  created: "{{date}}"
+  severity: "{{severity}}"
+
+problem:
+  description: "{{problem_description}}"
+  reproduction_steps:
+    - "{{step_1}}"
+    - "{{step_2}}"
+    - "{{step_3}}"
+  expected_behavior: "{{expected}}"
+  actual_behavior: "{{actual}}"
+
+ears:
+  # Trigger condition
+  when: "{{trigger_event}}"
+
+  # Error condition
+  if: "{{error_condition}}"
+
+  # System correction (SHALL = mandatory fix)
+  then: "System SHALL {{fix_behavior}}"
+
+  # Constraints
+  where: "{{constraints}}"
+
+root_cause:
+  analysis: "{{root_cause}}"
+  affected_components:
+    - "{{component_1}}"
+
+fix_validation:
+  - "{{validation_1}}"
+  - "{{validation_2}}"
+
+regression_prevention:
+  test_cases:
+    - "{{test_case_1}}"
+  monitoring:
+    - "{{monitoring_1}}"
+
+traceability:
+  reported_by: "{{reporter}}"
+  reported_date: "{{report_date}}"
+  affected_users: "{{user_count}}"
+  related_incidents: []
+
+tags:
+  - "{{req_id}}"
+  - bugfix
+  - "{{severity}}"
+  - "{{component}}"

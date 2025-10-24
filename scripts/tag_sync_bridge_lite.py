@@ -31,12 +31,14 @@ try:
     from feature_flags import FeatureFlags
     from mermaid_graph_generator import MermaidGraphGenerator
     from obsidian_bridge import ObsidianBridge
+    from security_utils import MemorySafeResourceManager
     from tag_extractor_lite import CodeTag, TagExtractorLite
 except ImportError:
     from scripts.dataview_generator import DataviewGenerator
     from scripts.feature_flags import FeatureFlags
     from scripts.mermaid_graph_generator import MermaidGraphGenerator
     from scripts.obsidian_bridge import ObsidianBridge
+    from scripts.security_utils import MemorySafeResourceManager
     from scripts.tag_extractor_lite import CodeTag, TagExtractorLite
 
 
@@ -63,6 +65,9 @@ class TagSyncBridgeLite(ObsidianBridge):
         """
         super().__init__(vault_path)
 
+        # Initialize memory-safe resource manager
+        self.resource_manager = MemorySafeResourceManager()
+
         # TAG-specific directories
         self.requirements_dir = self.vault_path / "requirements"
         self.implementations_dir = self.vault_path / "implementations"
@@ -73,14 +78,17 @@ class TagSyncBridgeLite(ObsidianBridge):
         for directory in [self.requirements_dir, self.implementations_dir, self.tests_dir, self.docs_dir]:
             directory.mkdir(parents=True, exist_ok=True)
 
-        # TAG extractor
+        # TAG extractor (register for cleanup)
         self.tag_extractor = TagExtractorLite(project_root=project_root)
+        self.resource_manager.register_resource(self.tag_extractor)
 
-        # Dataview generator
+        # Dataview generator (register for cleanup)
         self.dataview_generator = DataviewGenerator()
+        self.resource_manager.register_resource(self.dataview_generator)
 
-        # Mermaid graph generator
+        # Mermaid graph generator (register for cleanup)
         self.mermaid_generator = MermaidGraphGenerator()
+        self.resource_manager.register_resource(self.mermaid_generator)
 
     def create_tag_note(self, tag: CodeTag) -> Path:
         """Create Obsidian note for @TAG.
@@ -359,6 +367,26 @@ class TagSyncBridgeLite(ObsidianBridge):
         print(f"  - Tests: {self.tests_dir}")
         print(f"  - Docs: {self.docs_dir}")
 
+    def cleanup(self) -> None:
+        """Clean up all managed resources.
+
+        Ensures proper resource cleanup to prevent memory leaks.
+        """
+        if hasattr(self, "resource_manager"):
+            self.resource_manager.cleanup()
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with cleanup."""
+        self.cleanup()
+
+    def __del__(self):
+        """Destructor - ensure cleanup on deletion."""
+        self.cleanup()
+
 
 def main() -> int:
     """CLI entry point.
@@ -405,29 +433,28 @@ Examples:
             print("[INFO] Set OBSIDIAN_VAULT_PATH environment variable or use --vault-path")
             return 1
 
-        # Initialize bridge
-        bridge = TagSyncBridgeLite(vault_path=vault_path)
+        # Initialize bridge with context manager for proper cleanup
+        with TagSyncBridgeLite(vault_path=vault_path) as bridge:
+            if args.generate_map:
+                # Generate traceability map
+                print(f"[INFO] Generating traceability map for: {args.generate_map}")
+                map_path = bridge.generate_traceability_map(args.generate_map)
 
-        if args.generate_map:
-            # Generate traceability map
-            print(f"[INFO] Generating traceability map for: {args.generate_map}")
-            map_path = bridge.generate_traceability_map(args.generate_map)
+                if map_path:
+                    print(f"[OK] Traceability map created: {map_path}")
+                else:
+                    print(f"[ERROR] No tags found for: {args.generate_map}")
+                    return 1
 
-            if map_path:
-                print(f"[OK] Traceability map created: {map_path}")
             else:
-                print(f"[ERROR] No tags found for: {args.generate_map}")
-                return 1
+                # Sync all tags
+                if args.tag_id:
+                    print(f"[INFO] Syncing TAG ID: {args.tag_id}")
+                else:
+                    print("[INFO] Syncing all @TAG annotations")
 
-        else:
-            # Sync all tags
-            if args.tag_id:
-                print(f"[INFO] Syncing TAG ID: {args.tag_id}")
-            else:
-                print("[INFO] Syncing all @TAG annotations")
-
-            created_notes = bridge.sync_all_tags(tag_id=args.tag_id)
-            bridge.print_sync_summary(created_notes)
+                created_notes = bridge.sync_all_tags(tag_id=args.tag_id)
+                bridge.print_sync_summary(created_notes)
 
         return 0
 

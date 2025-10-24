@@ -1,0 +1,57 @@
+# EARS Template: Feature Request
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "{{req_id}}"
+  title: "{{title}}"
+  type: feature
+  priority: medium
+  status: draft
+  created: "{{date}}"
+
+ears:
+  # Trigger condition
+  when: "{{trigger_event}}"
+
+  # Precondition (optional)
+  if: "{{precondition}}"
+
+  # System response (SHALL = mandatory requirement)
+  then: "System SHALL {{system_response}}"
+
+  # Environmental constraints
+  where: "{{constraints}}"
+
+acceptance_criteria:
+  - "{{criterion_1}}"
+  - "{{criterion_2}}"
+  - "{{criterion_3}}"
+
+non_functional:
+  performance:
+    response_time: "< 200ms"
+    throughput: "> 1000 req/s"
+
+  security:
+    authentication: required
+    authorization: role-based
+    data_encryption: at-rest and in-transit
+
+  reliability:
+    availability: "99.9%"
+    error_rate: "< 0.1%"
+
+traceability:
+  stakeholder: "{{stakeholder}}"
+  business_value: "{{business_value}}"
+  related_requirements: []
+
+implementation:
+  estimated_effort: "{{effort_hours}}h"
+  complexity: medium
+  dependencies: []
+
+tags:
+  - "{{req_id}}"
+  - feature
+  - "{{domain}}"

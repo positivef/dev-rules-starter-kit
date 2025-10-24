@@ -158,22 +158,60 @@ class TestTddCommand:
         assert result.exit_code == 0
         assert "[INFO] Coverage threshold: 90.0%" in result.output
 
-    def test_tdd_strict_mode(self, runner: CliRunner, reset_singleton, monkeypatch, temp_config):
+    def test_tdd_strict_mode(self, runner: CliRunner, reset_singleton, monkeypatch, temp_config, tmp_path):
         """Test tdd command with strict mode."""
         from scripts.feature_flags import FeatureFlags
+        import subprocess
+        from unittest.mock import Mock
+        import json
 
         monkeypatch.setattr(FeatureFlags, "_config_path", temp_config)
+
+        # Mock subprocess.run to avoid running actual pytest
+        def mock_subprocess_run(*args, **kwargs):
+            mock_result = Mock()
+            mock_result.returncode = 0
+            mock_result.stdout = "tests passed"
+            mock_result.stderr = ""
+            return mock_result
+
+        monkeypatch.setattr(subprocess, "run", mock_subprocess_run)
+
+        # Create a fake coverage.json file
+        coverage_file = tmp_path / "coverage.json"
+        coverage_data = {"totals": {"percent_covered": 90.0}, "files": {}}
+        coverage_file.write_text(json.dumps(coverage_data))
+        monkeypatch.chdir(tmp_path)
 
         result = runner.invoke(cli, ["tdd", "--strict"])
 
         assert result.exit_code == 0
         assert "[INFO] Strict mode: True" in result.output
 
-    def test_tdd_quick_mode(self, runner: CliRunner, reset_singleton, monkeypatch, temp_config):
+    def test_tdd_quick_mode(self, runner: CliRunner, reset_singleton, monkeypatch, temp_config, tmp_path):
         """Test tdd command with quick mode."""
         from scripts.feature_flags import FeatureFlags
+        import subprocess
+        from unittest.mock import Mock
+        import json
 
         monkeypatch.setattr(FeatureFlags, "_config_path", temp_config)
+
+        # Mock subprocess.run to avoid running actual pytest
+        def mock_subprocess_run(*args, **kwargs):
+            mock_result = Mock()
+            mock_result.returncode = 0
+            mock_result.stdout = "tests passed"
+            mock_result.stderr = ""
+            return mock_result
+
+        monkeypatch.setattr(subprocess, "run", mock_subprocess_run)
+
+        # Create a fake coverage.json file
+        coverage_file = tmp_path / "coverage.json"
+        coverage_data = {"totals": {"percent_covered": 90.0}, "files": {}}
+        coverage_file.write_text(json.dumps(coverage_data))
+        monkeypatch.chdir(tmp_path)
 
         result = runner.invoke(cli, ["tdd", "-q"])
 

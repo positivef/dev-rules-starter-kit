@@ -22,7 +22,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
-from scripts.feature_flags import FeatureFlags
+from feature_flags import FeatureFlags
 
 
 class TddEnforcerLite:
