@@ -29,11 +29,13 @@ from typing import Dict, List, Optional
 try:
     from dataview_generator import DataviewGenerator
     from feature_flags import FeatureFlags
+    from mermaid_graph_generator import MermaidGraphGenerator
     from obsidian_bridge import ObsidianBridge
     from tag_extractor_lite import CodeTag, TagExtractorLite
 except ImportError:
     from scripts.dataview_generator import DataviewGenerator
     from scripts.feature_flags import FeatureFlags
+    from scripts.mermaid_graph_generator import MermaidGraphGenerator
     from scripts.obsidian_bridge import ObsidianBridge
     from scripts.tag_extractor_lite import CodeTag, TagExtractorLite
 
@@ -76,6 +78,9 @@ class TagSyncBridgeLite(ObsidianBridge):
 
         # Dataview generator
         self.dataview_generator = DataviewGenerator()
+
+        # Mermaid graph generator
+        self.mermaid_generator = MermaidGraphGenerator()
 
     def create_tag_note(self, tag: CodeTag) -> Path:
         """Create Obsidian note for @TAG.
@@ -322,26 +327,10 @@ class TagSyncBridgeLite(ObsidianBridge):
                     content += f"- `{tag.file_path}:{tag.line_number}`\n"
                 content += "\n"
 
-        # Add Mermaid diagram
+        # Add advanced Mermaid diagram
         content += "## Traceability Graph\n\n"
-        content += "```mermaid\n"
-        content += "graph TD\n"
-
-        if "SPEC" in by_type:
-            content += f"    SPEC[SPEC: {tag_id.upper()}]\n"
-        if "CODE" in by_type:
-            for i, tag in enumerate(by_type["CODE"]):
-                content += f"    CODE{i}[CODE: {tag.file_path.name}:{tag.line_number}]\n"
-                if "SPEC" in by_type:
-                    content += f"    SPEC --> CODE{i}\n"
-        if "TEST" in by_type:
-            for i, tag in enumerate(by_type["TEST"]):
-                content += f"    TEST{i}[TEST: {tag.file_path.name}:{tag.line_number}]\n"
-                if "CODE" in by_type:
-                    for j in range(len(by_type["CODE"])):
-                        content += f"    CODE{j} --> TEST{i}\n"
-
-        content += "```\n"
+        content += self.mermaid_generator.generate_advanced_graph(by_type, tag_id)
+        content += "\n"
 
         # Write note
         map_path.write_text(self._format_markdown(frontmatter, content), encoding="utf-8")
