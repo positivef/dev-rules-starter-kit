@@ -153,10 +153,19 @@ def tdd(threshold: Optional[float], strict: Optional[bool], quick: bool) -> None
     click.echo(f"[INFO] Coverage threshold: {threshold}%")
     click.echo(f"[INFO] Strict mode: {strict}")
     click.echo(f"[INFO] Quick mode: {quick}")
+    click.echo("")
 
-    # TODO: Phase 1 implementation - delegating to tdd_enforcer_lite
-    click.echo("[NOT_IMPLEMENTED] tdd_enforcer_lite will be implemented in Phase 1 (Week 3)")
-    click.echo("[INFO] This CLI infrastructure is ready for integration")
+    # Delegate to tdd_enforcer_lite
+    from tdd_enforcer_lite import TddEnforcerLite
+
+    enforcer = TddEnforcerLite(
+        threshold=threshold,
+        strict=strict,
+        quick=quick,
+    )
+
+    exit_code = enforcer.enforce()
+    sys.exit(exit_code)
 
 
 @cli.command()
