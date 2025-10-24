@@ -27,10 +27,12 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 try:
+    from dataview_generator import DataviewGenerator
     from feature_flags import FeatureFlags
     from obsidian_bridge import ObsidianBridge
     from tag_extractor_lite import CodeTag, TagExtractorLite
 except ImportError:
+    from scripts.dataview_generator import DataviewGenerator
     from scripts.feature_flags import FeatureFlags
     from scripts.obsidian_bridge import ObsidianBridge
     from scripts.tag_extractor_lite import CodeTag, TagExtractorLite
@@ -71,6 +73,9 @@ class TagSyncBridgeLite(ObsidianBridge):
 
         # TAG extractor
         self.tag_extractor = TagExtractorLite(project_root=project_root)
+
+        # Dataview generator
+        self.dataview_generator = DataviewGenerator()
 
     def create_tag_note(self, tag: CodeTag) -> Path:
         """Create Obsidian note for @TAG.
@@ -222,10 +227,8 @@ class TagSyncBridgeLite(ObsidianBridge):
         content += tag.context
         content += "\n```\n\n"
 
-        # Traceability links
-        content += "## Traceability\n\n"
-        content += "### Related TAGs\n\n"
-        content += "(Dataview query will be added)\n\n"
+        # Traceability links with Dataview queries
+        content += self.dataview_generator.format_for_note(tag.tag_id, tag.tag_type)
 
         # Metadata
         content += "---\n\n"
