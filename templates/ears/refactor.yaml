@@ -1,0 +1,71 @@
+# EARS Template: Refactoring
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "{{req_id}}"
+  title: "{{title}}"
+  type: refactor
+  priority: medium
+  status: draft
+  created: "{{date}}"
+
+motivation:
+  current_issues:
+    - "{{issue_1}}"
+    - "{{issue_2}}"
+  technical_debt: "{{debt_description}}"
+  improvement_goals:
+    - "{{goal_1}}"
+    - "{{goal_2}}"
+
+ears:
+  # Refactoring trigger
+  when: "{{trigger_event}}"
+
+  # Code quality condition
+  if: "{{quality_condition}}"
+
+  # Refactoring requirement
+  then: "System SHALL {{refactoring_action}}"
+
+  # Constraints (backward compatibility, no functional changes)
+  where: "{{constraints}}"
+
+scope:
+  affected_files:
+    - "{{file_1}}"
+  affected_components:
+    - "{{component_1}}"
+
+success_criteria:
+  functional:
+    - "All existing tests pass"
+    - "No functional changes"
+    - "{{criterion_1}}"
+
+  quality_metrics:
+    maintainability: "{{target_maintainability}}"
+    complexity: "{{target_complexity}}"
+    duplication: "< 5%"
+
+risk_assessment:
+  level: medium
+  mitigation:
+    - "Comprehensive test coverage before refactoring"
+    - "Feature flag for gradual rollout"
+    - "{{mitigation_1}}"
+
+rollback_plan:
+  - "{{rollback_step_1}}"
+  - "Git revert to commit {{commit_hash}}"
+
+traceability:
+  initiated_by: "{{initiator}}"
+  business_justification: "{{justification}}"
+  related_requirements: []
+
+tags:
+  - "{{req_id}}"
+  - refactor
+  - "{{component}}"
+  - technical-debt
