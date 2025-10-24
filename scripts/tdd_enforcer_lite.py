@@ -71,7 +71,7 @@ class TddEnforcerLite:
             RuntimeError: If pytest-cov is not installed.
         """
         try:
-            # Run pytest with coverage
+            # Run pytest with coverage (with 5-minute timeout to prevent infinite hangs)
             result = subprocess.run(
                 [
                     sys.executable,
@@ -86,6 +86,7 @@ class TddEnforcerLite:
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
+                timeout=300,  # 5 minutes timeout
             )
 
             # Check if pytest-cov is installed
@@ -117,6 +118,10 @@ class TddEnforcerLite:
                 "files": coverage_data.get("files", {}),
             }
 
+        except subprocess.TimeoutExpired:
+            print("[ERROR] Coverage check timed out after 5 minutes")
+            print("[ERROR] This may indicate infinite loops or hanging tests")
+            return False, {}
         except FileNotFoundError:
             raise RuntimeError("pytest not found. Install with: pip install pytest pytest-cov")
 

@@ -20,6 +20,7 @@ Example:
     $ python scripts/spec_builder_lite.py "Fix login timeout" -t bugfix
 """
 
+import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -31,6 +32,12 @@ try:
     from feature_flags import FeatureFlags
 except ImportError:
     from scripts.feature_flags import FeatureFlags
+
+# Platform-specific file locking
+if os.name == "nt":  # Windows
+    import msvcrt
+else:  # Unix/Linux/Mac
+    import fcntl
 
 
 class SpecBuilderLite:
@@ -63,6 +70,8 @@ class SpecBuilderLite:
     def generate_req_id(self, title: str) -> str:
         """Generate requirement ID from title.
 
+        Uses file locking to prevent race conditions in concurrent environments.
+
         Args:
             title: Requirement title.
 
@@ -79,12 +88,29 @@ class SpecBuilderLite:
         key_word = next((w for w in words if w.lower() not in ["add", "fix", "update", "refactor"]), "FEATURE")
         key_word = key_word.upper()[:4]
 
-        # Count existing contracts with same prefix
-        prefix = f"REQ-{key_word}"
-        existing = list(self.contracts_dir.glob(f"{prefix}-*.yaml"))
-        next_num = len(existing) + 1
+        # Use file lock to prevent race conditions
+        lock_file = self.contracts_dir / ".req_id.lock"
+        lock_file.touch(exist_ok=True)
 
-        return f"{prefix}-{next_num:03d}"
+        with open(lock_file, "r+", encoding="utf-8") as lock:
+            # Platform-specific file locking
+            if os.name == "nt":  # Windows
+                msvcrt.locking(lock.fileno(), msvcrt.LK_LOCK, 1)
+            else:  # Unix/Linux/Mac
+                fcntl.flock(lock, fcntl.LOCK_EX)
+
+            try:
+                # Count existing contracts with same prefix (while holding lock)
+                prefix = f"REQ-{key_word}"
+                existing = list(self.contracts_dir.glob(f"{prefix}-*.yaml"))
+                next_num = len(existing) + 1
+
+                return f"{prefix}-{next_num:03d}"
+            finally:
+                # Release lock
+                if os.name == "nt":  # Windows
+                    msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+                # Unix lock is automatically released when file is closed
 
     def parse_request(self, request: str) -> Dict[str, str]:
         """Parse natural language request into EARS components.
@@ -145,8 +171,25 @@ class SpecBuilderLite:
 
         Raises:
             FileNotFoundError: If template file not found.
+            ValueError: If template type contains invalid characters.
         """
-        template_path = self.templates_dir / f"{self.template_type}.yaml"
+        # Sanitize template_type to prevent path traversal
+        safe_type = re.sub(r"[^a-zA-Z0-9_-]", "", self.template_type)
+        if safe_type != self.template_type:
+            raise ValueError(f"Invalid template type: {self.template_type}")
+
+        template_path = self.templates_dir / f"{safe_type}.yaml"
+
+        # Verify resolved path is within templates_dir
+        try:
+            template_path_resolved = template_path.resolve()
+            templates_dir_resolved = self.templates_dir.resolve()
+            if not template_path_resolved.is_relative_to(templates_dir_resolved):
+                raise ValueError(f"Path traversal detected: {self.template_type}")
+        except ValueError as e:
+            # is_relative_to raises ValueError on path traversal
+            raise ValueError(f"Path traversal detected: {self.template_type}") from e
+
         if not template_path.exists():
             raise FileNotFoundError(f"Template not found: {template_path}")
 
@@ -283,7 +326,20 @@ class SpecBuilderLite:
         try:
             with open(contract_path, encoding="utf-8") as f:
                 contract = yaml.safe_load(f)
+        except (IOError, PermissionError) as e:
+            print(f"[ERROR] Cannot read contract file: {e}")
+            return False
+        except UnicodeDecodeError as e:
+            print(f"[ERROR] Invalid file encoding: {e}")
+            return False
+        except yaml.YAMLError as e:
+            print(f"[ERROR] Invalid YAML: {e}")
+            return False
+        except Exception as e:
+            print(f"[ERROR] Validation failed: {e}")
+            return False
 
+        try:
             # Check required sections
             required = ["requirement", "ears", "tags"]
             for section in required:
@@ -301,9 +357,6 @@ class SpecBuilderLite:
 
             return True
 
-        except yaml.YAMLError as e:
-            print(f"[ERROR] Invalid YAML: {e}")
-            return False
         except Exception as e:
             print(f"[ERROR] Validation failed: {e}")
             return False
