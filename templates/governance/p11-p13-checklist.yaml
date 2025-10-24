@@ -1,0 +1,42 @@
+# 거버넌스 체크리스트 (P11~P13)
+# 사용법: 의사결정 전에 각 항목을 작성하고, `scripts/governance_gate.py`로 검증/저장하세요.
+
+meta:
+  decision_title: ""
+  prepared_by: ""
+  reviewers:
+    - ""
+  date: ""
+
+p11_conflict_review:
+  related_principles:
+    - "P1"
+  past_decisions_consulted:
+    - ""
+  conflict_summary: ""
+  resolution: ""
+
+p12_tradeoff_analysis:
+  options:
+    - name: ""
+      pros:
+        - ""
+      cons:
+        - ""
+      evidence:
+        - ""
+  recommended_option: ""
+  rationale: ""
+
+p13_constitution_change:
+  required: false
+  target_articles:
+    - ""
+  change_summary: ""
+  approval_status: "pending"  # pending | approved | rejected
+  approval_notes: ""
+
+signoff:
+  approver: ""
+  approval_date: ""
+  additional_notes: ""
