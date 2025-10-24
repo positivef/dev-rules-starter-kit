@@ -87,10 +87,36 @@ def spec(request: str, template: str, quick: bool) -> None:
     click.echo(f"[INFO] Creating SPEC for: {request}")
     click.echo(f"[INFO] Template: {template}")
     click.echo(f"[INFO] Quick mode: {quick}")
+    click.echo("")
 
-    # TODO: Phase 1 implementation - delegating to spec_builder_lite
-    click.echo("[NOT_IMPLEMENTED] spec_builder_lite will be implemented in Phase 1 (Week 4-5)")
-    click.echo("[INFO] This CLI infrastructure is ready for integration")
+    # Delegate to spec_builder_lite
+    from spec_builder_lite import SpecBuilderLite
+
+    try:
+        builder = SpecBuilderLite(template_type=template)
+        output_path = builder.generate_spec(request, quick=quick)
+
+        click.echo(f"[OK] Contract generated: {output_path}")
+
+        # Validate (unless quick mode)
+        if not quick:
+            valid = builder.validate_contract(output_path)
+            if valid:
+                click.echo("[OK] Contract validation passed")
+            else:
+                click.echo("[ERROR] Contract validation failed")
+                sys.exit(1)
+
+        click.echo("")
+        click.echo("[INFO] Next steps:")
+        click.echo(f"  1. Review contract: cat {output_path}")
+        req_id = builder.generate_req_id(request)
+        click.echo(f"  2. Implement: [Write code with @TAG {req_id}]")
+        click.echo(f"  3. Verify: python scripts/tier1_cli.py tag {req_id}")
+
+    except Exception as e:
+        click.echo(f"[ERROR] Failed to generate SPEC: {e}")
+        sys.exit(1)
 
 
 @cli.command()
@@ -213,17 +239,53 @@ def tag(tag_chain: tuple, validate: bool, suggest: bool) -> None:
         if suggest is None:
             suggest = False
 
-    if tag_chain:
-        click.echo(f"[INFO] Tracing @TAG chain: {' '.join(tag_chain)}")
-    else:
-        click.echo("[INFO] Scanning project for @TAG annotations")
+    # Delegate to tag_tracer_lite
+    from tag_tracer_lite import TagTracerLite
 
-    click.echo(f"[INFO] Validate chain: {validate}")
-    click.echo(f"[INFO] Auto-suggest: {suggest}")
+    try:
+        tracer = TagTracerLite()
 
-    # TODO: Phase 1 implementation - delegating to tag_tracer_lite
-    click.echo("[NOT_IMPLEMENTED] tag_tracer_lite will be implemented in Phase 1 (Week 6-7)")
-    click.echo("[INFO] This CLI infrastructure is ready for integration")
+        if tag_chain:
+            # Extract TAG ID from @TAG[TYPE:ID] format or plain ID
+            tag_ids = []
+            for tag in tag_chain:
+                # Remove @ prefix if present
+                tag_clean = tag.lstrip("@")
+                # Extract ID from TAG[TYPE:ID] format
+                import re
+
+                match = re.match(r"TAG\[(?:[A-Z]+:)?([^\]]+)\]", tag_clean)
+                if match:
+                    tag_ids.append(match.group(1))
+                else:
+                    tag_ids.append(tag_clean)
+
+            # Verify each TAG ID
+            for tag_id in tag_ids:
+                click.echo(f"[INFO] Tracing @TAG chain: {tag_id}")
+                if validate:
+                    is_valid = tracer.validate_chain(tag_id)
+                    if not is_valid:
+                        click.echo(f"[ERROR] TAG chain '{tag_id}' is incomplete")
+                        sys.exit(1)
+                    click.echo(f"[OK] TAG chain '{tag_id}' is complete")
+                else:
+                    tracer.verify_tag_chain(tag_id=tag_id)
+        else:
+            # Verify all TAG chains
+            click.echo("[INFO] Scanning project for @TAG annotations")
+            report = tracer.verify_tag_chain()
+
+            if validate and report.get("incomplete_chains", 0) > 0:
+                click.echo(f"[ERROR] Found {report['incomplete_chains']} incomplete TAG chains")
+                sys.exit(1)
+
+        if suggest:
+            click.echo("[INFO] Auto-suggest feature will be implemented in Phase 2")
+
+    except Exception as e:
+        click.echo(f"[ERROR] Failed to trace TAG chains: {e}")
+        sys.exit(1)
 
 
 @cli.command()
