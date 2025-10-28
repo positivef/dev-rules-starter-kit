@@ -38,6 +38,7 @@ from task_executor import (
     TaskExecutorError,
     SecurityError,
     run_validation_commands,
+    write_lessons_template,
 )
 
 # Import v1.1.0 components (Trust Score 8.0+ patterns)
@@ -284,6 +285,8 @@ class EnhancedTaskExecutor:
             self.log(f"Evidence files: {len(evidence_hashes)}")
             self.log(f"Provenance: RUNS/{task_id}/provenance.json\n")
 
+            write_lessons_template(runs_dir, {"task_id": task_id, "project": "spec-kit"}, status="success")
+
             try:
                 validation_commands = OrchestrationPolicy().get_validation_commands()
             except FileNotFoundError:
@@ -318,6 +321,12 @@ class EnhancedTaskExecutor:
             )
 
             self.log(f"\n[FAIL] EXECUTION FAILED: {e}\n")
+            write_lessons_template(
+                runs_dir,
+                {"task_id": task_id, "project": "spec-kit"},
+                status="failed",
+                error_message=str(e),
+            )
             raise
 
     def _check_checklists(self, tasks_file: Path) -> bool:

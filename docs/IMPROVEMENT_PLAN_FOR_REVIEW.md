@@ -228,47 +228,42 @@ else:
 ```yaml
 Phase: Observability Infrastructure
 Files:
-  - .github/workflows/observability.yml    # 주기 알림 (신규)
-  - scripts/send_notification.py           # 알림 헬퍼 (신규)
-  - scripts/context_compare.py             # 주간 보고 (기존 활용)
-  - scripts/multi_agent_sync.py            # 로그 출력 강화
+  - .github/workflows/observability-report.yml  # 일일 Slack 알림
+  - scripts/observability_report.py             # 요약 리포트 생성
+  - scripts/notification_utils.py               # Slack 웹훅 헬퍼
+  - scripts/context_compare.py                  # 컨텍스트 비교 (기존 활용)
 ```
 
 **구현 상세**:
 
 #### 3.1 주기적 상태 알림 (GitHub Actions)
 ```yaml
-name: Weekly Status Report
+name: Daily Observability Report
 on:
   schedule:
-    - cron: '0 9 * * 1'  # 매주 월요일 09:00 UTC
+    - cron: '0 9 * * *'  # 매일 09:00 UTC
   workflow_dispatch:      # 수동 실행 가능
 
 jobs:
   status-report:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Generate context comparison report
-        run: python scripts/context_compare.py report
-
-      - name: Generate sync status
-        run: python scripts/multi_agent_sync.py list
-
-      - name: Send to Slack
+      - name: Send daily summary to Slack
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          python scripts/send_notification.py \
-            --type weekly \
-            --report experiments/c7-sync-prototype/reports/latest.json
+          python scripts/observability_report.py --limit 5 --slack
 ```
 
 **보안 조치**:
 - Slack webhook URL은 GitHub Secrets에 저장
 - 코드에 민감 정보 노출 금지
 - `Settings > Secrets and variables > Actions`에서 관리
+
+**현재 상태**:
+- `.github/workflows/observability-report.yml`과 `scripts/observability_report.py`가 매일 컨텍스트·Agent 해시·RUNS·Lessons·Prompt feedback을 요약해 Slack으로 전송합니다.
 
 #### 3.2 즉시 알림 (Critical Failures)
 ```python

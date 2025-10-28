@@ -1,0 +1,67 @@
+task_id: "GIT-HOOKS-2025-10-29"
+title: "Implement Git Hooks for Auto-sync"
+description: |
+  P1 (YAML First) 준수하여 Git Hook 자동화 시스템 구축
+  커밋 시 자동으로 Obsidian 동기화 및 품질 검증
+constitution_references:
+  - P1: "YAML First"
+  - P2: "Evidence-Based"
+  - P7: "Zero Hallucination"
+author: "Claude Code"
+created_at: "2025-10-29"
+priority: HIGH
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P7"]
+  - type: "quality"
+    metrics:
+      - "pre_execution_guard_pass: true"
+      - "error_patterns_loaded: true"
+
+steps:
+  - id: "step1"
+    name: "Create Pre-commit Hook"
+    description: "실행 전 패턴 검증"
+    commands:
+      - create_file: ".git/hooks/pre-commit"
+      - set_executable: ".git/hooks/pre-commit"
+    validation:
+      - file_exists: ".git/hooks/pre-commit"
+      - is_executable: true
+
+  - id: "step2"
+    name: "Create Post-commit Hook"
+    description: "Obsidian 자동 동기화"
+    commands:
+      - create_file: ".git/hooks/post-commit"
+      - set_executable: ".git/hooks/post-commit"
+    validation:
+      - file_exists: ".git/hooks/post-commit"
+      - is_executable: true
+
+  - id: "step3"
+    name: "Test Hooks"
+    description: "Hook 작동 검증"
+    commands:
+      - test_command: "git commit --dry-run"
+    validation:
+      - hook_triggered: true
+      - no_errors: true
+
+evidence:
+  location: "RUNS/evidence/git-hooks-2025-10-29/"
+  required:
+    - "hook_execution.log"
+    - "sync_results.json"
+    - "validation_report.md"
+
+success_criteria:
+  - "Pre-commit hook detects violations"
+  - "Post-commit syncs to Obsidian"
+  - "All tests pass"
+
+rollback:
+  - remove: ".git/hooks/pre-commit"
+  - remove: ".git/hooks/post-commit"
+  - restore: "previous_state"

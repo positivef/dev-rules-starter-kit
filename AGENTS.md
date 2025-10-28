@@ -1,19 +1,25 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Place runtime modules inside `src/` and keep automation glue confined to `scripts/` (e.g., `task_executor.py`) so utilities import packaged code cleanly. Store execution contracts in `TASKS/` using uppercase, hyphenated filenames, and archive knowledge artifacts in `docs/`. The `dev-context/`, `memory/`, and `RUNS/` folders hold agent state and evidence; avoid manual edits unless you are diagnosing a run. Update `templates/` when you introduce a repeatable pattern and regenerate downstream copies via the setup script. Add new regression suites under `tests/` alongside the related feature.
+Core services live under `backend/`, with `streamlit_app.py` providing the demo UI and experimental front ends housed in `web/`. Automation runners, sync jobs, and notification tooling belong in `scripts/`. Central configuration and schema material resides in `config/`, with shared agent context under `dev-context/` and automation contracts in `TASKS/`. Tests stay in `tests/`, notably `tests/test_task_executor.py` and `tests/test_enhanced_executor.py` for integration flows. Capture debugging artifacts under `RUNS/<task_id>/` to keep investigations traceable.
 
 ## Build, Test, and Development Commands
-Install tooling with `pip install -r requirements.txt`. Scaffold a project variant through `python setup.py --project-name MyNewProject --framework fastapi` when you need framework-specific scaffolds. Dry-run automation using `python scripts/task_executor.py TASKS/TEMPLATE.yaml --plan`, then execute with the same command minus `--plan` once approved. Run local guards via `ruff check scripts tests src` and execute the test suite with `pytest -q tests`. Finish with `pre-commit run --all-files` so CI stays green.
+- `python3 -m venv .venv && source .venv/bin/activate` prepares the Python environment once per machine.
+- `pip install -r requirements.txt` syncs core Python dependencies.
+- `npm install --no-fund --no-audit` installs Node tooling without extra prompts.
+- `python scripts/context_provider.py get-context` validates agent context before commits.
+- `python3 setup.py --validate-config --project-name Dummy` safeguards configuration compatibility.
+- `python -m pytest -q tests` runs the entire test suite quietly.
+- `npm run release -- --dry-run` confirms semantic-release metadata.
 
 ## Coding Style & Naming Conventions
-Follow PEP 8, four-space indentation, `snake_case` for modules and functions, `PascalCase` for classes, and `UPPER_SNAKE_CASE` constants. Keep Python, YAML, and shell sources ASCII-only per `DEVELOPMENT_RULES.md`; move any emoji or localized copy into Markdown. Let `ruff` fix import ordering and whitespace—avoid silencing rules without consensus.
+Follow PEP 8 with four-space indentation across Python sources. Use snake_case for modules, functions, and local vars; PascalCase for classes; UPPER_SNAKE_CASE for constants. Keep YAML keys lowercase-hyphenated and stick to ASCII unless a file already uses Unicode. Run `ruff check .` (or the project pre-commit hooks) before submitting changes to catch formatting drift early.
 
 ## Testing Guidelines
-Tests use `pytest` discovery over `unittest` fixtures; mirror the structure in `tests/test_task_executor.py`. Name files `test_<feature>.py`, keep mocks local with `unittest.mock`, and cover success, failure, and edge paths for each change. Ensure `pytest -q` passes from a clean checkout and retain determinism by stubbing external calls.
+Pytest drives unit and integration coverage for this codebase. Place new test modules as `tests/test_<feature>.py`, leaning on fixtures for setup. Extend the orchestrator coverage when automation pipelines change, and update `tests/test_master_config_schema.py` whenever schema fields evolve. Re-run `python -m pytest -q tests` plus any focused suites before pushing.
 
 ## Commit & Pull Request Guidelines
-Commits follow Conventional Commits; scope names mirror directories (`feat(task-exec): tighten port guards`). Squash noisy fixups locally. Each PR should include a crisp summary, linked task or issue IDs, verification notes (`pytest`, `ruff`, `pre-commit`), and updated docs or templates when behavior changes. Keep scaffolding updates separate from runtime logic when feasible.
+Write Conventional Commit messages (example: `feat(orchestration): add adaptive policy`) and reference relevant TASK IDs. Pull requests should summarize scope, link tasks, and attach logs or screenshots from `RUNS/<task_id>/` alongside any documentation updates. Before requesting review, rerun context validation, the full pytest suite, and the semantic-release dry run; share the results in the PR discussion.
 
-## Security & Automation Notes
-Setup installs emoji guards, `gitleaks`, and Task Executor safety rails (command allowlist, port checks). Prefer running composite work through the executor rather than ad-hoc shell scripts to maintain audit trails. Never commit secrets; if a hook flags sensitive data, rotate the credential and document the remediation in your PR.
+## Security & Configuration Tips
+Seed secrets from `.env.example` and review `docs/SECRET_MANAGEMENT.md` prior to credentials changes. Log experiments that touch production paths inside `backup/` and mirror key takeaways in Obsidian per `docs/OBSIDIAN_TAG_GUIDE.md`. Avoid committing sensitive data, and rely on in-repo tooling for secret rotation and auditing.

@@ -27,7 +27,7 @@ import glob as glob_module
 from pathlib import Path
 from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
-from typing import Dict, List
+from typing import Any, Dict, List
 
 # Import prompt compression integration, progress tracking, and error handling
 sys.path.insert(0, str(Path(__file__).parent))
@@ -36,6 +36,82 @@ from progress_tracker import create_progress_tracker
 from error_handler import ErrorCatalog
 from notification_utils import send_slack_notification
 from orchestration_policy import OrchestrationPolicy
+
+
+def write_lessons_template(runs_dir: Path, contract: Dict, status: str, error_message: str | None = None) -> None:
+    """Create a skeleton lessons file if one does not exist."""
+
+    lessons_file = runs_dir / "lessons.md"
+    if lessons_file.exists():
+        return
+
+    project = contract.get("project") or contract.get("project_name") or "unknown"
+    task_id = contract.get("task_id", runs_dir.name)
+    date_tag = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    summary_line = "- TODO: Add key learning points."
+    if error_message:
+        summary_line = f"- Failure reason: {error_message}"
+
+    content = (
+        f"# Lessons Learned - {task_id} ({status.upper()})\n"
+        f"#lesson #{project} #{date_tag}\n\n"
+        "## Summary\n"
+        f"{summary_line}\n\n"
+        "## What Worked\n- TODO\n\n"
+        "## Challenges\n- TODO\n\n"
+        "## Next Actions\n- TODO\n"
+    )
+
+    lessons_file.write_text(content, encoding="utf-8")
+
+
+def write_prompt_feedback(runs_dir: Path, stats: List[Dict[str, Any]]) -> None:
+    """Persist prompt compression statistics in a compact JSON format."""
+
+    if not stats:
+        return
+
+    successes = [s for s in stats if "error" not in s]
+    errors = [s for s in stats if "error" in s]
+
+    report: Dict[str, Any] = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "entries": len(stats),
+    }
+
+    if successes:
+        total_original = sum(s.get("original_tokens", 0) for s in successes)
+        total_compressed = sum(s.get("compressed_tokens", 0) for s in successes)
+        avg_savings = (
+            sum(s.get("savings_pct", 0.0) for s in successes) / len(successes)
+            if successes
+            else 0.0
+        )
+        best_entry = max(successes, key=lambda s: s.get("savings_pct", 0.0), default=None)
+
+        report["summary"] = {
+            "total_prompts": len(successes),
+            "total_original_tokens": total_original,
+            "total_compressed_tokens": total_compressed,
+            "average_savings_pct": round(avg_savings, 2),
+        }
+
+        if best_entry:
+            report["top_prompt"] = {
+                "command_id": best_entry.get("command_id"),
+                "context": best_entry.get("context"),
+                "savings_pct": best_entry.get("savings_pct"),
+                "rules_applied": best_entry.get("rules_applied"),
+            }
+
+        report["entries_detail"] = successes[:5]
+
+    if errors:
+        report["errors"] = errors
+
+    feedback_path = runs_dir / "prompt_feedback.json"
+    feedback_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
 # Command whitelist - customize for your project
 ALLOWED_CMDS = {
@@ -286,6 +362,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
                 # Save compression report
                 report_path = compression_config.get("report_path", "RUNS/{task_id}/compression_report.json")
                 save_compression_report(compression_stats, report_path, task_id)
+                write_prompt_feedback(runs_dir, compression_stats)
                 print(f"   Report: {report_path.replace('{task_id}', task_id)}")
 
         except Exception as e:
@@ -453,6 +530,8 @@ def execute_contract(contract_path: str, mode: str = "execute"):
             print("\n[POLICY] Running post-execution validation commands...")
             run_validation_commands(validation_commands, root, task_id)
 
+        write_lessons_template(runs_dir, contract, status="success")
+
         print(f"\n[OK] Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")
         print(f"   Provenance: RUNS/{task_id}/provenance.json")
@@ -466,6 +545,9 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         atomic_write_json(
             state_file, {"status": "failed", "error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}
         )
+        write_lessons_template(runs_dir, contract, status="failed", error_message=str(e))
+        if compression_stats:
+            write_prompt_feedback(runs_dir, compression_stats)
         raise
 
     finally:

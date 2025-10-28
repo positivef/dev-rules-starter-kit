@@ -32,7 +32,7 @@
     "total_violations": 0,
     "total_security_issues": 0,
     "total_solid_violations": 0,
-    "last_checked": "2025-10-22T10:15:29.355177",
-    "analysis_mode": "fast"
+    "last_checked": "2025-10-23T12:44:57.553390",
+    "analysis_mode": "deep"
   }
 ]

@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "timestamp": "2025-10-27T10:44:30.340821",
+    "quality_score": 9.866666666666667,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 33.33333333333333
+  }
+]
