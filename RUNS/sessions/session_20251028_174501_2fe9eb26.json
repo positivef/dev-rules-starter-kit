@@ -1,0 +1,15 @@
+{
+  "session_id": "session_20251028_174501_2fe9eb26",
+  "started_at": "2025-10-28T08:45:01.492724+00:00",
+  "last_checkpoint": "2025-10-28T08:45:01.493291+00:00",
+  "context_hash": "43cad44817a3e4e9",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "session_number": 2
+    },
+    "user": {},
+    "app": {},
+    "temp": {}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "session_id": "session_20251027_040642_01e5f65c",
+  "started_at": "2025-10-26T19:06:42.462364+00:00",
+  "last_checkpoint": "2025-10-26T19:06:42.465123+00:00",
+  "context_hash": "e8cd9a09c95bcb85",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "test_key": "test_value"
+    },
+    "user": {
+      "user_id": "user_001"
+    },
+    "app": {
+      "app_name": "SessionManager"
+    },
+    "temp": {}
+  }
+}

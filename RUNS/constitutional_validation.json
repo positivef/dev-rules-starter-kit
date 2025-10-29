@@ -1,0 +1,218 @@
+[
+  {
+    "timestamp": "C:\\Users\\user\\Documents\\GitHub\\dev-rules-starter-kit",
+    "context": {
+      "proposal": "Add Streamlit dashboard as the main interface",
+      "files_count": 2,
+      "has_yaml": true
+    },
+    "results": [
+      {
+        "article": "P1",
+        "passed": true,
+        "message": "Valid YAML contract provided",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P2",
+        "passed": false,
+        "message": "No evidence collection configured in task",
+        "severity": "medium",
+        "automated": false
+      },
+      {
+        "article": "P3",
+        "passed": false,
+        "message": "Obsidian sync not enabled (set OBSIDIAN_ENABLED=true)",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P4",
+        "passed": true,
+        "message": "SOLID validation requires code analysis (use DeepAnalyzer)",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P5",
+        "passed": true,
+        "message": "No obvious security issues detected",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P6",
+        "passed": true,
+        "message": "Quality gate check requires metrics analysis",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P7",
+        "passed": false,
+        "message": "Hallucination risk: TODO comment found",
+        "severity": "medium",
+        "automated": false
+      },
+      {
+        "article": "P8",
+        "passed": false,
+        "message": "No test commands found in task",
+        "severity": "high",
+        "automated": false
+      },
+      {
+        "article": "P9",
+        "passed": true,
+        "message": "Commit validation handled by pre-commit hooks",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P10",
+        "passed": true,
+        "message": "No emoji detected",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P11",
+        "passed": false,
+        "message": "Principle conflicts detected:\n[WARN] Principle Conflict Detection (P11)\n============================================================\n\n1. FOCUS_SHIFT\n   Severity: high\n   Past Decision (2025-10-20):\n  ",
+        "severity": "high",
+        "automated": true
+      },
+      {
+        "article": "P12",
+        "passed": false,
+        "message": "Trade-off analysis required:\nTrade-off Analysis Report (P12)\n============================================================\nContext: Add Streamlit dashboard as the main interface\nTimestamp: 2025-10-28T1",
+        "severity": "high",
+        "automated": true
+      },
+      {
+        "article": "P13",
+        "passed": true,
+        "message": "No constitution modifications",
+        "severity": "low",
+        "automated": false
+      }
+    ],
+    "summary": {
+      "total": 13,
+      "passed": 7,
+      "failed": 6,
+      "automated": 2,
+      "critical": 0
+    }
+  },
+  {
+    "timestamp": "C:\\Users\\user\\Documents\\GitHub\\dev-rules-starter-kit",
+    "context": {
+      "proposal": "Add Streamlit dashboard as the main interface",
+      "files_count": 2,
+      "has_yaml": true
+    },
+    "results": [
+      {
+        "article": "P1",
+        "passed": true,
+        "message": "Valid YAML contract provided",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P2",
+        "passed": false,
+        "message": "No evidence collection configured in task",
+        "severity": "medium",
+        "automated": false
+      },
+      {
+        "article": "P3",
+        "passed": false,
+        "message": "Obsidian sync not enabled (set OBSIDIAN_ENABLED=true)",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P4",
+        "passed": true,
+        "message": "SOLID validation requires code analysis (use DeepAnalyzer)",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P5",
+        "passed": true,
+        "message": "No obvious security issues detected",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P6",
+        "passed": true,
+        "message": "Quality gate check requires metrics analysis",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P7",
+        "passed": false,
+        "message": "Hallucination risk: TODO comment found",
+        "severity": "medium",
+        "automated": false
+      },
+      {
+        "article": "P8",
+        "passed": false,
+        "message": "No test commands found in task",
+        "severity": "high",
+        "automated": false
+      },
+      {
+        "article": "P9",
+        "passed": true,
+        "message": "Commit validation handled by pre-commit hooks",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P10",
+        "passed": true,
+        "message": "No emoji detected",
+        "severity": "low",
+        "automated": false
+      },
+      {
+        "article": "P11",
+        "passed": false,
+        "message": "Principle conflicts detected:\n[WARN] Principle Conflict Detection (P11)\n============================================================\n\n1. FOCUS_SHIFT\n   Severity: high\n   Past Decision (2025-10-20):\n  ",
+        "severity": "high",
+        "automated": true
+      },
+      {
+        "article": "P12",
+        "passed": false,
+        "message": "Trade-off analysis required:\nTrade-off Analysis Report (P12)\n============================================================\nContext: Add Streamlit dashboard as the main interface\nTimestamp: 2025-10-28T1",
+        "severity": "high",
+        "automated": true
+      },
+      {
+        "article": "P13",
+        "passed": true,
+        "message": "No constitution modifications",
+        "severity": "low",
+        "automated": false
+      }
+    ],
+    "summary": {
+      "total": 13,
+      "passed": 7,
+      "failed": 6,
+      "automated": 2,
+      "critical": 0
+    }
+  }
+]

@@ -384,6 +384,7 @@ class RuffVerifier:
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",  # Force UTF-8 encoding for Windows compatibility
                 timeout=self._timeout,
                 check=False,  # Don't raise on non-zero exit (Ruff returns 1 for violations)
             )

@@ -492,3 +492,17 @@ RELEASE_NOTES.md                  # v0.3.0 ë¦´ë¦¬ì¦ˆ
 
 *Last updated: 2025-01-27*
 *Next: Phase D Week 1 ì‹œì‘*
+
+## 2025-10-29 Collaboration System Notes
+- TaskExecutor automatically locks files via gent_sync.acquire_lock; contract evidence/commands determine lock targets.
+- Locks are persisted under dev-context/agent_sync_state.json (gents + locks). scripts/multi_agent_sync.py now mirrors this shape.
+- Internal TaskExecutor commands (write_file, eplace, un_shell_command) are routed through INTERNAL_FUNCTIONS; provide dict arguments when authoring YAML contracts.
+- Enhanced Task Executor v2 has a complete, test-backed API (	ests/test_enhanced_task_executor_v2.py). Reuse its helpers for markdown/YAML parsing or dry-run flows.
+
+- »çÀü Á¡°Ë: python scripts/preflight_checks.py¸¦ ½ÇÇàÇØ Enhanced Executor Å×½ºÆ®¸¦ Åë°úÇß´ÂÁö È®ÀÎÇÒ °Í.
+
+- Ãæµ¹ °Ë»ç: python scripts/agent_sync_status.py --agent <you> --files <paths>·Î Àá±İ Ãæµ¹À» ¹Ì¸® È®ÀÎÇÏ¼¼¿ä.
+
+- ¹®¼­ Âü°í: »ó¼¼ ÁöÄ§Àº docs/COLLAB_LOCKING_GUIDE.md¿¡ Á¤¸®µÇ¾î ÀÖÀ¸¸ç, Obsidian¿¡ µ¿±âÈ­ÇØ ´ÙÀ½ ¿¡ÀÌÀüÆ®°¡ ¹Ù·Î È®ÀÎÇÏµµ·Ï ¾È³»ÇÏ¼¼¿ä.
+- ÇÁ¸®ÇÃ¶óÀÌÆ®: °è¾à ½ÇÇà/ÇÚµå¿ÀÇÁ Àü¿¡ python scripts/preflight_checks.py (ÇÊ¿ä ½Ã --quick)¸¦ ½ÇÇàÇØ È¸±Í¸¦ »çÀü¿¡ Â÷´ÜÇÕ´Ï´Ù.
+- Àá±İ Á¡°Ë: python scripts/agent_sync_status.py --agent <you> --task <task>·Î °èÈ¹ ÁßÀÎ ÆÄÀÏ¿¡ Ãæµ¹ÀÌ ¾ø´ÂÁö È®ÀÎ ÈÄ ½ÇÇàÇÕ´Ï´Ù.

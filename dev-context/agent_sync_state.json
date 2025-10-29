@@ -1,9 +1,12 @@
-[
-  {
-    "agent": "codex",
-    "focus": "obsidian fix",
-    "context_hash": "faf9d3e3535f6964d530df6d7ebdd83d5063b5bbb0c88ad9f21498828f003b7e",
-    "updated_at": "2025-10-20T21:39:49.066759+00:00",
-    "notes": null
-  }
-]
+{
+  "agents": [
+    {
+      "agent": "codex",
+      "focus": "obsidian fix",
+      "context_hash": "faf9d3e3535f6964d530df6d7ebdd83d5063b5bbb0c88ad9f21498828f003b7e",
+      "updated_at": "2025-10-20T21:39:49.066759+00:00",
+      "notes": null
+    }
+  ],
+  "locks": []
+}

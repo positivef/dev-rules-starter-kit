@@ -1,0 +1,8 @@
+{
+  "evidence_sha256": {
+    "scripts\\task_executor.py": "965e2e517570e1b99139f3d21feb0e06cb8c9fd4f73e3a68ac2a234241497fce",
+    "TASKS\\ALLOW_WRITE_COMMANDS.yaml": "24be1714e4f60ec77b6674357aec772a1163f03d31b12a94dc0b9a8a28438d99"
+  },
+  "executed_at": "2025-10-29T20:03:11.953694+00:00",
+  "executor": "TaskExecutor-v3.2.1"
+}

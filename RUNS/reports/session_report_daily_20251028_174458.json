@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "period": "daily",
+    "days": 1,
+    "generated_at": "2025-10-28T08:44:58.153749+00:00",
+    "timestamp": "20251028_174458"
+  },
+  "analysis": {
+    "task_patterns": {
+      "most_frequent_tasks": [
+        [
+          "TEST-HOOK-001",
+          12
+        ],
+        [
+          "TEST-2025-10-26-01",
+          2
+        ]
+      ],
+      "failed_tasks": [],
+      "task_execution_times": {
+        "TEST-HOOK-001": {
+          "avg": 10.5,
+          "min": 10.5,
+          "max": 10.5,
+          "count": 4
+        }
+      },
+      "command_patterns": [],
+      "total_unique_tasks": 2,
+      "total_failed_tasks": 0
+    },
+    "productivity": {
+      "peak_hours": [
+        [
+          17,
+          11
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "peak_days": [
+        [
+          "Monday",
+          11
+        ],
+        [
+          "Tuesday",
+          6
+        ]
+      ],
+      "avg_session_duration_minutes": 0.0032644343137254906,
+      "total_sessions": 17,
+      "hourly_distribution": {
+        "8": 6,
+        "17": 11
+      },
+      "daily_distribution": {
+        "Tuesday": 6,
+        "Monday": 11
+      }
+    },
+    "error_patterns": {
+      "common_errors": [],
+      "error_tasks": {},
+      "error_timeline": [],
+      "total_unique_errors": 0,
+      "total_errors": 0
+    },
+    "execution_stats": {
+      "total_tasks": 4,
+      "successful_tasks": 4,
+      "failed_tasks": 0,
+      "success_rate": 100.0,
+      "total_execution_hours": 0.011666666666666667,
+      "avg_execution_time": 10.5
+    },
+    "insights": {
+      "recommendations": [
+        "\ud3c9\uade0 \uc138\uc158 \uc2dc\uac04\uc774 30\ubd84 \ubbf8\ub9cc - \ub354 \uae34 \uc9d1\uc911 \uc2dc\uac04 \ud655\ubcf4 \uad8c\uc7a5",
+        "\uac00\uc7a5 \uc0dd\uc0b0\uc801\uc778 \uc2dc\uac04\ub300: 17\uc2dc, 8\uc2dc"
+      ],
+      "warnings": [],
+      "positive_patterns": [
+        "\uc791\uc5c5 \uc131\uacf5\ub960\uc774 100.0%\ub85c \ub9e4\uc6b0 \ub192\uc74c"
+      ]
+    }
+  }
+}

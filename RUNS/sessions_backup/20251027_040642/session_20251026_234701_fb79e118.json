@@ -1,0 +1,17 @@
+{
+  "session_id": "session_20251026_234701_fb79e118",
+  "started_at": "2025-10-26T14:47:01.772208+00:00",
+  "last_checkpoint": "2025-10-26T14:47:01.773721+00:00",
+  "context_hash": "1146493d9f90e4de",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "test_key": "test_value"
+    },
+    "user": {
+      "user_pref": "dark_mode"
+    },
+    "app": {},
+    "temp": {}
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "summary": {
+    "total_unoptimized_tokens": 346580,
+    "total_optimized_tokens": 19279,
+    "total_savings": "94.4%",
+    "cost_savings_per_session": "$6.55"
+  },
+  "breakdown": {
+    "file_reading": {
+      "timestamp": "2025-10-28T18:47:11.881156",
+      "file_reading_costs": {
+        "small_files": {
+          "count": 4,
+          "avg_tokens": 187,
+          "total_tokens": 748
+        },
+        "medium_files": {
+          "count": 43,
+          "avg_tokens": 1591,
+          "total_tokens": 68415
+        },
+        "large_files": {
+          "count": 52,
+          "avg_tokens": 4331,
+          "total_tokens": 225219
+        },
+        "huge_files": {
+          "count": 1,
+          "avg_tokens": 13698,
+          "total_tokens": 13698
+        }
+      },
+      "optimization_potential": {
+        "current_total_tokens": 308080,
+        "with_summaries": 61616,
+        "with_cache": 15404,
+        "savings_with_summaries": "80.0%",
+        "savings_with_cache": "95.0%"
+      }
+    },
+    "session_recording": {
+      "full_recording": {
+        "tokens": 14750,
+        "size_mb": 0.05626678466796875
+      },
+      "optimized_recording": {
+        "tokens": 1500,
+        "size_mb": 0.0057220458984375
+      },
+      "savings": "89.8%"
+    },
+    "obsidian_sync": {
+      "full_sync_tokens": 23750,
+      "incremental_sync_tokens": 2375,
+      "savings": "90.0%"
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "File Reading",
+      "action": "Implement file caching system",
+      "impact": "95.0%",
+      "implementation": "\n# 구현 예시\ncache = FileCache()\nif cache.is_valid(file_path):\n    return cache.get_summary(file_path)\nelse:\n    content = read_file(file_path)\n    cache.update(file_path, content)\n    return content\n"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Obsidian Sync",
+      "action": "Implement incremental sync",
+      "impact": "90.0%",
+      "implementation": "\n# 구현 예시\ndef sync_obsidian_incremental():\n    changed_files = get_modified_since_last_sync()\n    return sync_only(changed_files)\n"
+    },
+    {
+      "priority": "CRITICAL",
+      "category": "Overall Strategy",
+      "action": "Implement 3-tier caching",
+      "impact": "90% token reduction",
+      "implementation": "\n# 3-Tier Caching Strategy\nLevel 1: In-memory cache (hot data) - 100% savings\nLevel 2: File summaries (warm data) - 80% savings\nLevel 3: Full content (cold data) - 0% savings\n\ndef smart_load(file_path):\n    if in_memory_cache.has(file_path):\n        return in_memory_cache.get(file_path)\n    elif summary_cache.has(file_path):\n        return summary_cache.get(file_path)\n    else:\n        return load_full_content(file_path)\n"
+    }
+  ]
+}

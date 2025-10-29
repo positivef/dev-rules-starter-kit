@@ -1,0 +1,43 @@
+{
+  "session_id": "session_20251028_174458_33f1df64",
+  "started_at": "2025-10-28T08:44:58.107984+00:00",
+  "last_checkpoint": "2025-10-28T08:44:58.129152+00:00",
+  "context_hash": "1933e4a1376825df",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "test_key": "test_value",
+      "current_task": {
+        "task_id": "TEST-HOOK-001",
+        "title": "Unknown Task",
+        "status": "success",
+        "started_at": "2025-10-28T08:44:58.124171+00:00",
+        "yaml_path": "",
+        "completed_at": "2025-10-28T08:44:58.129037+00:00",
+        "execution_time": 10.5,
+        "error": null
+      },
+      "task_history": [
+        {
+          "task_id": "TEST-HOOK-001",
+          "started_at": "2025-10-28T08:44:58.128756+00:00",
+          "status": "started"
+        }
+      ],
+      "completed_tasks": [
+        "TEST-HOOK-001"
+      ]
+    },
+    "user": {
+      "user_pref": "dark_mode",
+      "execution_stats": {
+        "total_executions": 1,
+        "successful": 1,
+        "total_time": 10.5,
+        "avg_time": 10.5
+      }
+    },
+    "app": {},
+    "temp": {}
+  }
+}

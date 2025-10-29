@@ -1,0 +1,1046 @@
+{
+  "events": [
+    {
+      "timestamp": "2025-10-24T23:56:11.801773",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp961m8c96\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 423.52294921875,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:12.255499",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp961m8c96\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 435.23287773132324,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:21.142539",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp3_eacgj5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 217.33379364013672,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:21.374520",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp3_eacgj5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 215.06333351135254,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:21.534892",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp3_eacgj5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 144.9134349822998,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:23.743288",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpndsjuk4r\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 428.4689426422119,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:24.035114",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpndsjuk4r\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 260.2658271789551,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:27.839003",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp988dwjwt\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 279.2398929595947,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:28.114838",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp988dwjwt\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 253.44109535217285,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:29.740700",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmplnfn08bz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 615.8368587493896,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:29.959533",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmplnfn08bz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 202.29315757751465,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:30.345967",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmplnfn08bz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 359.0874671936035,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:43.213346",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpa87sndf5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 244.26651000976562,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:43.554371",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpa87sndf5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 316.0686492919922,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:43.882200",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpa87sndf5\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 309.3221187591553,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:46.338841",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpryjlq9pp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 362.40434646606445,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:46.762846",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpryjlq9pp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 388.5972499847412,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:58.292993",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmprjb6d4b6\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 294.12126541137695,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:56:58.725228",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmprjb6d4b6\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 405.15661239624023,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:08.249273",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi3njtt8s\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 212.45169639587402,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:08.511150",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi3njtt8s\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 227.73241996765137,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:08.734195",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpi3njtt8s\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 194.62823867797852,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:15.281640",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmptywmkt76\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 177.65331268310547,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:15.526925",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmptywmkt76\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 221.68946266174316,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:15.779268",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmptywmkt76\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 231.40931129455566,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:28.567525",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_5rhn1zp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 194.69261169433594,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:28.764698",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_5rhn1zp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 178.42984199523926,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:28.972397",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_5rhn1zp\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 173.0210781097412,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:30.019968",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp2ogugtbc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 236.07277870178223,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:30.321181",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp2ogugtbc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 276.0424613952637,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:30.592677",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp2ogugtbc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 245.9268569946289,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:42.252229",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpmnle2wvv\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 227.56528854370117,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:43.169654",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp9f1dqsek\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 203.11546325683594,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:43.447827",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp9f1dqsek\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 254.852294921875,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:43.742977",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp9f1dqsek\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 270.4892158508301,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:44.794783",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpt8tdkcb1\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 320.65725326538086,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:45.134996",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpt8tdkcb1\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 301.1641502380371,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:52.736306",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpqx63lxnz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 188.27247619628906,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:52.976181",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpqx63lxnz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 214.47134017944336,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:53.207615",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpqx63lxnz\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 202.4710178375244,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:54.302384",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpcgup3wkw\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 209.6726894378662,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:54.564761",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpcgup3wkw\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 236.1311912536621,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:54.753471",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpcgup3wkw\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 161.19909286499023,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:57.628945",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpoifjm3bg\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 235.90922355651855,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:57.915901",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpoifjm3bg\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 252.9892921447754,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:57:58.186236",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpoifjm3bg\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 232.96189308166504,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:01.329622",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp47vfp376\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 262.8200054168701,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:01.548789",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp47vfp376\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 184.76033210754395,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:01.790227",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp47vfp376\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 213.0725383758545,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:11.054436",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpone2v7ey\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 235.42523384094238,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:11.344660",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpone2v7ey\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 261.1675262451172,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:11.599651",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpone2v7ey\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 220.37863731384277,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:15.541272",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp4db2xzug\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 219.12074089050293,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:15.816318",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp4db2xzug\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 247.37906455993652,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:16.049919",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp4db2xzug\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 195.5878734588623,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:22.828546",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmppcfdv391\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 257.63702392578125,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:23.106579",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmppcfdv391\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 243.32451820373535,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:23.344100",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmppcfdv391\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 207.10444450378418,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:32.899815",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpn643my56\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 428.3919334411621,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:33.097266",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpn643my56\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 154.21438217163086,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:41.397258",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp30ihddbx\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 148.1184959411621,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:41.653364",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp30ihddbx\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 208.38022232055664,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:41.853853",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp30ihddbx\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 169.27170753479004,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:51.756631",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpaesfbu59\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 221.7700481414795,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:52.012661",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpaesfbu59\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 207.60130882263184,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:58:52.296933",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpaesfbu59\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 249.53222274780273,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:09.401792",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_fvph8qc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 260.4022026062012,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:09.657819",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_fvph8qc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 220.37553787231445,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:09.935576",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp_fvph8qc\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 249.8178482055664,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:10.772450",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpnw8004xq\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 225.48627853393555,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:10.936162",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpnw8004xq\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 127.9757022857666,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:11.158104",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpnw8004xq\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 190.45758247375488,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:13.138174",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpk8yspu15\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 209.96403694152832,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:13.349610",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpk8yspu15\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 176.07736587524414,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:14.309612",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpo0ckn_oy\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 237.64371871948242,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:14.666273",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpo0ckn_oy\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 297.28150367736816,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:20.199432",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpvfzf76e_\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 209.11550521850586,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:20.443087",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpvfzf76e_\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 187.27517127990723,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:20.729908",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpvfzf76e_\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 253.20029258728027,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:22.268187",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp6exaitic\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 132.56263732910156,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:22.450765",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp6exaitic\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 145.59006690979004,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:22.693463",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmp6exaitic\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 206.06255531311035,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:25.430648",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmphy8tlbj8\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 180.6356906890869,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:25.629538",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmphy8tlbj8\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 157.66334533691406,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:25.841085",
+      "event_type": "modified",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmphy8tlbj8\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 175.5087375640869,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    },
+    {
+      "timestamp": "2025-10-24T23:59:39.423508",
+      "event_type": "created",
+      "file": "C:\\Users\\user\\AppData\\Local\\Temp\\tmpd03zeynl\\scripts\\test_script.py",
+      "verification": {
+        "ruff_passed": true,
+        "violations": []
+      },
+      "duration_ms": 766.6606903076172,
+      "from_cache": false,
+      "analysis_mode": "fast"
+    }
+  ],
+  "summary": {
+    "total_verifications": 86,
+    "passed": 86,
+    "failed": 0,
+    "errors": 0,
+    "success_rate": 1.0,
+    "avg_duration_ms": 248.61771006916845,
+    "total_duration_ms": 21381.123065948486
+  },
+  "exported_at": "2025-10-24T23:59:39.425115"
+}

@@ -1,0 +1,31 @@
+{
+  "session_id": "session_20251028_174458_a5f75aad",
+  "started_at": "2025-10-28T08:44:58.132871+00:00",
+  "last_checkpoint": "2025-10-28T08:44:58.164070+00:00",
+  "context_hash": "f8b1b06f362c8743",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "task_0": "value_0",
+      "task_1": "value_1",
+      "task_2": "value_2",
+      "current_task": {
+        "task_id": "TEST-2025-10-26-01",
+        "title": "\ud1b5\ud569 \ud14c\uc2a4\ud2b8 \uc791\uc5c5",
+        "status": "running",
+        "started_at": "2025-10-28T08:44:58.163895+00:00",
+        "yaml_path": "TASKS/TEST-2025-10-26-01.yaml"
+      },
+      "task_history": [
+        {
+          "task_id": "TEST-2025-10-26-01",
+          "started_at": "2025-10-28T08:44:58.164057+00:00",
+          "status": "started"
+        }
+      ]
+    },
+    "user": {},
+    "app": {},
+    "temp": {}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "weekly": {
+    "timestamp": "2025-10-26T23:40:00.624305",
+    "report_file": "RUNS\\reports\\session_report_weekly_20251026_234000.html"
+  },
+  "daily": {
+    "timestamp": "2025-10-26T23:40:42.466896",
+    "report_file": "RUNS\\reports\\session_report_daily_20251026_234042.html"
+  },
+  "monthly": {
+    "timestamp": "2025-10-26T23:41:33.185696",
+    "report_file": "RUNS\\reports\\session_report_monthly_20251026_234133.html"
+  }
+}

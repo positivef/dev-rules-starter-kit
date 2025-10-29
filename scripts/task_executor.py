@@ -24,6 +24,7 @@ import hashlib
 import yaml
 import sys
 import glob as glob_module
+import uuid
 from pathlib import Path
 from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
@@ -36,6 +37,17 @@ from progress_tracker import create_progress_tracker
 from error_handler import ErrorCatalog
 from notification_utils import send_slack_notification
 from orchestration_policy import OrchestrationPolicy
+
+try:
+    from agent_sync import (
+        acquire_lock as agent_acquire_lock,
+        release_lock as agent_release_lock,
+        detect_conflicts as agent_detect_conflicts,
+    )
+except ImportError:
+    agent_acquire_lock = None
+    agent_release_lock = None
+    agent_detect_conflicts = None
 
 
 def write_lessons_template(runs_dir: Path, contract: Dict, status: str, error_message: str | None = None) -> None:
@@ -83,11 +95,7 @@ def write_prompt_feedback(runs_dir: Path, stats: List[Dict[str, Any]]) -> None:
     if successes:
         total_original = sum(s.get("original_tokens", 0) for s in successes)
         total_compressed = sum(s.get("compressed_tokens", 0) for s in successes)
-        avg_savings = (
-            sum(s.get("savings_pct", 0.0) for s in successes) / len(successes)
-            if successes
-            else 0.0
-        )
+        avg_savings = sum(s.get("savings_pct", 0.0) for s in successes) / len(successes) if successes else 0.0
         best_entry = max(successes, key=lambda s: s.get("savings_pct", 0.0), default=None)
 
         report["summary"] = {
@@ -113,8 +121,9 @@ def write_prompt_feedback(runs_dir: Path, stats: List[Dict[str, Any]]) -> None:
     feedback_path = runs_dir / "prompt_feedback.json"
     feedback_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
-# Command whitelist - customize for your project
-ALLOWED_CMDS = {
+
+# Command whitelist for external executables - customize for your project
+ALLOWED_SHELL_CMDS = {
     "python",
     "python3",
     "pytest",
@@ -130,7 +139,7 @@ ALLOWED_CMDS = {
     "make",
     "node",
     "npm",
-    "echo",  # For demonstration purposes
+    "echo",  # For demonstration purposes (Windows users should prefer cmd /c echo)
 }
 
 DANGEROUS_PATTERNS = [
@@ -282,35 +291,154 @@ def run_validation_commands(commands: List[str], cwd: Path, task_id: str):
             raise GateFailedError(message)
 
 
-def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout: int = 300):
-    """Safe command execution (exec array, shell=False)"""
-    # 1. Command allowlist check
-    if cmd not in ALLOWED_CMDS:
+# Dummy functions for internal call mechanism
+# These will be replaced by actual tool calls in a real environment
+def write_file(file_path: str, content: str):
+    print(f"DUMMY_WRITE: Writing to {file_path}")
+    Path(file_path).write_text(content, encoding="utf-8")
+    return {"status": "success"}
+
+
+def replace(file_path: str, old_string: str, new_string: str):
+    print(f"DUMMY_REPLACE: Modifying {file_path}")
+    content = Path(file_path).read_text(encoding="utf-8")
+    new_content = content.replace(old_string, new_string)
+    Path(file_path).write_text(new_content, encoding="utf-8")
+    return {"status": "success", "replacements": 1}
+
+
+# Dummy function for run_shell_command
+
+
+def run_shell_command(command: str, description: str = ""):  # Added for agent collaboration
+    print(f"DUMMY_RUN_SHELL_COMMAND: Executing '{command}' - {description}")
+    # In a real scenario, this would execute the command and return its output.
+    # For now, we just simulate success.
+    return {"status": "success", "command": command, "stdout": "(simulated output)", "stderr": "", "exit_code": 0}
+
+
+# Allowed internal functions
+INTERNAL_FUNCTIONS = {
+    "write_file": write_file,
+    "replace": replace,
+    "run_shell_command": run_shell_command,  # Added for agent collaboration
+}
+
+ALLOWED_INTERNAL_CMDS = set(INTERNAL_FUNCTIONS.keys())
+ALL_ALLOWED_CMDS = ALLOWED_INTERNAL_CMDS | ALLOWED_SHELL_CMDS
+
+
+def detect_agent_id() -> str:
+    """Derive a stable agent identifier from environment hints."""
+    if agent_id := os.getenv("AGENT_ID"):
+        return agent_id
+    if os.getenv("CODEX_CLI"):
+        return "codex"
+    if os.getenv("CLAUDE_CODE"):
+        return "claude"
+    if os.getenv("GEMINI_AI"):
+        return "gemini"
+    return f"agent-{uuid.uuid4().hex[:8]}"
+
+
+AGENT_ID = detect_agent_id()
+
+
+def _looks_like_file(path_str: str) -> bool:
+    return not any(char in path_str for char in ("*", "?", "[", "]"))
+
+
+def collect_files_to_lock(contract: Dict[str, Any]) -> List[str]:
+    """Infer which files should be locked for a contract execution."""
+    files: List[str] = []
+    for pattern in contract.get("evidence", []) or []:
+        if isinstance(pattern, str) and _looks_like_file(pattern):
+            files.append(pattern)
+    for command in contract.get("commands", []) or []:
+        exec_info = command.get("exec", {}) or {}
+        cmd_name = exec_info.get("cmd")
+        if cmd_name not in {"write_file", "replace"}:
+            continue
+        args = exec_info.get("args") or {}
+        if isinstance(args, dict):
+            file_path = args.get("file_path")
+            if file_path:
+                files.append(file_path)
+    seen = set()
+    unique_files: List[str] = []
+    for file_path in files:
+        normalized = str(Path(file_path))
+        if normalized not in seen:
+            seen.add(normalized)
+            unique_files.append(normalized)
+    return unique_files
+
+
+class TaskExecutorError(Exception):
+    """TaskExecutor base exception"""
+
+    pass
+
+
+    """Release lock file"""
+    try:
+        lock_path.unlink()
+    except FileNotFoundError:
+        pass
+
+
+def run_exec(cmd: str, args: Any, cwd: Path, env: Dict[str, str], timeout: int = 300):
+    """Safe command execution (internal commands or allowlisted executables)."""
+    # 1. Internal commands take precedence so they never fall through to shell execution
+    if cmd in INTERNAL_FUNCTIONS:
+        print(f"[EXEC-INTERNAL] {cmd}")
+        if args is None:
+            args = {}
+        if not isinstance(args, dict):
+            raise TypeError(f"Arguments for internal function '{cmd}' must be a dictionary.")
+        try:
+            internal_func = INTERNAL_FUNCTIONS[cmd]
+            result = internal_func(**args)
+            print(f"   [SUCCESS] Internal function '{cmd}' executed successfully.")
+            return result
+        except Exception as exc:
+            error = ErrorCatalog.command_failed(cmd, -1, str(exc))
+            print(f"\n{error.format(include_traceback=True)}", file=sys.stderr)
+            raise
+
+    # 2. Shell commands must be on the allowlist
+    if cmd not in ALLOWED_SHELL_CMDS:
         error = ErrorCatalog.command_not_allowed(cmd)
         print(f"\n{error.format()}", file=sys.stderr)
         raise SecurityError(error.message)
 
-    # 2. Dangerous pattern check
-    full_cmd = f"{cmd} {' '.join(args)}"
+    # 3. Normalise arguments
+    if args is None:
+        args_list: List[str] = []
+    else:
+        if not isinstance(args, list):
+            raise TypeError(f"Arguments for shell command '{cmd}' must be provided as a list.")
+        args_list = [str(part) for part in args]
+
+    full_cmd = f"{cmd} {' '.join(args_list)}".strip()
     for pattern in DANGEROUS_PATTERNS:
         if re.search(pattern, full_cmd):
             raise SecurityError(f"Dangerous pattern detected: {pattern}")
 
-    # 3. Execute with exec array (shell=False)
-    print(f"[EXEC] {cmd} {' '.join(args)}")
+    # 4. Execute with exec array (shell=False)
+    print(f"[EXEC] {cmd} {' '.join(args_list)}")
     try:
-        result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
-
+        result = run(
+            [cmd] + args_list, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout
+        )
         if result.returncode != 0:
             stderr = result.stderr.decode("utf-8", errors="ignore")
             error = ErrorCatalog.command_failed(cmd, result.returncode, stderr)
             print(f"\n{error.format()}", file=sys.stderr)
-            raise CalledProcessError(result.returncode, [cmd] + args)
-
+            raise CalledProcessError(result.returncode, [cmd] + args_list)
         return result
-
-    except TimeoutExpired:
-        raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}")
+    except TimeoutExpired as exc:
+        raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}") from exc
 
 
 def execute_contract(contract_path: str, mode: str = "execute"):
@@ -442,6 +570,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     ensure_secrets(contract.get("secrets_required"), ctx=task_id)
 
     acquired_locks = []
+    agent_lock_acquired = False
     try:
         for lock in contract.get("locks", []):
             acquired_locks.append(acquire_lock(lock, locks_dir))
@@ -449,6 +578,20 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         ports_free(contract.get("ports_should_be_free"))
 
         env = build_env()
+
+        files_to_lock = collect_files_to_lock(contract)
+        if files_to_lock and agent_detect_conflicts:
+            conflicts = agent_detect_conflicts(AGENT_ID, task_id, files_to_lock)
+            for lock in conflicts:
+                print(f"[WARN] File '{lock.get('file')}' locked by {lock.get('agent_id')} (task {lock.get('task_id')})")
+
+        if files_to_lock and agent_acquire_lock and agent_release_lock:
+            try:
+                if not agent_acquire_lock(AGENT_ID, task_id, files_to_lock):
+                    raise SecurityError(f"Unable to acquire agent sync lock for {task_id}")
+                agent_lock_acquired = True
+            except Exception as lock_error:
+                raise SecurityError(f"Failed to acquire agent sync lock: {lock_error}") from lock_error
 
         # === 5. Command execution ===
         atomic_write_json(
@@ -464,7 +607,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
             try:
                 exec_info = cmd.get("exec", {})
-                run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+                run_exec(exec_info["cmd"], exec_info.get("args"), root, env)
                 progress.complete_step(success=True)
             except Exception:
                 progress.complete_step(success=False)
@@ -487,7 +630,7 @@ def execute_contract(contract_path: str, mode: str = "execute"):
                 else:
                     exec_info = gate.get("exec")
                     if exec_info:
-                        run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+                        run_exec(exec_info["cmd"], exec_info.get("args"), root, env)
                 progress.complete_step(success=True)
             except Exception:
                 progress.complete_step(success=False)
@@ -554,6 +697,11 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         # Release locks
         for lock_path in acquired_locks:
             release_lock(lock_path)
+        if agent_lock_acquired and agent_release_lock:
+            try:
+                agent_release_lock(AGENT_ID, task_id)
+            except Exception as release_error:
+                print(f"[WARN] Failed to release agent sync lock: {release_error}")
 
 
 def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status: str):

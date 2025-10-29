@@ -44,6 +44,7 @@ class ObsidianBridge:
         if vault_path is None:
             try:
                 from dotenv import load_dotenv
+
                 load_dotenv()
             except ImportError:
                 pass
@@ -116,11 +117,7 @@ class ObsidianBridge:
             self.history_tracker.track_update(
                 relative_path,
                 action="create_devlog",
-                metadata={
-                    "task_id": task_id,
-                    "status": status,
-                    "execution_time": execution_result.get("duration", 0)
-                }
+                metadata={"task_id": task_id, "status": status, "execution_time": execution_result.get("duration", 0)},
             )
 
         return filepath
@@ -281,9 +278,7 @@ class ObsidianBridge:
         if self.history_tracker:
             relative_path = filepath.relative_to(self.vault_path).as_posix()
             self.history_tracker.track_update(
-                relative_path,
-                action="create_task",
-                metadata={"task_id": task_id, "status": data.get("status", "pending")}
+                relative_path, action="create_task", metadata={"task_id": task_id, "status": data.get("status", "pending")}
             )
 
     def _update_task_file(self, filepath: Path, updates: Dict):
@@ -304,11 +299,7 @@ class ObsidianBridge:
         # Track update history
         if self.history_tracker:
             relative_path = filepath.relative_to(self.vault_path).as_posix()
-            self.history_tracker.track_update(
-                relative_path,
-                action="update_checklist",
-                metadata={"updates": updates}
-            )
+            self.history_tracker.track_update(relative_path, action="update_checklist", metadata={"updates": updates})
 
 
 # Global instance

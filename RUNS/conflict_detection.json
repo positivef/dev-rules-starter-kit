@@ -1,0 +1,202 @@
+[
+  {
+    "timestamp": "2025-10-28T13:35:05.621633",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-28T13:35:05.623425",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-28T13:35:05.626518",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-28T13:35:34.021321",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Add Streamlit dashboard as the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-28T13:39:19.302328",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Add Streamlit dashboard as the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
