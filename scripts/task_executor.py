@@ -380,13 +380,6 @@ class TaskExecutorError(Exception):
     pass
 
 
-    """Release lock file"""
-    try:
-        lock_path.unlink()
-    except FileNotFoundError:
-        pass
-
-
 def run_exec(cmd: str, args: Any, cwd: Path, env: Dict[str, str], timeout: int = 300):
     """Safe command execution (internal commands or allowlisted executables)."""
     # 1. Internal commands take precedence so they never fall through to shell execution
