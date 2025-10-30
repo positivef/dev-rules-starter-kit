@@ -109,7 +109,7 @@ def test_authenticate():
             # Check note content
             spec_note = created_notes["SPEC"][0]
             assert spec_note.exists()
-            content = spec_note.read_text()
+            content = spec_note.read_text(encoding="utf-8")
             assert "SPEC: AUTH-001" in content
             assert "auth.py:2" in content
 
@@ -118,7 +118,7 @@ def test_authenticate():
             map_path = bridge.generate_traceability_map("auth-001")
             assert map_path.exists()
 
-            map_content = map_path.read_text()
+            map_content = map_path.read_text(encoding="utf-8")
             assert "Traceability Map: AUTH-001" in map_content
             assert "```mermaid" in map_content  # Check for Mermaid diagram
 
@@ -211,6 +211,10 @@ ears:
   if: {{precondition}}
   then: System SHALL {{system_response}}
   where: {{constraints}}
+
+tags:
+  - feature
+  - {{domain}}
 """)
 
         builder = SpecBuilderLite(
@@ -236,11 +240,11 @@ ears:
         def risky_file_op():
             raise FileNotFoundError("test.txt")
 
-        with error_system.error_context("test_module", "file_op"):
-            try:
+        try:
+            with error_system.error_context("test_module", "file_op"):
                 risky_file_op()
-            except FileNotFoundError:
-                pass  # Expected
+        except FileNotFoundError:
+            pass  # Expected - error_context will record it before re-raising
 
         # Check metrics
         metrics = error_system.get_metrics()
@@ -486,7 +490,6 @@ class TestRobustness:
             if attempt_count < 3:
                 raise IOError("Temporary failure")
             return "Success"
-
 
         # Should retry and eventually succeed
         # Note: Actual retry logic would be in strategy
