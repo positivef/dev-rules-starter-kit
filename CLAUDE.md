@@ -371,3 +371,7 @@ pre-commit install
 
 > 상세 절차와 체크리스트는 docs/COLLAB_LOCKING_GUIDE.md에 정리되어 있으며, Obsidian 싱크 시 해당 문서를 공유하세요.
 
+- 빠른 점검: python scripts/lock_dashboard.py --agent <you> --files <paths>를 사용해 잠금/충돌 현황을 한 번에 확인하고, 필요 시 gent_sync_status.py와 병행하세요.
+
+- Streamlit 보기: `streamlit run scripts/lock_dashboard_streamlit.py`로 잠금/충돌 현황을 시각적으로 확인하세요.
+- Preflight 옵션: `python scripts/preflight_checks.py --extra "tests/test_session_ecosystem.py"` 처럼 추가 테스트를 연결하거나 `--skip-handoff`, `--only-handoff`로 선택 실행할 수 있습니다.

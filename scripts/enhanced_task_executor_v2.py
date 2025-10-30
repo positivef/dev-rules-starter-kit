@@ -98,6 +98,7 @@ class ParallelTaskExecutor:
         self.max_workers = max(1, max_workers)
         self.dry_run = dry_run
 
+        self.phases: List[Phase] = []
         self.stats: Dict[str, float] = {}
 
     # ---------------------------------------------------------------------
@@ -105,10 +106,12 @@ class ParallelTaskExecutor:
     # ---------------------------------------------------------------------
     def parse_tasks_file(self, file_path: Path) -> List[Phase]:
         if file_path.suffix == ".md":
-            return self._parse_markdown_tasks(file_path)
-        if file_path.suffix in {".yml", ".yaml"}:
-            return self._parse_yaml_tasks(file_path)
-        raise ValueError(f"Unsupported file format: {file_path.suffix}")
+            self.phases = self._parse_markdown_tasks(file_path)
+        elif file_path.suffix in {".yml", ".yaml"}:
+            self.phases = self._parse_yaml_tasks(file_path)
+        else:
+            raise ValueError(f"Unsupported file format: {file_path.suffix}")
+        return self.phases
 
     def _parse_markdown_tasks(self, file_path: Path) -> List[Phase]:
         phases: List[Phase] = []

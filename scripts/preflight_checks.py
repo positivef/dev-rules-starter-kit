@@ -4,11 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import shlex
 import subprocess
 import sys
 from typing import Iterable, List, Tuple
 
-TESTS: List[Tuple[str, List[str]]] = [
+DEFAULT_TESTS: List[Tuple[str, List[str]]] = [
     ("enhanced-executor", [sys.executable, "-m", "pytest", "-q", "tests/test_enhanced_task_executor_v2.py"]),
     ("handoff-protocol", [sys.executable, "-m", "pytest", "-q", "tests/test_handoff_protocol.py"]),
 ]
@@ -19,22 +20,35 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--quick", action="store_true", help="Run only essential tests (skip handoff protocol)")
     parser.add_argument("--skip-handoff", action="store_true", help="Skip handoff protocol test")
     parser.add_argument("--only-handoff", action="store_true", help="Run only the handoff protocol test")
+    parser.add_argument(
+        "--extra",
+        action="append",
+        default=[],
+        help="Additional pytest targets (e.g. 'tests/test_session_ecosystem.py -k smoke')",
+    )
     parser.add_argument("--list", action="store_true", help="List configured checks without executing")
     return parser
 
 
 def select_checks(args: argparse.Namespace) -> List[Tuple[str, List[str]]]:
     if args.only_handoff:
-        return [item for item in TESTS if item[0] == "handoff-protocol"]
+        selected = [item for item in DEFAULT_TESTS if item[0] == "handoff-protocol"]
+    else:
+        selected: List[Tuple[str, List[str]]] = []
+        for name, cmd in DEFAULT_TESTS:
+            if args.quick and name != "enhanced-executor":
+                continue
+            if args.skip_handoff and name == "handoff-protocol":
+                continue
+            selected.append((name, cmd))
 
-    selected: List[Tuple[str, List[str]]] = []
-    for name, cmd in TESTS:
-        if args.quick and name != "enhanced-executor":
-            continue
-        if args.skip_handoff and name == "handoff-protocol":
-            continue
-        selected.append((name, cmd))
-    return selected
+    extras: List[Tuple[str, List[str]]] = []
+    for idx, extra in enumerate(args.extra or [], start=1):
+        parts = shlex.split(extra)
+        cmd = [sys.executable, "-m", "pytest", "-q", *parts]
+        extras.append((f"extra-{idx}", cmd))
+
+    return selected + extras
 
 
 def run_checks(checks: Iterable[Tuple[str, List[str]]]) -> int:

@@ -506,3 +506,5 @@ RELEASE_NOTES.md                  # v0.3.0 ë¦´ë¦¬ì¦ˆ
 - ¹®¼­ Âü°í: »ó¼¼ ÁöÄ§Àº docs/COLLAB_LOCKING_GUIDE.md¿¡ Á¤¸®µÇ¾î ÀÖÀ¸¸ç, Obsidian¿¡ µ¿±âÈ­ÇØ ´ÙÀ½ ¿¡ÀÌÀüÆ®°¡ ¹Ù·Î È®ÀÎÇÏµµ·Ï ¾È³»ÇÏ¼¼¿ä.
 - ÇÁ¸®ÇÃ¶óÀÌÆ®: °è¾à ½ÇÇà/ÇÚµå¿ÀÇÁ Àü¿¡ python scripts/preflight_checks.py (ÇÊ¿ä ½Ã --quick)¸¦ ½ÇÇàÇØ È¸±Í¸¦ »çÀü¿¡ Â÷´ÜÇÕ´Ï´Ù.
 - Àá±İ Á¡°Ë: python scripts/agent_sync_status.py --agent <you> --task <task>·Î °èÈ¹ ÁßÀÎ ÆÄÀÏ¿¡ Ãæµ¹ÀÌ ¾ø´ÂÁö È®ÀÎ ÈÄ ½ÇÇàÇÕ´Ï´Ù.
+- Streamlit ´ë½Ãº¸µå: `streamlit run scripts/lock_dashboard_streamlit.py`·Î À¥ UI¿¡¼­ Àá±İ°ú Ãæµ¹À» Á¡°ËÇÕ´Ï´Ù.
+- Preflight È®Àå: `python scripts/preflight_checks.py --extra "tests/test_session_ecosystem.py"` µîÀ¸·Î ÇÁ·ÎÁ§Æ®º° °ËÁõÀ» Ãß°¡ÇÏ°í, `--skip-handoff`/`--only-handoff` ¿É¼ÇÀ¸·Î »óÈ²º° ¼±ÅÃ ½ÇÇàÀÌ °¡´ÉÇÕ´Ï´Ù.
