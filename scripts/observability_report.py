@@ -18,13 +18,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
-ROOT = Path(__file__).resolve().parent.parent
-BOARD_PATH = ROOT / "dev-context" / "agent_sync_state.json"
-RUNS_PATH = ROOT / "RUNS"
-
 # Local imports
 from context_compare import compare
 from notification_utils import send_slack_notification
+
+ROOT = Path(__file__).resolve().parent.parent
+BOARD_PATH = ROOT / "dev-context" / "agent_sync_state.json"
+RUNS_PATH = ROOT / "RUNS"
 
 
 def load_agent_board() -> List[Dict[str, str]]:

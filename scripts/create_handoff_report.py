@@ -11,14 +11,7 @@ import datetime
 import os
 from pathlib import Path
 
-# Try to import components from the project
-try:
-    from context_provider import build_context
-    from obsidian_bridge import ObsidianBridge
-    from constitutional_validator import validate_article
-except ImportError:
-    # Fallback for standalone execution
-    pass
+# Components are available but not used in standalone mode
 
 
 def get_git_info():

@@ -52,7 +52,7 @@ def test_report_generation():
 
     # 4. PDF 리포트 (matplotlib 설치된 경우)
     try:
-        import matplotlib
+        import matplotlib  # noqa: F401
 
         print("\n4. Generating PDF report...")
         pdf_report = generator.generate_report(period="weekly", days=7, format="pdf")
@@ -65,7 +65,7 @@ def test_report_generation():
 
     # 5. Excel 내보내기 (pandas 설치된 경우)
     try:
-        import pandas
+        import pandas  # noqa: F401
 
         print("\n5. Exporting to Excel...")
         excel_file = generator.export_to_excel(days=7)
@@ -189,7 +189,7 @@ def interactive_menu():
                     report = generator.generate_report(period="weekly", format=format)
                     if report:
                         print(f"  - {format.upper()}: {Path(report).name}")
-                except:
+                except Exception:
                     print(f"  - {format.upper()}: Failed")
         elif choice == "5":
             show_report_paths()

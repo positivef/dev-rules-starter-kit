@@ -298,7 +298,7 @@ class SessionManager:
             for old_session in sessions[: -self.max_sessions * 2]:
                 try:
                     old_session.unlink()
-                except:
+                except Exception:
                     pass
 
     def _generate_session_id(self) -> str:

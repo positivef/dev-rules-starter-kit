@@ -64,7 +64,7 @@ class AutoSetup:
         try:
             subprocess.run(["git", "--version"], capture_output=True, check=True)
             print("✓ Git 설치 확인")
-        except:
+        except Exception:
             print("⚠️  Git이 설치되어 있지 않습니다.")
 
     def create_directories(self):

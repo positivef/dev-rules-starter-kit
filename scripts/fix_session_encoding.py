@@ -194,7 +194,7 @@ def clean_invalid_sessions():
             # UTF-8로 읽기 시도
             with open(filepath, "r", encoding="utf-8") as f:
                 json.load(f)
-        except:
+        except Exception:
             # 읽을 수 없는 파일은 백업으로 이동
             backup_path = backup_dir / f"invalid_{filepath.name}"
             shutil.move(str(filepath), str(backup_path))

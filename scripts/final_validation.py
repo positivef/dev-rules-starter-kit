@@ -75,10 +75,10 @@ class FinalValidator:
         start = time.perf_counter()
         try:
             from tag_extractor_lite import TagExtractorLite
-            from tag_sync_bridge_lite import TagSyncBridgeLite
-            from spec_builder_lite import SpecBuilderLite
-            from dataview_generator import DataviewGenerator
-            from mermaid_graph_generator import MermaidGraphGenerator
+            from tag_sync_bridge_lite import TagSyncBridgeLite  # noqa: F401
+            from spec_builder_lite import SpecBuilderLite  # noqa: F401
+            from dataview_generator import DataviewGenerator  # noqa: F401
+            from mermaid_graph_generator import MermaidGraphGenerator  # noqa: F401
 
             duration = (time.perf_counter() - start) * 1000
             self._add_result(
@@ -369,7 +369,7 @@ class FinalValidator:
                     len(test_files) > 0,
                     f"~{estimated_count} tests (estimated from {len(test_files)} files)",
                 )
-            except:
+            except Exception:
                 self._add_result(
                     "Deployment",
                     "Test Suite",

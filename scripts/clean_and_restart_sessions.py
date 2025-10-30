@@ -59,7 +59,7 @@ def clean_sessions():
             try:
                 file.unlink()
                 print(f"  Removed: {file.name}")
-            except:
+            except Exception:
                 pass
 
     print("\n" + "=" * 60)

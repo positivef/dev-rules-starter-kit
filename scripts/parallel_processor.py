@@ -28,7 +28,6 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 try:
-    from security_utils import SecureConfig
     from tag_extractor_lite import CodeTag, TagExtractorLite
 except ImportError:
     from scripts.tag_extractor_lite import CodeTag, TagExtractorLite

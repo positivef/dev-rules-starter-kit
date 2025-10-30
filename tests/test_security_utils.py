@@ -170,11 +170,11 @@ class TestSecureFileLock:
             # Cleanup - make sure locks are released before deleting
             try:
                 lock1.release()
-            except:
+            except Exception:
                 pass
             try:
                 lock2.release()
-            except:
+            except Exception:
                 pass
             if lock_file.exists():
                 try:

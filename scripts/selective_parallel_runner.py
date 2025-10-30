@@ -159,9 +159,8 @@ class SelectiveParallelRunner:
         # Show summary
         print("\n[INFO] Test Distribution:")
         print(f"  Small tests (<{self.PARALLEL_THRESHOLD}): {len(self.categorized_tests['small'])} files")
-        print(
-            f"  Medium tests ({self.PARALLEL_THRESHOLD}-{self.LARGE_TEST_THRESHOLD}): {len(self.categorized_tests['medium'])} files"
-        )
+        medium_range = f"{self.PARALLEL_THRESHOLD}-{self.LARGE_TEST_THRESHOLD}"
+        print(f"  Medium tests ({medium_range}): {len(self.categorized_tests['medium'])} files")
         print(f"  Large tests (>{self.LARGE_TEST_THRESHOLD}): {len(self.categorized_tests['large'])} files")
 
         # Run each category with appropriate strategy

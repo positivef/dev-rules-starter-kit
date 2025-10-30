@@ -7,7 +7,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 jsonschema = pytest.importorskip("jsonschema")
-from jsonschema import ValidationError, validate
+from jsonschema import ValidationError, validate  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = ROOT / "config" / "master_config.json"

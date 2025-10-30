@@ -36,7 +36,7 @@ def find_problematic_byte():
                         after = raw_bytes[86:].decode("utf-8", errors="replace")
                         print(f"  Context before: ...{before[-20:]}")
                         print(f"  Context after: {after[:20]}...")
-                    except:
+                    except Exception:
                         pass
 
                     return filepath
@@ -152,7 +152,7 @@ def check_executio_logs():
                 if e.start == 85:
                     print("  [MATCH] This is the problem file!")
                     return file
-            except:
+            except Exception:
                 pass
 
     return None

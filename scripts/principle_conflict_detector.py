@@ -93,7 +93,7 @@ class PrincipleConflictDetector:
                         data = json.load(f)
                         if "decisions" in data:
                             decisions.extend(data["decisions"])
-                except:
+                except Exception:
                     pass
 
         return decisions
@@ -320,7 +320,7 @@ class PrincipleConflictDetector:
             try:
                 with open(self.conflict_log, "r", encoding="utf-8") as f:
                     existing_logs = json.load(f)
-            except:
+            except Exception:
                 existing_logs = []
 
         existing_logs.append(log_data)

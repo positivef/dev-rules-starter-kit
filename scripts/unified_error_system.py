@@ -32,7 +32,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 try:
     from error_handler import EnhancedError, ErrorCatalog, ErrorSeverity
-    from security_utils import SecureConfig, SecurityError
+    from security_utils import SecurityError
     from notification_utils import send_slack_notification
 except ImportError:
     from scripts.error_handler import EnhancedError, ErrorCatalog, ErrorSeverity

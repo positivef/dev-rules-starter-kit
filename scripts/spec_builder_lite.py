@@ -29,7 +29,7 @@ import yaml
 
 try:
     from feature_flags import FeatureFlags
-    from security_utils import SecurePathValidator, SecureFileLock, SecureConfig
+    from security_utils import SecurePathValidator, SecureFileLock
 except ImportError:
     from scripts.feature_flags import FeatureFlags
     from scripts.security_utils import SecurePathValidator, SecureFileLock

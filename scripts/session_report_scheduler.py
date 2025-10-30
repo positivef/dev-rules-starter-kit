@@ -257,7 +257,7 @@ class SessionReportScheduler:
                     data = json.load(f)
                     stats = data.get("analysis", {}).get("execution_stats", {})
                     summary = f"Tasks: {stats.get('total_tasks', 0)}, " f"Success Rate: {stats.get('success_rate', 0):.1f}%"
-            except:
+            except Exception:
                 pass
 
         message = f"""
@@ -277,7 +277,7 @@ Report: {Path(report_file).name}
             try:
                 with open(self.last_run_file, "r", encoding="utf-8") as f:
                     last_run_data = json.load(f)
-            except:
+            except Exception:
                 pass
 
         last_run_data[period] = {"timestamp": datetime.now().isoformat(), "report_file": report_file}
