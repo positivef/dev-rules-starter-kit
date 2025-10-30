@@ -353,7 +353,7 @@ class UnifiedConstitutionalValidator:
         """C6: Test-First Development validation."""
         try:
             # Check test coverage
-            result = subprocess.run(
+            subprocess.run(
                 ["python", "-m", "pytest", "--cov=scripts", "--cov-report=json", "--quiet"], capture_output=True, text=True
             )
 
@@ -364,7 +364,7 @@ class UnifiedConstitutionalValidator:
             else:
                 coverage = 0.0
 
-        except:
+        except Exception:
             coverage = 0.0
 
         return ValidationResult(
@@ -413,7 +413,7 @@ class UnifiedConstitutionalValidator:
             result = subprocess.run(["python", "-m", "pip", "list", "--format=json"], capture_output=True, text=True)
             # Simple check - in production would use safety or bandit
             security_passed = "vulnerability" not in result.stdout.lower()
-        except:
+        except Exception:
             security_passed = False
 
         return ValidationResult(

@@ -182,7 +182,6 @@ def demo_session_recovery():
 
     # 현재 세션 정보 저장
     manager = SessionManager.get_instance()
-    old_session_id = manager.session_id
 
     # 테스트 데이터 저장
     manager.set("test_before_crash", "복구될 데이터", StateScope.SESSION)

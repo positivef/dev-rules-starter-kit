@@ -20,7 +20,7 @@ Example:
     $ python scripts/dataview_generator.py --tag-id auth-001 --tag-type SPEC
 """
 
-from typing import Dict, List
+from typing import Dict
 
 
 class DataviewGenerator:

@@ -87,9 +87,7 @@ class MermaidGraphGenerator:
         filename = tag.file_path.name if isinstance(tag.file_path, Path) else tag.file_path
         return f"{tag.tag_type}: {tag.tag_id}<br/>{filename}:{tag.line_number}"
 
-    def generate_node_definition(
-        self, tag: CodeTag, index: int = 0, status: str = "active"
-    ) -> str:
+    def generate_node_definition(self, tag: CodeTag, index: int = 0, status: str = "active") -> str:
         """Generate Mermaid node definition.
 
         Args:
@@ -110,9 +108,7 @@ class MermaidGraphGenerator:
         node_def = f"    {node_id}{shape_template.format(text=label)}"
         return node_def
 
-    def generate_link(
-        self, from_id: str, to_id: str, label: str = "", bidirectional: bool = False
-    ) -> str:
+    def generate_link(self, from_id: str, to_id: str, label: str = "", bidirectional: bool = False) -> str:
         """Generate Mermaid link between nodes.
 
         Args:
@@ -168,9 +164,7 @@ class MermaidGraphGenerator:
             styles.append(f"    classDef {status} fill:{color},stroke:#333,stroke-width:2px")
         return "\n".join(styles)
 
-    def generate_advanced_graph(
-        self, tags_by_type: Dict[str, List[CodeTag]], tag_id: str
-    ) -> str:
+    def generate_advanced_graph(self, tags_by_type: Dict[str, List[CodeTag]], tag_id: str) -> str:
         """Generate advanced Mermaid graph with all features.
 
         Args:
@@ -229,9 +223,7 @@ class MermaidGraphGenerator:
         lines.append("```")
         return "\n".join(lines)
 
-    def generate_minimal_graph(
-        self, tags_by_type: Dict[str, List[CodeTag]], tag_id: str
-    ) -> str:
+    def generate_minimal_graph(self, tags_by_type: Dict[str, List[CodeTag]], tag_id: str) -> str:
         """Generate minimal Mermaid graph (backward compatibility).
 
         Args:
@@ -300,7 +292,7 @@ Examples:
     print("")
 
     try:
-        generator = MermaidGraphGenerator()
+        MermaidGraphGenerator()
 
         # Note: This is example usage, actual implementation
         # would integrate with TagExtractor to get real tags

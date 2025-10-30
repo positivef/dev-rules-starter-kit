@@ -80,7 +80,6 @@ class DashboardConsolidator:
 
         # Archive redundant files
         archived = []
-        kept = []
 
         # Define files to keep (consolidation targets)
         files_to_keep = [
@@ -179,7 +178,8 @@ if "%choice%"=="1" (
         readme_content = f"""# Dashboard Organization
 
 ## Overview
-This directory structure has been consolidated from {datetime.now().strftime("%Y-%m-%d")} to address scattered dashboard files.
+This directory structure has been consolidated from {datetime.now().strftime("%Y-%m-%d")}
+to address scattered dashboard files.
 
 ## Active Dashboards
 

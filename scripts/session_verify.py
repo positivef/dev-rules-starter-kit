@@ -138,7 +138,6 @@ def verify_session_recovery():
         manager = SessionManager.get_instance()
         manager.set("recovery_test", "복구 데이터", StateScope.SESSION)
         manager.checkpoint()
-        old_session_id = manager.session_id
         print_test_result("복구용 데이터 저장", True)
 
         # SessionManager 재시작

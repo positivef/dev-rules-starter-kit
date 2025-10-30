@@ -313,13 +313,13 @@ def main():
 
     # 분석 실행
     print("\n1. Analyzing file reading costs...")
-    file_analysis = analyzer.analyze_file_reading_cost()
+    analyzer.analyze_file_reading_cost()
 
     print("\n2. Analyzing session recording costs...")
-    session_analysis = analyzer.analyze_session_recording_cost()
+    analyzer.analyze_session_recording_cost()
 
     print("\n3. Analyzing Obsidian sync costs...")
-    obsidian_analysis = analyzer.calculate_obsidian_sync_cost()
+    analyzer.calculate_obsidian_sync_cost()
 
     print("\n4. Generating optimization strategy...")
     strategy = analyzer.generate_optimization_strategy()

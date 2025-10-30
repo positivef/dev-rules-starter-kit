@@ -192,7 +192,6 @@ class SafeTokenOptimizer:
                 summary.append(line)
 
         # 2. 클래스와 함수 시그니처
-        in_class = False
         in_function = False
         indent_level = 0
 
@@ -202,7 +201,6 @@ class SafeTokenOptimizer:
 
             if stripped.startswith("class "):
                 summary.append(line)
-                in_class = True
                 indent_level = current_indent
                 # 클래스 docstring 포함
                 if i + 1 < len(lines) and '"""' in lines[i + 1]:

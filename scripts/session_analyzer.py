@@ -170,7 +170,6 @@ class SessionAnalyzer:
         hourly_activity = defaultdict(int)
         daily_activity = defaultdict(int)
         session_durations = []
-        checkpoints_per_session = []
 
         for session in self.sessions_data:
             # 세션 시작 시간 분석
@@ -182,7 +181,7 @@ class SessionAnalyzer:
                     day = dt.strftime("%A")
                     hourly_activity[hour] += 1
                     daily_activity[day] += 1
-                except:
+                except Exception:
                     pass
 
             # 세션 지속 시간 계산
@@ -194,7 +193,7 @@ class SessionAnalyzer:
                     duration = (end_dt - start_dt).total_seconds() / 60  # 분 단위
                     if duration > 0:
                         session_durations.append(duration)
-                except:
+                except Exception:
                     pass
 
         # 가장 생산적인 시간대

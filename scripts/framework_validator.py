@@ -554,7 +554,7 @@ class MultiStageVerificationFramework:
         """최종 의사결정"""
 
         optimal = self.stage_results[4].outputs["optimal_solution"]
-        phases = self.stage_results[5].outputs["phases"]
+        self.stage_results[5].outputs["phases"]
 
         decision = {
             "success": True,
