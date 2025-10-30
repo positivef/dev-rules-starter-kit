@@ -1,0 +1,57 @@
+# EARS Template: Feature Request
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "REQ-FEAT-024"
+  title: "차트 트레이딩관련 매매 시그널이 나왔을떄 알림주는 시스템개발을 하고싶어"
+  type: feature
+  priority: medium
+  status: draft
+  created: "2025-10-26T05:05:05.983064"
+
+ears:
+  # Trigger condition
+  when: "User requests 차트 트레이딩관련 매매 시그널이 나왔을떄 알림주는 시스템개발을 하고싶어"
+
+  # Precondition (optional)
+  if: "User is authenticated"
+
+  # System response (SHALL = mandatory requirement)
+  then: "System SHALL provide 차트 트레이딩관련 매매 시그널이 나왔을떄 알림주는 시스템개발을 하고싶어"
+
+  # Environmental constraints
+  where: "Response time < 200ms"
+
+acceptance_criteria:
+  - "Functionality works as specified"
+  - "All tests pass"
+  - "Code review approved"
+
+non_functional:
+  performance:
+    response_time: "< 200ms"
+    throughput: "> 1000 req/s"
+
+  security:
+    authentication: required
+    authorization: role-based
+    data_encryption: at-rest and in-transit
+
+  reliability:
+    availability: "99.9%"
+    error_rate: "< 0.1%"
+
+traceability:
+  stakeholder: "Product Team"
+  business_value: "Enable user authentication"
+  related_requirements: []
+
+implementation:
+  estimated_effort: "8h"
+  complexity: medium
+  dependencies: []
+
+tags:
+  - "REQ-FEAT-024"
+  - feature
+  - "authentication"

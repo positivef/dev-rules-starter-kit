@@ -1,0 +1,39 @@
+# Simplified Tier 1 Configuration
+# Keep it simple, avoid over-engineering
+
+# Basic Settings (80% of use cases)
+basic:
+  enabled: true
+  coverage_threshold: 85  # Simple percentage
+  parallel_workers: auto  # Let system decide
+
+# Test Optimization
+testing:
+  incremental: true  # Only test changed files
+  smart_parallel: true  # Only parallelize big tests (>50 tests)
+  cache_results: true  # Cache for 5 minutes
+
+# Evidence Management
+evidence:
+  enabled: false  # Turn off by default (was creating 31,000+ files!)
+  max_files: 100  # If enabled, limit to 100 most recent
+  auto_cleanup: true  # Delete old files automatically
+
+# Notification (Keep it simple)
+notifications:
+  slack: false  # Off by default
+  email: false  # Off by default
+  critical_only: true  # Only notify on critical failures
+
+# Performance (Realistic defaults)
+performance:
+  max_workers: 4  # Not 8 - most systems have 4-8 cores
+  batch_size: 50  # Not 100 - smaller batches = better responsiveness
+  timeout_seconds: 30  # Not infinite
+
+# Remove these over-engineered features:
+# - Risk assessment scores (unmeasurable)
+# - Complexity metrics (subjective)
+# - Byzantine consensus (overkill)
+# - Theory validation (academic)
+# - MCP orchestration priorities (confusing)

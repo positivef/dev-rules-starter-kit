@@ -70,4 +70,43 @@ RUNS/handoffs/
 RUNS/mcp_advice/
 RUNS/prompt_coach/
 RUNS/prompt_feedback/
+RUNS/.cache/
+RUNS/DEMO-OBSIDIAN-SYNC/
 node_modules/
+
+# Temporary files
+nul
+foo
+tmp.txt
+tmp2.txt
+*.backup.json
+*.bak
+
+# Build/Generated files
+backup/
+archive/
+obsidian_update.md
+copy_to_obsidian.py
+sync_to_obsidian_today.py
+check_dashboard_live.py
+run_dashboard.py
+launch.sh
+streamlit_app.py.bak
+
+# Test artifacts
+test_enhanced_pipeline.py
+test_pipeline_simple.py
+
+# Frontend/Build
+web/
+mcp/
+orchestrator/
+package-lock.json
+dashboards/
+files/
+
+# Korean directories (Obsidian sync)
+개발일지/
+
+# Runtime logs
+RUNS/dev-assistant-*/

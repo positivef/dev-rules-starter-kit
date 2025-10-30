@@ -1,0 +1,37 @@
+task_id: "DEMO-OBSIDIAN-SYNC"
+title: "Obsidian 동기화 데모"
+description: "Obsidian 지식 베이스 자동 동기화 시연"
+project: "DevRulesStarter"
+type: "demo"
+priority: "low"
+tags:
+  - "obsidian"
+  - "sync"
+  - "demo"
+
+acceptance_criteria:
+  - "Obsidian에 개발일지 자동 생성"
+  - "증거 파일 해시값 기록"
+  - "3초 내 동기화 완료"
+
+gates:
+  - id: "constitution"
+    type: "constitutional"
+    articles: ["P3"]  # 지식 자산화
+
+commands:
+  - id: "test-sync"
+    exec:
+      cmd: "python"
+      args: ["-c", "print('Obsidian sync demo executed successfully')"]
+    output: "demo_output.txt"
+
+  - id: "list-files"
+    exec:
+      cmd: "python"
+      args: ["-c", "import os; print('\\n'.join(os.listdir('.')))"]
+    output: "file_list.txt"
+
+evidence:
+  - "demo_output.txt"
+  - "file_list.txt"

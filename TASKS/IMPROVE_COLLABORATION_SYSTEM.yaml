@@ -1,0 +1,148 @@
+
+task_id: "IMPROVE-COLLAB-SYS-001"
+title: "에이전트 협업 시스템 개선: 파일 잠금 및 동기화 강화"
+description: |
+  여러 에이전트가 동시에 개발을 진행할 때 발생할 수 있는 충돌을 방지하고,
+  협업 효율성을 높이기 위해 파일 잠금(File Locking) 메커니즘을 도입하고,
+  실시간 동기화 기반을 마련한다.
+project: "dev-rules-starter-kit"
+priority: "high"
+tags: [refactor, collaboration, agent-system]
+status: "todo"
+
+acceptance_criteria:
+  - "agent_sync.py 스크립트가 생성되어야 한다."
+  - "agent_sync.py는 acquire_lock, release_lock 함수를 포함해야 한다."
+  - "task_executor.py는 작업 시작 시 acquire_lock을, 종료 시 release_lock을 호출해야 한다."
+  - "agent_sync_state.json에 'locks' 필드가 추가되어야 한다."
+  - "개선 작업 후 모든 기존 테스트가 통과해야 한다."
+
+commands:
+  - id: "01-create-sync-script"
+    description: "파일 잠금 로직을 담당할 agent_sync.py 스크립트를 생성합니다."
+    exec:
+      cmd: "write_file"
+      args:
+        file_path: "scripts/agent_sync.py"
+        content: |
+          import json
+          import os
+          from datetime import datetime
+          from pathlib import Path
+
+          AGENT_SYNC_STATE_FILE = Path(__file__).parent.parent / 'dev-context' / 'agent_sync_state.json'
+          LOCK_FILE_DIR = Path(__file__).parent.parent / '.project'
+
+          def get_state():
+              if not AGENT_SYNC_STATE_FILE.exists():
+                  return {'agents': [], 'locks': []}
+              with open(AGENT_SYNC_STATE_FILE, 'r') as f:
+                  return json.load(f)
+
+          def save_state(state):
+              with open(AGENT_SYNC_STATE_FILE, 'w') as f:
+                  json.dump(state, f, indent=2)
+
+          def acquire_lock(agent_id: str, task_id: str, files: list[str]) -> bool:
+              state = get_state()
+              timestamp = datetime.utcnow().isoformat()
+
+              for file in files:
+                  if any(lock['file'] == file for lock in state.get('locks', [])):
+                      print(f"[LOCK_ERROR] File '{file}' is already locked.")
+                      return False
+
+              for file in files:
+                  state.setdefault('locks', []).append({
+                      'file': file,
+                      'agent_id': agent_id,
+                      'task_id': task_id,
+                      'locked_at': timestamp
+                  })
+
+              save_state(state)
+              print(f"[LOCK_ACQUIRED] Agent '{agent_id}' locked {len(files)} file(s) for task '{task_id}'.")
+              return True
+
+          def release_lock(agent_id: str, task_id: str):
+              state = get_state()
+
+              initial_lock_count = len(state.get('locks', []))
+              state['locks'] = [
+                  lock for lock in state.get('locks', [])
+                  if not (lock['agent_id'] == agent_id and lock['task_id'] == task_id)
+              ]
+              final_lock_count = len(state['locks'])
+
+              if initial_lock_count > final_lock_count:
+                  save_state(state)
+                  print(f"[LOCK_RELEASED] Agent '{agent_id}' released locks for task '{task_id}'.")
+              else:
+                  print(f"[LOCK_INFO] No locks found for agent '{agent_id}' and task '{task_id}' to release.")
+
+  - id: "02-integrate-task-executor"
+    description: "task_executor.py에 파일 잠금/해제 로직을 통합합니다."
+    exec:
+      cmd: "replace"
+      args:
+        file_path: "scripts/task_executor.py"
+        old_string: "def main(task_file, plan_mode):"
+        new_string: |
+          from scripts.agent_sync import acquire_lock, release_lock
+          import uuid
+
+          AGENT_ID = f"agent-{str(uuid.uuid4())[:8]}"
+
+          def main(task_file, plan_mode):
+              # ... (rest of the function)
+
+  - id: "03-integrate-locking-logic"
+    description: "task_executor.py의 메인 실행 로직에 잠금 획득 및 해제 코드를 추가합니다."
+    exec:
+      cmd: "replace"
+      args:
+        file_path: "scripts/task_executor.py"
+        old_string: "task = load_task(task_file)"
+        new_string: |
+          task = load_task(task_file)
+          task_id = task.get('task_id', 'unknown_task')
+
+          # Extract files to be locked from evidence and commands
+          files_to_lock = task.get('evidence', [])
+          for command in task.get('commands', []):
+              if command.get('exec', {}).get('cmd') in ['write_file', 'replace']:
+                  file_path = command.get('exec', {}).get('args', {}).get('file_path')
+                  if file_path and file_path not in files_to_lock:
+                      files_to_lock.append(file_path)
+
+          if not plan_mode and files_to_lock:
+              if not acquire_lock(AGENT_ID, task_id, files_to_lock):
+                  print(f"Could not acquire lock for task {task_id}. Aborting.")
+                  return
+
+          try:
+              # ... (original code continues)
+              if plan_mode:
+                  # ...
+              else:
+                  # ...
+          finally:
+              if not plan_mode and files_to_lock:
+                  release_lock(AGENT_ID, task_id)
+
+  - id: "04-verify-changes"
+    description: "변경 사항이 적용된 후, 기존 테스트를 실행하여 시스템 안정성을 검증합니다."
+    exec:
+      cmd: "run_shell_command"
+      args:
+        command: "pytest tests/"
+
+evidence:
+  - "scripts/agent_sync.py"
+  - "scripts/task_executor.py"
+  - "dev-context/agent_sync_state.json"
+  - "TASKS/IMPROVE_COLLABORATION_SYSTEM.yaml"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P4", "P5"]

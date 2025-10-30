@@ -1,0 +1,232 @@
+name: Test Coverage Automation
+
+on:
+  push:
+    branches: [ main, develop, 'tier1/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test-coverage:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Needed for git history analysis
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest-cov coverage[toml] pytest-json-report
+
+    - name: Run tests with coverage
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+        OBSIDIAN_ENABLED: false  # Disable Obsidian for CI
+      run: |
+        python -X utf8 -m pytest tests/ \
+          --cov=scripts \
+          --cov=orchestrator \
+          --cov-report=json:coverage.json \
+          --cov-report=html:htmlcov \
+          --cov-report=term-missing \
+          --json-report \
+          --json-report-file=test-results.json \
+          -v
+
+    - name: Check coverage threshold (P8 requirement)
+      id: coverage-check
+      run: |
+        python -c "
+        import json
+
+        # Load coverage data
+        with open('coverage.json', 'r') as f:
+            data = json.load(f)
+
+        # Extract total coverage percentage
+        total_coverage = data['totals']['percent_covered']
+
+        # P8 requirement: >= 90% coverage
+        THRESHOLD = 90.0
+
+        print(f'Total Coverage: {total_coverage:.1f}%')
+        print(f'Threshold: {THRESHOLD}%')
+
+        if total_coverage >= THRESHOLD:
+            print(f'✅ Coverage check PASSED')
+            exit(0)
+        else:
+            print(f'❌ Coverage check FAILED')
+            print(f'Coverage {total_coverage:.1f}% is below required {THRESHOLD}%')
+            exit(1)
+        "
+
+    - name: Generate coverage badge
+      if: github.ref == 'refs/heads/main'
+      run: |
+        python -c "
+        import json
+
+        # Load coverage data
+        with open('coverage.json', 'r') as f:
+            data = json.load(f)
+
+        total = data['totals']['percent_covered']
+
+        # Determine badge color
+        if total >= 90:
+            color = 'brightgreen'
+        elif total >= 80:
+            color = 'green'
+        elif total >= 70:
+            color = 'yellow'
+        elif total >= 60:
+            color = 'orange'
+        else:
+            color = 'red'
+
+        # Generate badge JSON
+        badge = {
+            'schemaVersion': 1,
+            'label': 'coverage',
+            'message': f'{total:.1f}%',
+            'color': color
+        }
+
+        with open('coverage-badge.json', 'w') as f:
+            json.dump(badge, f, indent=2)
+        "
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report-${{ matrix.python-version }}
+        path: |
+          coverage.json
+          htmlcov/
+          test-results.json
+          coverage-badge.json
+
+    - name: Comment PR with coverage
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+
+          // Read coverage data
+          const coverageData = JSON.parse(fs.readFileSync('coverage.json', 'utf8'));
+          const testResults = JSON.parse(fs.readFileSync('test-results.json', 'utf8'));
+
+          const totalCoverage = coverageData.totals.percent_covered;
+          const threshold = 90.0;
+          const passed = totalCoverage >= threshold;
+
+          // Create comment body
+          const body = `## 📊 Test Coverage Report (Python ${{ matrix.python-version }})
+
+          ### Coverage: ${totalCoverage.toFixed(1)}% ${passed ? '✅' : '❌'}
+
+          | Metric | Value |
+          |--------|-------|
+          | Lines Covered | ${coverageData.totals.covered_lines} / ${coverageData.totals.num_statements} |
+          | Branches Covered | ${coverageData.totals.covered_branches || 'N/A'} / ${coverageData.totals.num_branches || 'N/A'} |
+          | Tests Passed | ${testResults.summary.passed} / ${testResults.summary.total} |
+          | Test Duration | ${testResults.duration.toFixed(2)}s |
+
+          ### Constitution Compliance
+          - **P8 (Test-First)**: ${passed ? '✅ PASSED' : '❌ FAILED'} - Requires ≥90% coverage
+          - **P6 (Quality Gate)**: ${passed ? '✅ PASSED' : '⚠️ At Risk'}
+
+          ${!passed ? `
+          ### ⚠️ Action Required
+          Coverage is below the required 90% threshold. Please add more tests to meet P8 requirements.
+          ` : ''}
+
+          <details>
+          <summary>Files with Low Coverage</summary>
+
+          | File | Coverage |
+          |------|----------|
+          ${Object.entries(coverageData.files)
+            .filter(([_, data]) => data.summary.percent_covered < 80)
+            .sort((a, b) => a[1].summary.percent_covered - b[1].summary.percent_covered)
+            .slice(0, 10)
+            .map(([file, data]) => `| ${file.replace(/\\/g, '/')} | ${data.summary.percent_covered.toFixed(1)}% |`)
+            .join('\n')}
+
+          </details>`;
+
+          // Post comment
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+    - name: Update coverage in RUNS/metrics.json
+      if: github.ref == 'refs/heads/main'
+      run: |
+        python -c "
+        import json
+        from pathlib import Path
+        from datetime import datetime
+
+        # Load current coverage
+        with open('coverage.json', 'r') as f:
+            coverage_data = json.load(f)
+
+        # Update metrics file
+        metrics_file = Path('RUNS/metrics.json')
+        metrics_file.parent.mkdir(parents=True, exist_ok=True)
+
+        if metrics_file.exists():
+            with open(metrics_file, 'r') as f:
+                metrics = json.load(f)
+        else:
+            metrics = {}
+
+        # Update metrics
+        metrics.update({
+            'test_coverage': coverage_data['totals']['percent_covered'],
+            'coverage_timestamp': datetime.now().isoformat(),
+            'total_tests': len(coverage_data['files']),
+            'python_version': '${{ matrix.python-version }}'
+        })
+
+        # Save updated metrics
+        with open(metrics_file, 'w') as f:
+            json.dump(metrics, f, indent=2)
+
+        print(f'Updated metrics with coverage: {metrics[\"test_coverage\"]:.1f}%')
+        "
+
+    - name: Fail if coverage below threshold
+      if: steps.coverage-check.outcome == 'failure'
+      run: exit 1

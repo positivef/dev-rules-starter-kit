@@ -270,11 +270,38 @@ OBSIDIAN_ENABLED=true
 PROJECT_NAME=MyProject
 ```
 
-### Automatic sync triggers
+### Automatic Git Hook Sync (Installed)
+
+**Status**: âœ… Installed and active
+
+Auto-syncs to Obsidian on every commit when:
+- 3+ files changed
+- Feature commits (feat:, feature:, implement, add)
+- Bug fixes (fix:, bug:, resolve)
+- Refactoring (refactor:, cleanup)
+- Documentation (docs:, analyze, analysis)
+
+**Commands**:
+```bash
+# Check installation
+python scripts/install_obsidian_auto_sync.py --check
+
+# Reinstall if needed
+python scripts/install_obsidian_auto_sync.py
+
+# Uninstall
+python scripts/install_obsidian_auto_sync.py --uninstall
+```
+
+**How it works**:
+1. Commit your changes: `git commit -m "feat: add feature"`
+2. Post-commit hook automatically runs
+3. Development log created in `ê°œë°œì¼ì§€/YYYY-MM-DD_ìž‘ì—…ëª….md`
+4. No manual action needed
+
+### Manual sync triggers
 - TaskExecutor execution completion
-- 3+ file changes
-- Major feature completion
-- Bug fixes (MEDIUM+ severity)
+- Major architectural changes
 
 ### Knowledge structure
 - `ê°œë°œì¼ì§€/`: Daily development logs
@@ -363,15 +390,15 @@ pre-commit install
 - **Lock status CLI**: use python scripts/agent_sync_status.py to list active locks or python scripts/agent_sync_status.py --agent codex --task TASK-123 --files src/app.py to preflight conflicts.
 
 ## Collaboration Workflow (2025-10-29)
-1. python scripts/multi_agent_sync.py list·Î ÇöÀç ÄÚµð³×ÀÌ¼Ç »óÅÂ È®ÀÎ
-2. python scripts/agent_sync_status.py / --agent ¡¦ --files ¡¦·Î Àá±Ý Ãæµ¹ ¿©ºÎ ¼±Á¡
-3. YAML °è¾à¿¡ Evidence/Commands·Î ÆíÁý ÆÄÀÏÀ» ¸ðµÎ ±âÀç (TaskExecutor°¡ ÀÚµ¿ Àá±Ý)
-4. ½ÇÇà Àü python scripts/preflight_checks.py (ÇÊ¿ä ½Ã --quick, --only-handoff)
-5. ÇÚµå¿ÀÇÁ ½Ã Àá±Ý ÇØÁ¦ ¹× docs/COLLAB_LOCKING_GUIDE.md Âü°í »çÇ×À» ÇÔ²² Àü´Þ
+1. python scripts/multi_agent_sync.py listï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+2. python scripts/agent_sync_status.py / --agent ï¿½ï¿½ --files ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+3. YAML ï¿½ï¿½à¿¡ Evidence/Commandsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (TaskExecutorï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½)
+4. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ python scripts/preflight_checks.py (ï¿½Ê¿ï¿½ ï¿½ï¿½ --quick, --only-handoff)
+5. ï¿½Úµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ docs/COLLAB_LOCKING_GUIDE.md ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-> »ó¼¼ ÀýÂ÷¿Í Ã¼Å©¸®½ºÆ®´Â docs/COLLAB_LOCKING_GUIDE.md¿¡ Á¤¸®µÇ¾î ÀÖÀ¸¸ç, Obsidian ½ÌÅ© ½Ã ÇØ´ç ¹®¼­¸¦ °øÀ¯ÇÏ¼¼¿ä.
+> ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ docs/COLLAB_LOCKING_GUIDE.mdï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Obsidian ï¿½ï¿½Å© ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
 
-- ºü¸¥ Á¡°Ë: python scripts/lock_dashboard.py --agent <you> --files <paths>¸¦ »ç¿ëÇØ Àá±Ý/Ãæµ¹ ÇöÈ²À» ÇÑ ¹ø¿¡ È®ÀÎÇÏ°í, ÇÊ¿ä ½Ã gent_sync_status.py¿Í º´ÇàÇÏ¼¼¿ä.
+- ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: python scripts/lock_dashboard.py --agent <you> --files <paths>ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½/ï¿½æµ¹ ï¿½ï¿½È²ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½Ê¿ï¿½ ï¿½ï¿½ gent_sync_status.pyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
 
-- Streamlit º¸±â: `streamlit run scripts/lock_dashboard_streamlit.py`·Î Àá±Ý/Ãæµ¹ ÇöÈ²À» ½Ã°¢ÀûÀ¸·Î È®ÀÎÇÏ¼¼¿ä.
-- Preflight ¿É¼Ç: `python scripts/preflight_checks.py --extra "tests/test_session_ecosystem.py"` Ã³·³ Ãß°¡ Å×½ºÆ®¸¦ ¿¬°áÇÏ°Å³ª `--skip-handoff`, `--only-handoff`·Î ¼±ÅÃ ½ÇÇàÇÒ ¼ö ÀÖ½À´Ï´Ù.
+- Streamlit ï¿½ï¿½ï¿½ï¿½: `streamlit run scripts/lock_dashboard_streamlit.py`ï¿½ï¿½ ï¿½ï¿½ï¿½/ï¿½æµ¹ ï¿½ï¿½È²ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
+- Preflight ï¿½É¼ï¿½: `python scripts/preflight_checks.py --extra "tests/test_session_ecosystem.py"` Ã³ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°Å³ï¿½ `--skip-handoff`, `--only-handoff`ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.

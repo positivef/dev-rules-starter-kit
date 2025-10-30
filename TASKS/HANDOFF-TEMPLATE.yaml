@@ -1,0 +1,166 @@
+# AI Agent Handoff Contract Template
+# Constitution-based handoff protocol for multi-agent collaboration
+# Enforces P1 (YAML First), P2 (Evidence), P3 (Knowledge Asset)
+
+task_id: "HANDOFF-{YYYY-MM-DD-HH-MM}"
+title: "AI Agent Handoff: {from_agent} → {to_agent}"
+category: "handoff"
+priority: "critical"
+constitution_version: "1.0.0"
+
+metadata:
+  from_agent: "{sender_name}"  # e.g., "Codex", "Claude", "Gemini"
+  to_agent: "{receiver_name}"
+  handoff_type: "task_completion"  # or "context_switch", "emergency", "scheduled"
+  session_id: "{uuid}"
+  parent_task: "{original_task_id}"  # Link to the task being handed off
+
+# Constitution Gates - Must pass before handoff
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P3", "P7"]
+    mandatory: true
+
+  - type: "context_validation"
+    checks:
+      - "context_hash_match"
+      - "git_status_clean"
+      - "tests_passing"
+
+  - type: "quality"
+    metrics:
+      - test_coverage: 80
+      - constitution_compliance: 90
+      - hallucination_check: true
+
+# Pre-handoff validation
+pre_checks:
+  - id: "01-context-hash"
+    exec: ["python", "scripts/context_provider.py", "print-hash"]
+    expect: "hash_recorded"
+
+  - id: "02-git-status"
+    exec: ["git", "status", "--porcelain"]
+    expect: "clean_or_documented"
+
+  - id: "03-tests"
+    exec: ["pytest", "tests/", "-q", "--tb=short"]
+    expect: "all_passed"
+
+  - id: "04-constitution"
+    exec: ["python", "scripts/constitutional_validator.py"]
+    expect: "compliance_achieved"
+
+# Main handoff execution
+commands:
+  - id: "10-save-context"
+    desc: "Capture current context state"
+    exec:
+      cmd: "python"
+      args: ["scripts/context_provider.py", "save-snapshot",
+             "--session", "{session_id}"]
+
+  - id: "11-collect-evidence"
+    desc: "Gather work evidence"
+    exec:
+      cmd: "python"
+      args: ["scripts/automatic_evidence_tracker.py",
+             "--task", "{parent_task}",
+             "--output", "RUNS/handoffs/evidence_{timestamp}.json"]
+
+  - id: "12-generate-report"
+    desc: "Create handoff report"
+    exec:
+      cmd: "python"
+      args: ["scripts/create_handoff_report.py",
+             "--author", "{from_agent}",
+             "--summary", "{work_summary}",
+             "--test-results", "{test_results}",
+             "--instructions", "{next_steps}",
+             "--context-hash", "{context_hash}"]
+
+  - id: "13-sync-obsidian"
+    desc: "Sync to knowledge base"
+    exec:
+      cmd: "python"
+      args: ["scripts/obsidian_bridge.py",
+             "--type", "handoff",
+             "--file", "HANDOFF_REPORT.md",
+             "--tags", "handoff,{from_agent},{to_agent}"]
+
+  - id: "14-update-agent-board"
+    desc: "Update multi-agent sync board"
+    exec:
+      cmd: "python"
+      args: ["scripts/multi_agent_sync.py",
+             "update-status",
+             "{to_agent}",
+             "Received handoff from {from_agent}",
+             "--context-hash", "{context_hash}"]
+
+  - id: "15-notify"
+    desc: "Send notifications"
+    exec:
+      cmd: "python"
+      args: ["scripts/notification_utils.py",
+             "--event", "handoff_complete",
+             "--from", "{from_agent}",
+             "--to", "{to_agent}"]
+
+# Post-handoff validation
+post_checks:
+  - id: "20-verify-report"
+    exec: ["test", "-f", "HANDOFF_REPORT.md"]
+
+  - id: "21-verify-archive"
+    exec: ["test", "-f", "RUNS/handoffs/HANDOFF_{timestamp}.md"]
+
+  - id: "22-verify-obsidian"
+    exec: ["python", "scripts/obsidian_bridge.py", "--verify-last-sync"]
+
+# Evidence collection
+evidence:
+  primary:
+    - "HANDOFF_REPORT.md"
+    - "RUNS/handoffs/HANDOFF_{timestamp}.md"
+    - "RUNS/handoffs/evidence_{timestamp}.json"
+
+  context:
+    - "context_hash.txt"
+    - "git_commit.txt"
+    - "test_results.txt"
+
+  obsidian:
+    - "sync_confirmation.json"
+    - "knowledge_link.txt"
+
+# Rollback strategy
+rollback:
+  enabled: true
+  triggers:
+    - "context_hash_mismatch"
+    - "test_failure"
+    - "constitution_violation"
+
+  actions:
+    - id: "restore-context"
+      exec: ["python", "scripts/context_provider.py", "restore-snapshot"]
+
+    - id: "notify-failure"
+      exec: ["python", "scripts/notification_utils.py", "--event", "handoff_failed"]
+
+# Success criteria
+acceptance_criteria:
+  - "Handoff report created and archived"
+  - "Context hash verified and matched"
+  - "All tests passing"
+  - "Constitution compliance ≥90%"
+  - "Obsidian sync confirmed"
+  - "Next agent notified"
+
+# Template variables (filled at runtime)
+variables:
+  timestamp: "{{ datetime.now().isoformat() }}"
+  context_hash: "{{ context_provider.get_hash() }}"
+  git_commit: "{{ git.rev_parse('HEAD') }}"
+  test_results: "{{ pytest.get_summary() }}"

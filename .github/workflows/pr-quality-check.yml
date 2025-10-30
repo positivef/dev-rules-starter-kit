@@ -1,0 +1,158 @@
+name: PR Quality Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  analyze-pr-description:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # No external dependencies needed
+
+      - name: Analyze PR description
+        id: analyze
+        run: |
+          PR_BODY="${{ github.event.pull_request.body }}"
+
+          if [ -z "$PR_BODY" ] || [ "$PR_BODY" = "null" ]; then
+            echo "score=0" >> $GITHUB_OUTPUT
+            echo "status=empty" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Run analysis
+          python scripts/prompt_feedback_cli.py "$PR_BODY" --format json > analysis.json || true
+
+          if [ -f analysis.json ]; then
+            SCORE=$(python -c "import json; data=json.load(open('analysis.json')); print(int(data.get('overall_score', 0)))")
+            echo "score=$SCORE" >> $GITHUB_OUTPUT
+
+            if [ "$SCORE" -ge 80 ]; then
+              echo "status=excellent" >> $GITHUB_OUTPUT
+            elif [ "$SCORE" -ge 65 ]; then
+              echo "status=good" >> $GITHUB_OUTPUT
+            elif [ "$SCORE" -ge 50 ]; then
+              echo "status=acceptable" >> $GITHUB_OUTPUT
+            else
+              echo "status=needs_improvement" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "score=0" >> $GITHUB_OUTPUT
+            echo "status=error" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR (Empty)
+        if: steps.analyze.outputs.status == 'empty'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## PR Description Quality Check
+
+              ⚠️ **No PR description provided**
+
+              Please add a description that includes:
+              - What changes were made
+              - Why the changes were necessary
+              - How to test the changes
+              - Any relevant context or background
+
+              A good PR description helps reviewers understand your changes quickly!`
+            })
+
+      - name: Comment on PR (Needs Improvement)
+        if: steps.analyze.outputs.status == 'needs_improvement'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const score = '${{ steps.analyze.outputs.score }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## PR Description Quality Check
+
+              📊 **Quality Score: ${score}/100** (Needs Improvement)
+
+              ### Suggestions for improvement:
+              - Add more specific details about what changed
+              - Explain WHY the changes were made, not just WHAT
+              - Include test instructions or scenarios
+              - Add relevant screenshots or examples if applicable
+
+              ### Good PR description template:
+              \`\`\`markdown
+              ## Summary
+              Brief description of changes
+
+              ## Motivation
+              Why these changes are necessary
+
+              ## Changes
+              - Specific change 1
+              - Specific change 2
+
+              ## Testing
+              How to verify the changes work
+
+              ## Screenshots (if applicable)
+              Visual proof of changes
+              \`\`\`
+
+              *This is an automated check to help improve PR quality*`
+            })
+
+      - name: Comment on PR (Good/Excellent)
+        if: steps.analyze.outputs.status == 'good' || steps.analyze.outputs.status == 'excellent'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const score = '${{ steps.analyze.outputs.score }}';
+            const status = '${{ steps.analyze.outputs.status }}';
+            const emoji = status === 'excellent' ? '🌟' : '✅';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## PR Description Quality Check
+
+              ${emoji} **Quality Score: ${score}/100** (${status === 'excellent' ? 'Excellent' : 'Good'})
+
+              ${status === 'excellent' ?
+                'Outstanding PR description! Clear, specific, and provides excellent context.' :
+                'Good PR description with adequate detail and context.'}
+
+              *This is an automated check to help maintain PR quality*`
+            })
+
+      - name: Set status check
+        if: always()
+        run: |
+          STATUS="${{ steps.analyze.outputs.status }}"
+          SCORE="${{ steps.analyze.outputs.score }}"
+
+          if [ "$STATUS" = "empty" ] || [ "$STATUS" = "needs_improvement" ]; then
+            echo "::warning::PR description quality could be improved (Score: $SCORE/100)"
+          else
+            echo "::notice::PR description quality is good (Score: $SCORE/100)"
+          fi

@@ -1,0 +1,81 @@
+task_id: "EXAMPLE-PROMPT-QUALITY-2025-10-30"
+title: "Example Task with Prompt Quality Validation"
+description: |
+  This is an example task showing how to use prompt quality gates
+  in your YAML contracts.
+
+# Pre-execution gates
+gates:
+  - type: "prompt_quality"
+    min_score: 70
+    dimensions:
+      clarity: 65
+      logic: 60
+      context: 60
+    description: "Ensure task description meets quality standards"
+    target: "{{description}}"
+
+  - type: "custom_script"
+    command: ["python", "scripts/prompt_feedback_cli.py"]
+    args: ["{{title}}", "--threshold", "60"]
+    description: "Validate title clarity"
+
+# Task phases
+phases:
+  - name: "analysis"
+    description: |
+      Analyze the codebase to understand current authentication implementation.
+      Focus on:
+      1. Current auth flow in src/auth/
+      2. Session management approach
+      3. Existing security measures
+
+    gates:
+      - type: "prompt_quality"
+        min_score: 75
+        target: "{{phases[0].description}}"
+
+  - name: "implementation"
+    description: "Implement OAuth 2.0 authentication with session management"
+
+    tasks:
+      - description: |
+          Add OAuth 2.0 provider configuration to settings.py with:
+          - Client ID and secret management
+          - Redirect URI configuration
+          - Scope definitions (profile, email)
+        quality_check: true
+
+# Execution commands
+commands:
+  - exec: ["python", "scripts/example_implementation.py"]
+    timeout: 300
+
+# Post-execution validation
+post_validation:
+  - type: "prompt_quality"
+    target: "commit_message"
+    min_score: 70
+    message: "Ensure commit message explains changes clearly"
+
+# Metadata
+metadata:
+  author: "dev-team"
+  priority: "high"
+  estimated_time: "2 hours"
+  prompt_quality_enforced: true
+
+# Learning notes
+notes: |
+  This task demonstrates prompt quality integration:
+
+  1. Pre-gates validate task description quality
+  2. Phase descriptions checked for clarity
+  3. Individual task descriptions can be validated
+  4. Post-validation ensures good commit messages
+
+  Benefits:
+  - Clearer task specifications
+  - Better team communication
+  - Improved knowledge transfer
+  - Higher quality documentation
