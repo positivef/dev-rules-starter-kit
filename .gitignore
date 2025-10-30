@@ -47,3 +47,27 @@ copilot-messages.log
 .DS_Store
 .project/attachments/files/**
 coverage.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.coverage
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+.history/
+
+# Project specific
+.env
+.smart_cache/
+RUNS/evidence/
+RUNS/sessions/
+RUNS/reports/
+RUNS/handoffs/
+RUNS/mcp_advice/
+RUNS/prompt_coach/
+RUNS/prompt_feedback/
+node_modules/
