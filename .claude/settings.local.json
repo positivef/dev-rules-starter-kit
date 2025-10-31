@@ -102,7 +102,10 @@
       "Bash(gitleaks version)",
       "Bash(source ~/.bashrc)",
       "Bash(timeout 30 gitleaks detect:*)",
-      "Bash(timeout 60 python:*)"
+      "Bash(timeout 60 python:*)",
+      "Bash(git stash pop:*)",
+      "Bash(git stash drop:*)",
+      "Bash(.gitignore)"
     ],
     "deny": [],
     "ask": []

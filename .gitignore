@@ -110,3 +110,7 @@ files/
 
 # Runtime logs
 RUNS/dev-assistant-*/
+
+# Validation reports
+validation_report.html
+*_report.html
