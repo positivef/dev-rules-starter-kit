@@ -114,13 +114,13 @@ def analyze_with_gemini(api_key: str):
 
 ## Trust Score Pattern Validation
 ### cc-sdd (Trust 8.3)
-- ✅ Correct / ❌ Issues: [details]
+- [OK] Correct / [FAIL] Issues: [details]
 
 ### Hexagon (Trust 7.6)
-- ✅ Correct / ❌ Issues: [details]
+- [OK] Correct / [FAIL] Issues: [details]
 
 ### GrowthBook (Trust 8.0)
-- ✅ Correct / ❌ Issues: [details]
+- [OK] Correct / [FAIL] Issues: [details]
 
 ## Critical Bugs (Must Fix)
 [List with file:line]
@@ -144,7 +144,7 @@ def analyze_with_gemini(api_key: str):
 **Focus**: Be thorough but concise. Flag only real issues, not style preferences."""
 
     print("🤖 Gemini 분석 시작...")
-    print(f"📊 분석 대상: {len(files)} 파일")
+    print(f"[STATUS] 분석 대상: {len(files)} 파일")
     print("⏳ 처리 중...\n")
 
     try:
@@ -156,8 +156,8 @@ def analyze_with_gemini(api_key: str):
         output_file.parent.mkdir(exist_ok=True)
         output_file.write_text(report, encoding="utf-8")
 
-        print("✅ 분석 완료!")
-        print(f"📄 리포트: {output_file}\n")
+        print("[OK] 분석 완료!")
+        print(f"[INFO] 리포트: {output_file}\n")
         print("=" * 60)
         print(report)
         print("=" * 60)
@@ -165,7 +165,7 @@ def analyze_with_gemini(api_key: str):
         return report
 
     except Exception as e:
-        print(f"❌ 오류 발생: {e}")
+        print(f"[FAIL] 오류 발생: {e}")
         return None
 
 
@@ -178,7 +178,7 @@ def main():
     # API 키 확인
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        print("❌ 오류: GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.")
+        print("[FAIL] 오류: GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.")
         print("\n설정 방법:")
         print("Windows: set GEMINI_API_KEY=your_api_key_here")
         print("또는 .env 파일에 추가\n")

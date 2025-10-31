@@ -524,7 +524,7 @@ class MultiStageVerificationFramework:
         self.stage_results.append(stage_3)
         if not stage_3.gate_passed:
             # Stage 3 실패 시 Stage 4에서 최적화 시도
-            print("⚠️ Stage 3 부분 통과. Stage 4에서 최적화 진행.")
+            print("[WARN] Stage 3 부분 통과. Stage 4에서 최적화 진행.")
 
         # Stage 4: Trade-off Optimization
         stage_4 = self.stage_4_optimize_tradeoffs(stage_3)

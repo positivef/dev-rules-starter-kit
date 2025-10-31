@@ -146,7 +146,7 @@ class ContextTracker:
         ]
 
         subprocess.run(cmd, capture_output=True)
-        print(f"✅ Auto-created handoff at {datetime.now().strftime('%H:%M:%S')}")
+        print(f"[OK] Auto-created handoff at {datetime.now().strftime('%H:%M:%S')}")
 
 
 class AutoContextFileWatcher(FileSystemEventHandler):
@@ -192,12 +192,12 @@ class AutoContextManager:
         self.observer = Observer()
         self.observer.schedule(event_handler, ".", recursive=True)
         self.observer.start()
-        print(f"🔍 Auto-context tracking started for {self.tracker.agent_name}")
+        print(f"[INFO] Auto-context tracking started for {self.tracker.agent_name}")
 
     def check_auto_handoff(self):
         """Check if it's time for auto handoff"""
         if time.time() - self.last_handoff > self.auto_handoff_interval:
-            print("\n⏰ Auto-handoff time reached (30 minutes)")
+            print("\n[TIME] Auto-handoff time reached (30 minutes)")
             self.tracker.auto_create_handoff("Continue from auto-checkpoint")
             self.last_handoff = time.time()
 
@@ -274,7 +274,7 @@ if __name__ == "__main__":
         tracker.auto_create_handoff(instructions)
     elif args.track_command:
         tracker.track_command(args.track_command)
-        print(f"✅ Tracked command: {args.track_command}")
+        print(f"[OK] Tracked command: {args.track_command}")
     elif args.watch:
         manager = AutoContextManager()
         manager.run()

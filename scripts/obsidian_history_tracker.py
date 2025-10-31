@@ -151,7 +151,7 @@ class ObsidianHistoryTracker:
         section = []
         section.append("<!-- HISTORY_START -->")
         section.append("\n---\n")
-        section.append("## 📝 Update History")
+        section.append("## [LOG] Update History")
         section.append("")
 
         # 요약 정보
@@ -183,7 +183,7 @@ class ObsidianHistoryTracker:
 
         # 신뢰도 지표
         section.append("")
-        section.append("### 📊 Reliability Indicators")
+        section.append("### [STATUS] Reliability Indicators")
         section.append("")
 
         update_count = history["update_count"]
@@ -277,14 +277,14 @@ class ObsidianHistoryTracker:
         total_files = len(history_index)
         total_updates = sum(h["update_count"] for h in history_index.values())
 
-        report.append("## 📊 Statistics")
+        report.append("## [STATUS] Statistics")
         report.append("")
         report.append(f"- **Total Files Tracked**: {total_files}")
         report.append(f"- **Total Updates**: {total_updates}")
         report.append("")
 
         # 가장 많이 업데이트된 파일 Top 10
-        report.append("## 🔥 Most Updated Files")
+        report.append("## [CRITICAL] Most Updated Files")
         report.append("")
 
         sorted_files = sorted(history_index.items(), key=lambda x: x[1]["update_count"], reverse=True)[:10]

@@ -256,7 +256,7 @@ if __name__ == "__main__":
 def test():
     result = "완료"
     print(f"[OK] {result}")  # 이건 괜찮음
-    print("📝 Update History")  # 이건 문제됨
+    print("[LOG] Update History")  # 이건 문제됨
 """
 
     print("\n[TEST 1] Code with print(emoji):")
@@ -269,7 +269,7 @@ def test():
     result = "완료"
     print(f"[OK] {result}")
     # 이모지는 파일에만 쓰기
-    file.write_text("📝 Update History")
+    file.write_text("[LOG] Update History")
 """
 
     print("\n[TEST 2] Clean code:")

@@ -67,9 +67,9 @@ class CodexSession:
 
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode == 0:
-            print("✅ Handoff created successfully")
+            print("[OK] Handoff created successfully")
         else:
-            print(f"❌ Handoff creation failed: {result.stderr}")
+            print(f"[FAIL] Handoff creation failed: {result.stderr}")
 
     def get_context_hash(self):
         """Get current context hash"""
@@ -122,7 +122,7 @@ def update_status(status):
 
 # If running directly
 if __name__ == "__main__":
-    print("\n✅ Codex session initialized!")
+    print("\n[OK] Codex session initialized!")
     print("\nAvailable functions:")
     print("  - create_handoff(summary, instructions)")
     print("  - get_context_hash()")
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     print("  - update_status(status)")
 
     if _codex_session.instructions:
-        print("\n🎯 Current Task:")
+        print("\n[TASK] Current Task:")
         print(_codex_session.instructions)

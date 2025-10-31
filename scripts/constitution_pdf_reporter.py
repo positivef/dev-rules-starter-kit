@@ -389,11 +389,11 @@ class ConstitutionPDFReporter:
 
         # Key Achievements
         achievements = [
-            "✅ MCP Server implementation complete",
-            "✅ SessionManager with 30-minute checkpoints",
-            "✅ Obsidian 3-second synchronization",
-            "✅ 236 Streamlit components active",
-            "✅ Zero UTF-8 encoding errors",
+            "[OK] MCP Server implementation complete",
+            "[OK] SessionManager with 30-minute checkpoints",
+            "[OK] Obsidian 3-second synchronization",
+            "[OK] 236 Streamlit components active",
+            "[OK] Zero UTF-8 encoding errors",
         ]
         for achievement in achievements:
             story.append(Paragraph(achievement, self.styles["Normal"]))
@@ -414,11 +414,11 @@ class ConstitutionPDFReporter:
     def _get_status_emoji(self, compliance: float) -> str:
         """Get status emoji based on compliance percentage."""
         if compliance >= 95:
-            return "✅"
+            return "[OK]"
         elif compliance >= 80:
-            return "⚠️"
+            return "[WARN]"
         else:
-            return "❌"
+            return "[FAIL]"
 
     def _generate_recommendations(self, compliance_data: Dict[str, float]) -> List[str]:
         """Generate recommendations based on compliance data."""
@@ -494,11 +494,11 @@ class ConstitutionPDFReporter:
             "checkpoints": 3,
             "evidence_files": 12,
             "activities": [
-                {"time": "10:44:00", "name": "Session Start", "status": "✅", "duration": "0s"},
-                {"time": "10:44:05", "name": "TaskExecutor Run", "status": "✅", "duration": "15s"},
-                {"time": "10:44:20", "name": "Constitution Check", "status": "✅", "duration": "10s"},
-                {"time": "10:44:30", "name": "Deep Analysis", "status": "⚠️", "duration": "30s"},
-                {"time": "10:45:00", "name": "Obsidian Sync", "status": "✅", "duration": "3s"},
+                {"time": "10:44:00", "name": "Session Start", "status": "[OK]", "duration": "0s"},
+                {"time": "10:44:05", "name": "TaskExecutor Run", "status": "[OK]", "duration": "15s"},
+                {"time": "10:44:20", "name": "Constitution Check", "status": "[OK]", "duration": "10s"},
+                {"time": "10:44:30", "name": "Deep Analysis", "status": "[WARN]", "duration": "30s"},
+                {"time": "10:45:00", "name": "Obsidian Sync", "status": "[OK]", "duration": "3s"},
             ],
         }
 

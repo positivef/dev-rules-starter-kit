@@ -168,7 +168,7 @@ def create_handoff_report(author, summary, instructions, test_results, validate=
         if not all(validations.values()):
             print("[WARNING] Some validations failed:")
             for check, passed in validations.items():
-                status = "✅" if passed else "❌"
+                status = "[OK]" if passed else "[FAIL]"
                 print(f"  {status} {check}")
 
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -178,7 +178,7 @@ def create_handoff_report(author, summary, instructions, test_results, validate=
 
     warning_banner = ""
     if git_status != "Working directory is clean.":
-        warning_banner = "**⚠️ WARNING: Working tree contains uncommitted changes!**\n\n"
+        warning_banner = "**[WARN] WARNING: Working tree contains uncommitted changes!**\n\n"
 
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

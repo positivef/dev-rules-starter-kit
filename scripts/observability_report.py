@@ -196,7 +196,7 @@ def summarize_context() -> List[str]:
 def format_summary(limit: int) -> str:
     lines: List[str] = []
 
-    lines.append(f"📊 Dev Rules Observability Report — {datetime.now().isoformat(timespec='minutes')}")
+    lines.append(f"[STATUS] Dev Rules Observability Report — {datetime.now().isoformat(timespec='minutes')}")
     lines.append("\nAgent Sync Board:")
     board = load_agent_board()
     if board:

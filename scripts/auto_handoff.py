@@ -29,7 +29,7 @@ class AutoHandoff:
         # Load existing session if exists
         self.load_session()
 
-        print(f"📝 Auto-handoff enabled for {self.agent}")
+        print(f"[LOG] Auto-handoff enabled for {self.agent}")
         print("   Work will be automatically saved on exit")
 
     def detect_agent(self):
@@ -46,7 +46,7 @@ class AutoHandoff:
         """Add work item to track"""
         self.work_items.append({"time": datetime.now().isoformat(), "description": description})
         self.save_session()
-        print(f"✅ Tracked: {description}")
+        print(f"[OK] Tracked: {description}")
 
     def save_session(self):
         """Save current session state"""
@@ -85,7 +85,7 @@ class AutoHandoff:
         git_status = subprocess.run(["git", "status", "--short"], capture_output=True, text=True).stdout
 
         if git_status.strip():
-            print("⚠️  Uncommitted changes detected!")
+            print("[WARN]  Uncommitted changes detected!")
             commit = input("Commit changes before handoff? (y/n): ")
             if commit.lower() == "y":
                 message = input("Commit message: ")
@@ -93,7 +93,7 @@ class AutoHandoff:
                 subprocess.run(["git", "commit", "-m", message])
 
         # Get instructions for next agent
-        print("\n📝 Creating handoff report...")
+        print("\n[LOG] Creating handoff report...")
         instructions = input("Instructions for next agent (or Enter to skip): ")
         if not instructions:
             instructions = "Review completed work and continue development"
@@ -114,12 +114,12 @@ class AutoHandoff:
 
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode == 0:
-            print("✅ Handoff report created successfully!")
+            print("[OK] Handoff report created successfully!")
 
             # Clear session file
             self.session_file.unlink(missing_ok=True)
         else:
-            print("❌ Failed to create handoff report")
+            print("[FAIL] Failed to create handoff report")
 
         print("=" * 60)
 
@@ -164,7 +164,7 @@ def manual_handoff(instructions: str = "Continue development"):
     ]
 
     subprocess.run(cmd)
-    print("✅ Manual handoff created")
+    print("[OK] Manual handoff created")
 
 
 # Auto-initialize on import
@@ -191,4 +191,4 @@ if __name__ == "__main__":
                 break
             track(work)
 
-    print("\n✅ All work tracked. Handoff will be created on exit.")
+    print("\n[OK] All work tracked. Handoff will be created on exit.")

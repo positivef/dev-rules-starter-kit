@@ -192,11 +192,7 @@ class TokenOptimizer:
 
         # Check budget
         remaining = session["budget"] - session["usage"]
-        usage_percent = (
-            (session["usage"] / session["budget"]) * 100
-            if session["budget"] > 0
-            else float("inf")
-        )
+        usage_percent = (session["usage"] / session["budget"]) * 100 if session["budget"] > 0 else float("inf")
 
         # Generate warnings
         warnings = []
@@ -251,20 +247,14 @@ class TokenOptimizer:
             compressed = self._apply_aggressive_compression(compressed)
 
         compressed_length = len(compressed.split())
-        ratio = (
-            (original_length - compressed_length) / original_length
-            if original_length > 0
-            else 0.0
-        )
+        ratio = (original_length - compressed_length) / original_length if original_length > 0 else 0.0
 
         return compressed, round(ratio, 2)
 
     def _apply_aggressive_compression(self, text: str) -> str:
         """Apply aggressive compression strategies."""
         # Remove articles (a, an, the)
-        text = " ".join(
-            word for word in text.split() if word.lower() not in ["a", "an", "the"]
-        )
+        text = " ".join(word for word in text.split() if word.lower() not in ["a", "an", "the"])
 
         # Abbreviate common terms
         abbreviations = {
@@ -309,21 +299,14 @@ class TokenOptimizer:
         # Calculate statistics
         total_compressed = sum(1 for op in session["operations"] if op["compressed"])
         avg_compression = (
-            sum(
-                op["compression_ratio"]
-                for op in session["operations"]
-                if op["compression_ratio"]
-            )
-            / total_compressed
+            sum(op["compression_ratio"] for op in session["operations"] if op["compression_ratio"]) / total_compressed
             if total_compressed > 0
             else 0.0
         )
 
         # Estimate savings
         total_savings = sum(
-            int(op["tokens_used"] * op["compression_ratio"])
-            for op in session["operations"]
-            if op["compression_ratio"]
+            int(op["tokens_used"] * op["compression_ratio"]) for op in session["operations"] if op["compression_ratio"]
         )
 
         self._save_db()
@@ -374,11 +357,7 @@ class TokenOptimizer:
             if session["usage"] > session["budget"]:
                 budget_overruns += 1
 
-        avg_compression = (
-            total_compression_ratio / total_compression_ops
-            if total_compression_ops > 0
-            else 0.0
-        )
+        avg_compression = total_compression_ratio / total_compression_ops if total_compression_ops > 0 else 0.0
 
         return {
             "total_sessions": total_sessions,

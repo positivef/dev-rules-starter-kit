@@ -54,11 +54,11 @@ class AgentAutoInit:
     def read_handoff_report(self) -> bool:
         """Read and display previous handoff report"""
         if not self.handoff_file.exists():
-            print("\n⚠️  No HANDOFF_REPORT.md found")
+            print("\n[WARN] No HANDOFF_REPORT.md found")
             print("   Starting fresh session (no previous handoff)")
             return False
 
-        print("\n📄 Reading previous handoff report...")
+        print("\n[INFO] Reading previous handoff report...")
         print("-" * 50)
 
         with open(self.handoff_file, "r", encoding="utf-8") as f:
@@ -83,16 +83,16 @@ class AgentAutoInit:
             if "- **Latest Commit Hash:**" in content:
                 for line in content.split("\n"):
                     if "Latest Commit Hash:" in line:
-                        print(f"\n🔍 {line.strip()}")
+                        print(f"\n[INFO] {line.strip()}")
                     elif "Context Hash:" in line:
-                        print(f"🔍 {line.strip()}")
+                        print(f"[INFO] {line.strip()}")
 
         print("-" * 50)
         return True
 
     def sync_context(self):
         """Synchronize context hash"""
-        print("\n🔄 Synchronizing context...")
+        print("\n[SYNC] Synchronizing context...")
 
         try:
             result = subprocess.run(
@@ -101,15 +101,15 @@ class AgentAutoInit:
             self.context_hash = result.stdout.strip()
 
             if self.context_hash and not self.context_hash.startswith("N/A"):
-                print(f"✅ Context hash: {self.context_hash[:16]}...")
+                print(f"[OK] Context hash: {self.context_hash[:16]}...")
             else:
-                print("⚠️  Could not retrieve context hash")
+                print("[WARN]  Could not retrieve context hash")
         except Exception as e:
-            print(f"⚠️  Context sync failed: {e}")
+            print(f"[WARN]  Context sync failed: {e}")
 
     def update_agent_board(self):
         """Update multi-agent sync board"""
-        print("\n📊 Updating agent sync board...")
+        print("\n[STATUS] Updating agent sync board...")
 
         try:
             cmd = [
@@ -124,31 +124,31 @@ class AgentAutoInit:
                 cmd.extend(["--context-hash", self.context_hash])
 
             subprocess.run(cmd, capture_output=True, timeout=5)
-            print(f"✅ Agent board updated: {self.agent_name} is active")
+            print(f"[OK] Agent board updated: {self.agent_name} is active")
         except Exception as e:
-            print(f"⚠️  Agent board update failed: {e}")
+            print(f"[WARN]  Agent board update failed: {e}")
 
     def check_uncommitted_changes(self):
         """Check for uncommitted git changes"""
-        print("\n🔍 Checking git status...")
+        print("\n[INFO] Checking git status...")
 
         try:
             result = subprocess.run(["git", "status", "--short"], capture_output=True, text=True, timeout=5)
 
             if result.stdout.strip():
-                print("⚠️  Uncommitted changes detected:")
+                print("[WARN]  Uncommitted changes detected:")
                 for line in result.stdout.strip().split("\n")[:5]:
                     print(f"   {line}")
                 if len(result.stdout.strip().split("\n")) > 5:
                     print("   ... and more")
             else:
-                print("✅ Working directory clean")
+                print("[OK] Working directory clean")
         except Exception:
-            print("⚠️  Could not check git status")
+            print("[WARN]  Could not check git status")
 
     def show_quick_commands(self):
         """Display agent-specific quick commands"""
-        print("\n📚 Quick Commands:")
+        print("\n[HELP] Quick Commands:")
         print("-" * 50)
 
         if self.agent_name == "Claude":
@@ -181,13 +181,13 @@ class AgentAutoInit:
         # Show instructions if found
         if self.instructions:
             print("\n" + "=" * 60)
-            print("🎯 YOUR TASK:")
+            print("[TASK] YOUR TASK:")
             print(self.instructions)
             print("=" * 60)
 
         self.show_quick_commands()
 
-        print(f"\n✅ {self.agent_name} initialization complete!")
+        print(f"\n[OK] {self.agent_name} initialization complete!")
         print("Ready to continue work.\n")
 
         return handoff_exists

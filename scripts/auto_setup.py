@@ -44,7 +44,7 @@ class AutoSetup:
         self.run_initial_tests()
 
         print()
-        print("✅ 설정 완료!")
+        print("[OK] 설정 완료!")
         print()
         self.print_next_steps()
 
@@ -55,7 +55,7 @@ class AutoSetup:
         # Python 버전 확인
         version = sys.version_info
         if version.major < 3 or (version.major == 3 and version.minor < 8):
-            print(f"⚠️  Python {version.major}.{version.minor} 감지됨")
+            print(f"[WARN]  Python {version.major}.{version.minor} 감지됨")
             print("   Python 3.8 이상을 권장합니다.")
         else:
             print(f"✓ Python {version.major}.{version.minor} 확인")
@@ -65,7 +65,7 @@ class AutoSetup:
             subprocess.run(["git", "--version"], capture_output=True, check=True)
             print("✓ Git 설치 확인")
         except Exception:
-            print("⚠️  Git이 설치되어 있지 않습니다.")
+            print("[WARN]  Git이 설치되어 있지 않습니다.")
 
     def create_directories(self):
         """필요한 디렉토리 생성."""
@@ -291,7 +291,7 @@ htmlcov/
                 missing.append(package)
 
         if missing:
-            print(f"⚠️  누락된 패키지: {', '.join(missing)}")
+            print(f"[WARN]  누락된 패키지: {', '.join(missing)}")
             response = input("설치하시겠습니까? (y/n): ")
             if response.lower() == "y":
                 subprocess.run([sys.executable, "-m", "pip", "install"] + missing)
@@ -309,9 +309,9 @@ htmlcov/
             if result.returncode == 0:
                 print("✓ tier1_cli 정상 작동")
             else:
-                print("⚠️  tier1_cli 실행 오류")
+                print("[WARN]  tier1_cli 실행 오류")
         except Exception as e:
-            print(f"⚠️  테스트 실패: {e}")
+            print(f"[WARN]  테스트 실패: {e}")
 
     def print_next_steps(self):
         """다음 단계 안내."""

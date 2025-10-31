@@ -72,7 +72,7 @@ class GeminiHandoffSession:
 
     def _show_gemini_features(self):
         """Display Gemini-specific features"""
-        print("\n🚀 Gemini Enhanced Features:")
+        print("\n[DEPLOY] Gemini Enhanced Features:")
         print("  • AI-powered code analysis")
         print("  • Cross-verification with multiple sources")
         print("  • Intelligent handoff recommendations")
@@ -80,21 +80,21 @@ class GeminiHandoffSession:
 
     def analyze_codebase(self):
         """Gemini's enhanced codebase analysis"""
-        print("\n🔍 Running Gemini deep analysis...")
+        print("\n[INFO] Running Gemini deep analysis...")
 
         # Run deep analyzer
         result = subprocess.run(["python", "scripts/deep_analyzer.py"], capture_output=True, text=True)
 
         if result.returncode == 0:
-            print("✅ Analysis complete")
+            print("[OK] Analysis complete")
             return result.stdout
         else:
-            print("⚠️ Analysis failed")
+            print("[WARN] Analysis failed")
             return None
 
     def create(self, summary: str, instructions: str, verify=True):
         """Create handoff with Gemini verification"""
-        print("\n📝 Creating Gemini handoff report...")
+        print("\n[LOG] Creating Gemini handoff report...")
 
         # Run tests if verify is True
         test_results = "Tests not run"
@@ -120,10 +120,10 @@ class GeminiHandoffSession:
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode == 0:
-            print("✅ Handoff created successfully")
+            print("[OK] Handoff created successfully")
             self._update_gemini_history(summary)
         else:
-            print("❌ Handoff creation failed")
+            print("[FAIL] Handoff creation failed")
 
     def _update_gemini_history(self, summary):
         """Update Gemini session history"""
@@ -152,7 +152,7 @@ class GeminiHandoffSession:
         # Check if verify_with_gemini.py exists
         verify_script = Path("scripts/verify_with_gemini.py")
         if not verify_script.exists():
-            print("⚠️ Gemini API verification not configured")
+            print("[WARN] Gemini API verification not configured")
             return None
 
         print("\n🤖 Verifying with Gemini API...")
@@ -226,7 +226,7 @@ def session_info():
 
 # If running directly
 if __name__ == "__main__":
-    print("\n✅ Gemini session initialized!")
+    print("\n[OK] Gemini session initialized!")
     print("\nAvailable functions:")
     print("  - create_handoff(summary, instructions)")
     print("  - analyze() - Deep codebase analysis")
@@ -235,5 +235,5 @@ if __name__ == "__main__":
     print("  - session_info() - Current session details")
 
     if gemini.instructions:
-        print("\n🎯 Current Task:")
+        print("\n[TASK] Current Task:")
         print(gemini.instructions[:200] + "..." if len(gemini.instructions) > 200 else gemini.instructions)

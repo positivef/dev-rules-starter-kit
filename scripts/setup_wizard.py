@@ -331,7 +331,7 @@ class SetupWizard:
     def display_next_steps(self) -> None:
         """Display next steps for the user."""
         print("\n" + "=" * 60)
-        print(" Setup Complete! 🎉")
+        print(" Setup Complete! [COMPLETE]")
         print("=" * 60)
         print("\nNext steps:")
         print("1. Test your setup:")
@@ -343,7 +343,7 @@ class SetupWizard:
         print("\n4. View all commands:")
         print("   python scripts/tier1_cli.py --help")
         print("\nFor more help, see docs/README.md")
-        print("\nHappy coding! 🚀\n")
+        print("\nHappy coding! [DEPLOY]\n")
 
     def run(self) -> bool:
         """Run the setup wizard.

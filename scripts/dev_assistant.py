@@ -928,7 +928,7 @@ class FileChangeProcessor:
                     return
 
                 # Log classification info
-                mode_badge = "🔍 DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
+                mode_badge = "[INFO] DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
                 self._logger.debug(
                     f"[{mode_badge}] Criticality: {classification.criticality_score:.2f} - {classification.reason}"
                 )
@@ -991,7 +991,7 @@ class FileChangeProcessor:
                 return
 
         # Cache miss: Run verification
-        mode_badge = "🔍 DEEP" if analysis_mode == "deep" else "⚡ FAST"
+        mode_badge = "[INFO] DEEP" if analysis_mode == "deep" else "⚡ FAST"
         self._logger.info(f"[VERIFY] Running analysis ({mode_badge})...")
 
         # Phase C Week 2: Use DeepAnalyzer for DEEP_MODE files

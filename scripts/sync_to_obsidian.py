@@ -32,7 +32,7 @@ DETAILED_ERRORS = {
             {
                 "file": "framework_validator.py",
                 "line": 142,
-                "code": 'print("✅ Test passed")',
+                "code": 'print("[OK] Test passed")',
                 "error": "'cp949' codec can't encode character '\\u2705'",
             },
         ],
@@ -77,7 +77,7 @@ DETAILED_ERRORS = {
             {
                 "file": "various",
                 "line": "N/A",
-                "code": 'message = "✅ Complete"  # Python code',
+                "code": 'message = "[OK] Complete"  # Python code',
                 "error": "Potential cp949 error if printed",
             }
         ],
@@ -260,14 +260,14 @@ UnicodeEncodeError: 'cp949' codec can't encode character '\\U0001f4dd' in positi
 
 ### Python Files (.py)
 
-#### ❌ NEVER
+#### [FAIL] NEVER
 ```python
-print("✅ Test passed")
-logger.info("📝 Note")
-status = "✅ OK"  # in console output
+print("[OK] Test passed")
+logger.info("[LOG] Note")
+status = "[OK] OK"  # in console output
 ```
 
-#### ✅ ALWAYS
+#### [OK] ALWAYS
 ```python
 print("[OK] Test passed")
 logger.info("[NOTE] Note")
@@ -276,21 +276,21 @@ status = "[OK] OK"
 
 ### Markdown Files (.md)
 
-#### ✅ ALWAYS OK
+#### [OK] ALWAYS OK
 ```markdown
-## 📝 Update History
-- ✅ Completed
-- ❌ Failed
+## [LOG] Update History
+- [OK] Completed
+- [FAIL] Failed
 ```
 
 ### JSON Files
 
-#### ✅ OK (with UTF-8)
+#### [OK] OK (with UTF-8)
 ```python
 json.dump(data, f, ensure_ascii=False)  # OK
 ```
 
-#### ❌ NOT OK (default)
+#### [FAIL] NOT OK (default)
 ```python
 json.dump(data, f)  # ensure_ascii=True (default)
 ```
@@ -302,7 +302,7 @@ json.dump(data, f)  # ensure_ascii=True (default)
 ### Pattern 1: Direct Emoji
 ```python
 # DETECTED by pre_execution_guard
-print("✅")  # Line detected
+print("[OK]")  # Line detected
 ```
 
 ### Pattern 2: Variable with Emoji
@@ -315,7 +315,7 @@ print(history_section)  # Line 85 detected
 ### Pattern 3: String Literal
 ```python
 # DETECTED
-msg = "📝 Note"  # Detected in Python
+msg = "[LOG] Note"  # Detected in Python
 ```
 
 ---
@@ -324,16 +324,16 @@ msg = "📝 Note"  # Detected in Python
 
 | Emoji | ASCII | Usage |
 |-------|-------|-------|
-| ✅ | `[OK]` | Success |
-| ❌ | `[X]` | Failure |
-| ⚠️ | `[!]` | Warning |
-| 📝 | `[NOTE]` | Note |
-| 🚀 | `[>>]` | Progress |
-| 📊 | `[STATS]` | Statistics |
+| [OK] | `[OK]` | Success |
+| [FAIL] | `[X]` | Failure |
+| [WARN] | `[!]` | Warning |
+| [LOG] | `[NOTE]` | Note |
+| [DEPLOY] | `[>>]` | Progress |
+| [STATUS] | `[STATS]` | Statistics |
 | 🔧 | `[TOOL]` | Tool |
-| 💡 | `[IDEA]` | Idea |
-| 🎯 | `[TARGET]` | Target |
-| 🔍 | `[SEARCH]` | Search |
+| [TIP] | `[IDEA]` | Idea |
+| [TASK] | `[TARGET]` | Target |
+| [INFO] | `[SEARCH]` | Search |
 
 ---
 
@@ -372,7 +372,7 @@ print(history_section)  # Contains emoji from markdown
 ### Example 2: obsidian_history_tracker.py
 ```python
 # WRONG
-print("📝 Update History")
+print("[LOG] Update History")
 
 # RIGHT
 print("[NOTE] Update History")
@@ -385,10 +385,10 @@ print("[NOTE] Update History")
 ### Test Script
 ```python
 # Test 1: Direct emoji
-print("✅")  # Should detect
+print("[OK]")  # Should detect
 
 # Test 2: Variable
-content = "📝 Test"
+content = "[LOG] Test"
 print(content)  # Should detect
 
 # Test 3: File content

@@ -39,7 +39,7 @@ type: feature
 > - Master Dashboard 허브 생성
 > - Obsidian 동기화 검증
 
-## 🎯 구현된 기능들
+## [TASK] 구현된 기능들
 
 ### 1. MCP Server (`mcp/dev_rules_mcp_server.py`)
 - FastMCP 프레임워크 사용
@@ -72,7 +72,7 @@ type: feature
 - Quick Actions 버튼
 - 시스템 상태 실시간 표시
 
-## ✅ 완료된 작업 체크리스트
+## [OK] 완료된 작업 체크리스트
 
 - [x] 프로젝트 적합 스킬 분석 및 선정
 - [x] MCP Builder로 시스템 통합 서버 구축
@@ -89,24 +89,24 @@ type: feature
 - **Integration**: MCP (Model Context Protocol)
 - **Knowledge**: Obsidian Bridge (P3 준수)
 
-## 📊 시스템 현황
+## [STATUS] 시스템 현황
 
 | 컴포넌트 | 상태 | 포트 | 설명 |
 |---------|------|------|------|
-| SessionManager | ✅ 실행중 | 8501 | Streamlit 대시보드 |
-| Ultimate UI | ✅ 실행중 | 8000 | FastAPI 종합 관제 |
-| MCP Server | ✅ 구현완료 | - | 외부 도구 통합 |
-| PDF Reporter | ✅ 구현완료 | - | 보고서 생성 |
-| Master Dashboard | ✅ 구현완료 | - | 통합 허브 |
+| SessionManager | [OK] 실행중 | 8501 | Streamlit 대시보드 |
+| Ultimate UI | [OK] 실행중 | 8000 | FastAPI 종합 관제 |
+| MCP Server | [OK] 구현완료 | - | 외부 도구 통합 |
+| PDF Reporter | [OK] 구현완료 | - | 보고서 생성 |
+| Master Dashboard | [OK] 구현완료 | - | 통합 허브 |
 
-## 💡 학습된 내용
+## [TIP] 학습된 내용
 
 1. **MCP 통합의 강력함**: LLM이 직접 Dev Rules 시스템 제어 가능
 2. **단일 HTML 대시보드의 편리성**: 별도 서버 없이 즉시 배포
 3. **PDF 보고서의 가치**: 공식 문서로 프로젝트 상태 기록
 4. **통합 허브의 필요성**: 여러 도구를 한 곳에서 관리
 
-## 🔄 다음 단계
+## [SYNC] 다음 단계
 
 1. 통합 테스트 및 검증
 2. CI/CD 파이프라인 구축
@@ -115,7 +115,7 @@ type: feature
 
 ---
 
-**상태**: ✅ COMPLETED
+**상태**: [OK] COMPLETED
 **헌법 준수**: P1(YAML우선), P2(증거기반), P3(지식자산화) 모두 준수
 """
 
@@ -141,17 +141,17 @@ tags: ["task", "integration", "skills", "completed"]
 ### MCP Builder (⭐⭐⭐⭐⭐)
 - **파일**: `mcp/dev_rules_mcp_server.py`
 - **도구 수**: 6개
-- **상태**: ✅ 완료
+- **상태**: [OK] 완료
 
 ### Artifacts Builder (⭐⭐⭐⭐⭐)
 - **파일**: `web/integrated_dashboard.html`
 - **프레임워크**: React + Tailwind
-- **상태**: ✅ 완료
+- **상태**: [OK] 완료
 
 ### PDF Reporter (⭐⭐⭐⭐)
 - **파일**: `scripts/constitution_pdf_reporter.py`
 - **보고서 종류**: 4가지
-- **상태**: ✅ 완료
+- **상태**: [OK] 완료
 
 ## 관련 파일들
 
@@ -213,7 +213,7 @@ tags: ["moc", "dev-rules", "knowledge-map"]
 - [[Integrated Dashboard]] - React 대시보드
 - [[Master Dashboard]] - 통합 허브
 
-## 📊 프로젝트 메트릭
+## [STATUS] 프로젝트 메트릭
 
 - **헌법 준수율**: 90%
 - **테스트 커버리지**: 85%

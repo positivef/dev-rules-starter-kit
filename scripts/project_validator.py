@@ -813,19 +813,19 @@ def generate_html_report(report: ValidationReport, output_file: Path):
         <table>
             <tr><th>Category</th><th>Score</th><th>Status</th></tr>
             <tr><td>Constitution</td><td>{report.constitution_score}</td>
-                <td>{'✅' if report.constitution_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.constitution_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Structure</td><td>{report.structure_score}</td>
-                <td>{'✅' if report.structure_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.structure_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Dependencies</td><td>{report.dependency_score}</td>
-                <td>{'✅' if report.dependency_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.dependency_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Security</td><td>{report.security_score}</td>
-                <td>{'✅' if report.security_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.security_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Code Quality</td><td>{report.quality_score}</td>
-                <td>{'✅' if report.quality_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.quality_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Tests</td><td>{report.test_score}</td>
-                <td>{'✅' if report.test_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.test_score >= 70 else '[WARN]'}</td></tr>
             <tr><td>Documentation</td><td>{report.docs_score}</td>
-                <td>{'✅' if report.docs_score >= 70 else '⚠️'}</td></tr>
+                <td>{'[OK]' if report.docs_score >= 70 else '[WARN]'}</td></tr>
         </table>
     </div>
 

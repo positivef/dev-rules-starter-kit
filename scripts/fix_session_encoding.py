@@ -208,11 +208,11 @@ def main():
     success = fix_session_files()
 
     if success:
-        print("\n✅ 모든 세션 파일이 정상입니다.")
+        print("\n[OK] 모든 세션 파일이 정상입니다.")
         print("이제 대시보드를 실행할 수 있습니다:")
         print("  streamlit run scripts/session_dashboard.py")
     else:
-        print("\n⚠️ 일부 파일에 문제가 있습니다.")
+        print("\n[WARN] 일부 파일에 문제가 있습니다.")
         print("문제 파일을 정리한 후 다시 시도하세요.")
 
     return success

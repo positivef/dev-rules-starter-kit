@@ -168,7 +168,7 @@ def generate_devlog_content(commit_info: Dict[str, any]) -> str:
 
     content = f"""# {today} {title}
 
-## 🎯 오늘의 작업
+## [TASK] 오늘의 작업
 
 ### 커밋 정보
 - **커밋 해시**: `{commit_info["hash"]}`
@@ -186,7 +186,7 @@ def generate_devlog_content(commit_info: Dict[str, any]) -> str:
         content += f"\n### 상세 설명\n{description}\n"
 
     content += f"""
-## 💡 배운 점 & 인사이트
+## [TIP] 배운 점 & 인사이트
 
 ### 성공 사례
 - [자동 생성됨] 커밋 완료 및 옵시디언 자동 동기화 성공

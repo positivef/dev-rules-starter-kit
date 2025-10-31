@@ -55,9 +55,7 @@ class ErrorLearner:
         """Save error database to JSON file (atomic write)."""
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.db_path.with_suffix(".tmp")
-        tmp.write_text(
-            json.dumps(self.errors, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
+        tmp.write_text(json.dumps(self.errors, indent=2, ensure_ascii=False), encoding="utf-8")
         tmp.replace(self.db_path)
 
     def capture_error(
@@ -168,10 +166,7 @@ class ErrorLearner:
 
         # Fuzzy match (substring)
         for error_id, error_data in self.errors.items():
-            if (
-                normalized in error_data["normalized_pattern"]
-                or error_data["normalized_pattern"] in normalized
-            ):
+            if normalized in error_data["normalized_pattern"] or error_data["normalized_pattern"] in normalized:
                 return {
                     "error_id": error_id,
                     "type": error_data["type"],
@@ -208,13 +203,10 @@ class ErrorLearner:
                     warnings.append(
                         {
                             "error_id": error_id,
-                            "severity": "high"
-                            if error_data["occurrences"] > 1
-                            else "medium",
+                            "severity": "high" if error_data["occurrences"] > 1 else "medium",
                             "pattern": tag,
                             "message": (
-                                f"Detected risky pattern '{tag}' "
-                                f"(caused {error_data['occurrences']} error(s) before)"
+                                f"Detected risky pattern '{tag}' " f"(caused {error_data['occurrences']} error(s) before)"
                             ),
                             "suggestion": error_data["solution"],
                             "last_occurrence": error_data["last_seen"],
@@ -236,9 +228,7 @@ class ErrorLearner:
         total_occurrences = sum(e["occurrences"] for e in self.errors.values())
 
         # Top 10 most common errors
-        sorted_errors = sorted(
-            self.errors.items(), key=lambda x: x[1]["occurrences"], reverse=True
-        )[:10]
+        sorted_errors = sorted(self.errors.items(), key=lambda x: x[1]["occurrences"], reverse=True)[:10]
 
         return {
             "total_unique_errors": len(self.errors),
@@ -269,19 +259,14 @@ class ErrorLearner:
             "## Statistics",
             "",
             f"- Total Unique Errors: {len(self.errors)}",
-            (
-                "- Total Occurrences: "
-                f"{sum(e['occurrences'] for e in self.errors.values())}"
-            ),
+            ("- Total Occurrences: " f"{sum(e['occurrences'] for e in self.errors.values())}"),
             "",
             "## Most Common Errors",
             "",
         ]
 
         # Sort by occurrences
-        sorted_errors = sorted(
-            self.errors.items(), key=lambda x: x[1]["occurrences"], reverse=True
-        )
+        sorted_errors = sorted(self.errors.items(), key=lambda x: x[1]["occurrences"], reverse=True)
 
         for error_id, data in sorted_errors[:20]:  # Top 20
             moc_lines.extend(
@@ -340,9 +325,7 @@ def capture_error_quick(error: Exception, context: str, solution: str):
     error_type = type(error).__name__
     error_msg = str(error)
 
-    learner.capture_error(
-        error_type=error_type, error_msg=error_msg, context=context, solution=solution
-    )
+    learner.capture_error(error_type=error_type, error_msg=error_msg, context=context, solution=solution)
 
 
 if __name__ == "__main__":
@@ -367,7 +350,4 @@ if __name__ == "__main__":
 
     # Generate stats
     stats = learner.get_stats()
-    print(
-        f"\nStats: {stats['total_unique_errors']} unique errors, "
-        f"{stats['total_occurrences']} total occurrences"
-    )
+    print(f"\nStats: {stats['total_unique_errors']} unique errors, " f"{stats['total_occurrences']} total occurrences")

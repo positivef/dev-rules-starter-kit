@@ -255,7 +255,7 @@ def display_task_history(data: Dict[str, Any]):
 
             # 최근 10개만 표시
             for task_id in completed[-10:]:
-                st.write(f"✅ {task_id}")
+                st.write(f"[OK] {task_id}")
         else:
             st.info("완료된 작업이 없습니다")
 
@@ -265,7 +265,7 @@ def display_task_history(data: Dict[str, Any]):
             st.error(f"{len(failed)}개 작업 실패")
 
             for task_id, failure in failed.items():
-                st.write(f"❌ **{task_id}**")
+                st.write(f"[FAIL] **{task_id}**")
                 st.write(f"   Error: {failure.get('error', 'Unknown')[:100]}")
                 st.write(f"   Time: {failure.get('timestamp', 'Unknown')}")
                 st.divider()
@@ -336,17 +336,17 @@ def display_productivity_analysis():
         insights = results.get("insights", {})
 
         if insights.get("recommendations"):
-            st.subheader("💡 개선 제안")
+            st.subheader("[TIP] 개선 제안")
             for rec in insights["recommendations"]:
                 st.info(rec)
 
         if insights.get("warnings"):
-            st.subheader("⚠️ 주의사항")
+            st.subheader("[WARN] 주의사항")
             for warning in insights["warnings"]:
                 st.warning(warning)
 
         if insights.get("positive_patterns"):
-            st.subheader("✅ 긍정적 패턴")
+            st.subheader("[OK] 긍정적 패턴")
             for pattern in insights["positive_patterns"]:
                 st.success(pattern)
 

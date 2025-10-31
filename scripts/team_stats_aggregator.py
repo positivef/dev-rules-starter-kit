@@ -400,7 +400,7 @@ class DashboardGenerator:
 
         for stats in problem_files[:10]:
             file_name = Path(stats.file_path).name
-            status = "✅ PASS" if stats.passed_checks > 0 else "❌ FAIL"
+            status = "[OK] PASS" if stats.passed_checks > 0 else "[FAIL] FAIL"
             lines.append(
                 f"| {file_name} | {stats.avg_quality_score:.1f} | "
                 f"{stats.total_violations} | {stats.total_security_issues} | "
@@ -457,23 +457,25 @@ class DashboardGenerator:
 
         # 통과율
         if team_stats.pass_rate < 80.0:
-            recommendations.append(f"- ⚠️ **Pass Rate**: {team_stats.pass_rate:.1f}% (목표 80%+). " f"실패한 파일 우선 수정.")
+            recommendations.append(
+                f"- [WARN] **Pass Rate**: {team_stats.pass_rate:.1f}% (목표 80%+). " f"실패한 파일 우선 수정."
+            )
 
         # 품질 점수
         if team_stats.avg_quality_score < 7.0:
             recommendations.append(
-                f"- 📊 **Quality**: 평균 {team_stats.avg_quality_score:.1f}/10 " f"(목표 7.0+). 코드 품질 개선 필요."
+                f"- [STATUS] **Quality**: 평균 {team_stats.avg_quality_score:.1f}/10 " f"(목표 7.0+). 코드 품질 개선 필요."
             )
 
         # 문제 파일
         if len(problem_files) > 0:
             top_file = Path(problem_files[0].file_path).name
             recommendations.append(
-                f"- 🎯 **Priority**: `{top_file}` 파일부터 시작 " f"(Quality {problem_files[0].avg_quality_score:.1f})"
+                f"- [TASK] **Priority**: `{top_file}` 파일부터 시작 " f"(Quality {problem_files[0].avg_quality_score:.1f})"
             )
 
         if not recommendations:
-            recommendations.append("- ✅ **Good Job**: 모든 메트릭이 목표치 달성!")
+            recommendations.append("- [OK] **Good Job**: 모든 메트릭이 목표치 달성!")
 
         return recommendations
 

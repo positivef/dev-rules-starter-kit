@@ -406,7 +406,7 @@ class PipelineRunner:
 
         summary.append("\nLayer Results:")
         for layer_id, result in self.results.items():
-            status = "✅ PASS" if result.success else "❌ FAIL"
+            status = "[OK] PASS" if result.success else "[FAIL] FAIL"
             summary.append(f"  Layer {layer_id} ({result.layer_name}): {status} " f"({result.duration_seconds:.1f}s)")
 
             for tool_result in result.tools_results:

@@ -316,19 +316,19 @@ class SessionReportGenerator:
 
         {% for rec in insights.recommendations %}
         <div class="insight-box recommendation">
-            💡 {{ rec }}
+            [TIP] {{ rec }}
         </div>
         {% endfor %}
 
         {% for warning in insights.warnings %}
         <div class="insight-box warning">
-            ⚠️ {{ warning }}
+            [WARN] {{ warning }}
         </div>
         {% endfor %}
 
         {% for positive in insights.positive_patterns %}
         <div class="insight-box positive">
-            ✅ {{ positive }}
+            [OK] {{ positive }}
         </div>
         {% endfor %}
     </div>

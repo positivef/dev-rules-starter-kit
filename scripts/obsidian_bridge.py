@@ -203,11 +203,11 @@ class ObsidianBridge:
 > [!{"success" if status == "success" else "failure"}] Execution Result
 > Task ID: `{task_id}` - {status_icon} {status.upper()}
 
-## 🎯 Task Objective
+## [TASK] Task Objective
 
 {contract.get('description', title)}
 
-## ✅ Acceptance Criteria
+## [OK] Acceptance Criteria
 
 """
         for criterion in contract.get("acceptance_criteria", []):
@@ -234,13 +234,13 @@ class ObsidianBridge:
         # Evidence files
         evidence_hashes = result.get("evidence_hashes", {})
         if evidence_hashes:
-            content += "\n## 📊 Evidence Files\n\n"
+            content += "\n## [STATUS] Evidence Files\n\n"
             for file_path, hash_value in evidence_hashes.items():
                 content += f"- `{file_path}`: `{hash_value[:16]}...`\n"
 
         # Git commits
         if result.get("git_commits"):
-            content += "\n## 📝 Git Commits\n\n"
+            content += "\n## [LOG] Git Commits\n\n"
             for commit in result["git_commits"]:
                 content += f"- `{commit}`\n"
 
