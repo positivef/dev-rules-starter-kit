@@ -30,6 +30,10 @@ from task_executor import (
     collect_files_to_lock,
     acquire_lock,
     release_lock,
+    write_prompt_feedback,
+    ensure_secrets,
+    run_shell_command,
+    SecurityError,
 )
 
 
@@ -417,6 +421,110 @@ class TestReleaseLock:
 
         # Should not raise exception
         release_lock(lock_path)
+
+
+class TestWritePromptFeedback:
+    """Test prompt feedback statistics writing"""
+
+    def test_write_prompt_feedback_with_successes(self, tmp_path):
+        """Should create feedback file with statistics"""
+        stats = [
+            {
+                "command_id": "cmd1",
+                "context": "test",
+                "original_tokens": 100,
+                "compressed_tokens": 60,
+                "savings_pct": 40.0,
+                "rules_applied": ["rule1"],
+            },
+            {
+                "command_id": "cmd2",
+                "original_tokens": 200,
+                "compressed_tokens": 120,
+                "savings_pct": 40.0,
+            },
+        ]
+
+        write_prompt_feedback(tmp_path, stats)
+
+        feedback_file = tmp_path / "prompt_feedback.json"
+        assert feedback_file.exists()
+
+        data = json.loads(feedback_file.read_text(encoding="utf-8"))
+        assert data["entries"] == 2
+        assert data["summary"]["total_prompts"] == 2
+        assert data["summary"]["total_original_tokens"] == 300
+        assert data["summary"]["total_compressed_tokens"] == 180
+        assert data["summary"]["average_savings_pct"] == 40.0
+
+    def test_write_prompt_feedback_with_errors(self, tmp_path):
+        """Should include error information"""
+        stats = [
+            {"command_id": "cmd1", "original_tokens": 100},
+            {"command_id": "cmd2", "error": "Timeout"},
+        ]
+
+        write_prompt_feedback(tmp_path, stats)
+
+        data = json.loads((tmp_path / "prompt_feedback.json").read_text(encoding="utf-8"))
+        assert "errors" in data
+        assert len(data["errors"]) == 1
+        assert data["errors"][0]["error"] == "Timeout"
+
+    def test_write_prompt_feedback_empty_stats(self, tmp_path):
+        """Should skip writing for empty stats"""
+        write_prompt_feedback(tmp_path, [])
+
+        feedback_file = tmp_path / "prompt_feedback.json"
+        assert not feedback_file.exists()
+
+
+class TestEnsureSecrets:
+    """Test secret environment variable validation"""
+
+    def test_ensure_secrets_all_present(self, monkeypatch):
+        """Should pass when all secrets present"""
+        monkeypatch.setenv("SECRET1", "value1")
+        monkeypatch.setenv("SECRET2", "value2")
+
+        # Should not raise exception
+        ensure_secrets(["SECRET1", "SECRET2"], "test context")
+
+    def test_ensure_secrets_missing_key(self, monkeypatch):
+        """Should raise SecurityError for missing secret"""
+        monkeypatch.delenv("MISSING_SECRET", raising=False)
+
+        with pytest.raises(SecurityError) as exc_info:
+            ensure_secrets(["MISSING_SECRET"], "test context")
+
+        assert "Missing required secret: MISSING_SECRET" in str(exc_info.value)
+        assert "test context" in str(exc_info.value)
+
+    def test_ensure_secrets_empty_list(self):
+        """Should pass for empty secret list"""
+        # Should not raise exception
+        ensure_secrets([], "test")
+        ensure_secrets(None, "test")
+
+
+class TestRunShellCommand:
+    """Test shell command execution (dummy function)"""
+
+    def test_run_shell_command_returns_success(self):
+        """Should return success status"""
+        result = run_shell_command("echo hello", "test command")
+
+        assert result["status"] == "success"
+        assert result["command"] == "echo hello"
+        assert result["exit_code"] == 0
+        assert "stdout" in result
+
+    def test_run_shell_command_with_description(self):
+        """Should handle description parameter"""
+        description = "Testing shell command"
+        result = run_shell_command("test", description)
+
+        assert result["status"] == "success"
 
 
 if __name__ == "__main__":
