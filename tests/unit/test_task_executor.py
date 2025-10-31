@@ -23,6 +23,13 @@ from task_executor import (
     build_env,
     _looks_like_file,
     atomic_write_json,
+    write_lessons_template,
+    write_file,
+    replace,
+    detect_agent_id,
+    collect_files_to_lock,
+    acquire_lock,
+    release_lock,
 )
 
 
@@ -209,6 +216,207 @@ class TestAtomicWriteJSON:
 
         assert loaded == data
         assert loaded["korean"] == "한글"
+
+
+class TestWriteLessonsTemplate:
+    """Test lessons template file generation"""
+
+    def test_write_lessons_template_creates_file(self, tmp_path):
+        """Should create lessons.md with correct template"""
+        contract = {"task_id": "TEST-001", "project": "TestProject"}
+
+        write_lessons_template(tmp_path, contract, "completed")
+
+        lessons_file = tmp_path / "lessons.md"
+        assert lessons_file.exists()
+
+        content = lessons_file.read_text(encoding="utf-8")
+        assert "# Lessons Learned - TEST-001 (COMPLETED)" in content
+        assert "#lesson #TestProject" in content
+        assert "## Summary" in content
+        assert "## What Worked" in content
+
+    def test_write_lessons_template_with_error_message(self, tmp_path):
+        """Should include error message in summary"""
+        contract = {"task_id": "TEST-002"}
+        error_msg = "Connection timeout"
+
+        write_lessons_template(tmp_path, contract, "failed", error_msg)
+
+        content = (tmp_path / "lessons.md").read_text(encoding="utf-8")
+        assert "Failure reason: Connection timeout" in content
+
+    def test_write_lessons_template_skips_if_exists(self, tmp_path):
+        """Should not overwrite existing lessons.md"""
+        lessons_file = tmp_path / "lessons.md"
+        existing_content = "# Existing content"
+        lessons_file.write_text(existing_content, encoding="utf-8")
+
+        contract = {"task_id": "TEST-003"}
+        write_lessons_template(tmp_path, contract, "completed")
+
+        # Should not overwrite
+        assert lessons_file.read_text(encoding="utf-8") == existing_content
+
+
+class TestWriteFile:
+    """Test write_file internal function"""
+
+    def test_write_file_creates_new_file(self, tmp_path):
+        """Should create new file with content"""
+        target_file = tmp_path / "test.txt"
+        content = "Hello, World!"
+
+        result = write_file(str(target_file), content)
+
+        assert target_file.exists()
+        assert target_file.read_text(encoding="utf-8") == content
+        assert result["status"] == "success"
+
+    def test_write_file_overwrites_existing(self, tmp_path):
+        """Should overwrite existing file"""
+        target_file = tmp_path / "test.txt"
+        target_file.write_text("Old content", encoding="utf-8")
+
+        new_content = "New content"
+        write_file(str(target_file), new_content)
+
+        assert target_file.read_text(encoding="utf-8") == new_content
+
+
+class TestReplace:
+    """Test replace internal function"""
+
+    def test_replace_simple_string(self, tmp_path):
+        """Should replace string in file"""
+        target_file = tmp_path / "test.txt"
+        target_file.write_text("Hello, World!", encoding="utf-8")
+
+        result = replace(str(target_file), "World", "Python")
+
+        assert target_file.read_text(encoding="utf-8") == "Hello, Python!"
+        assert result["status"] == "success"
+        assert result["replacements"] == 1
+
+    def test_replace_multiple_occurrences(self, tmp_path):
+        """Should replace all occurrences"""
+        target_file = tmp_path / "test.txt"
+        target_file.write_text("foo bar foo baz foo", encoding="utf-8")
+
+        replace(str(target_file), "foo", "qux")
+
+        assert target_file.read_text(encoding="utf-8") == "qux bar qux baz qux"
+
+
+class TestDetectAgentId:
+    """Test agent ID detection"""
+
+    def test_detect_agent_id_from_env(self, monkeypatch):
+        """Should use AGENT_ID environment variable"""
+        monkeypatch.setenv("AGENT_ID", "custom-agent")
+
+        agent_id = detect_agent_id()
+
+        assert agent_id == "custom-agent"
+
+    def test_detect_agent_id_codex(self, monkeypatch):
+        """Should detect Codex from environment"""
+        monkeypatch.delenv("AGENT_ID", raising=False)
+        monkeypatch.setenv("CODEX_CLI", "true")
+
+        agent_id = detect_agent_id()
+
+        assert agent_id == "codex"
+
+    def test_detect_agent_id_claude(self, monkeypatch):
+        """Should detect Claude from environment"""
+        monkeypatch.delenv("AGENT_ID", raising=False)
+        monkeypatch.delenv("CODEX_CLI", raising=False)
+        monkeypatch.setenv("CLAUDE_CODE", "true")
+
+        agent_id = detect_agent_id()
+
+        assert agent_id == "claude"
+
+    def test_detect_agent_id_fallback(self, monkeypatch):
+        """Should generate UUID-based ID as fallback"""
+        monkeypatch.delenv("AGENT_ID", raising=False)
+        monkeypatch.delenv("CODEX_CLI", raising=False)
+        monkeypatch.delenv("CLAUDE_CODE", raising=False)
+        monkeypatch.delenv("GEMINI_AI", raising=False)
+
+        agent_id = detect_agent_id()
+
+        assert agent_id.startswith("agent-")
+        assert len(agent_id) == 14  # "agent-" + 8 hex chars
+
+
+class TestCollectFilesToLock:
+    """Test file collection for locking"""
+
+    def test_collect_files_from_evidence(self):
+        """Should collect files from evidence list"""
+        contract = {
+            "evidence": ["file1.txt", "file2.py", "*.md"]  # Last is glob, excluded
+        }
+
+        files = collect_files_to_lock(contract)
+
+        assert "file1.txt" in files
+        assert "file2.py" in files
+        assert "*.md" not in files  # Glob patterns excluded
+
+    def test_collect_files_empty_contract(self):
+        """Should handle empty contract"""
+        files = collect_files_to_lock({})
+
+        assert files == []
+
+
+class TestAcquireLock:
+    """Test lock acquisition"""
+
+    def test_acquire_lock_creates_lock_file(self, tmp_path):
+        """Should create lock file"""
+        lock_path = acquire_lock("test-lock", tmp_path)
+
+        assert lock_path.exists()
+        assert lock_path.name == "test-lock.lock"
+
+        # Cleanup
+        release_lock(lock_path)
+
+    def test_acquire_lock_stores_pid(self, tmp_path):
+        """Should store process ID in lock file"""
+        import os as os_module
+
+        lock_path = acquire_lock("test-lock", tmp_path)
+
+        pid_str = lock_path.read_text(encoding="utf-8")
+        assert pid_str == str(os_module.getpid())
+
+        # Cleanup
+        release_lock(lock_path)
+
+
+class TestReleaseLock:
+    """Test lock release"""
+
+    def test_release_lock_removes_file(self, tmp_path):
+        """Should remove lock file"""
+        lock_path = acquire_lock("test-lock", tmp_path)
+        assert lock_path.exists()
+
+        release_lock(lock_path)
+
+        assert not lock_path.exists()
+
+    def test_release_lock_nonexistent_file(self, tmp_path):
+        """Should not raise error for nonexistent lock"""
+        lock_path = tmp_path / "nonexistent.lock"
+
+        # Should not raise exception
+        release_lock(lock_path)
 
 
 if __name__ == "__main__":
