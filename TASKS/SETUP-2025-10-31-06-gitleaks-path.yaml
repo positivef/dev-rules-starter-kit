@@ -1,0 +1,69 @@
+task_id: "SETUP-2025-10-31-06"
+title: "Configure gitleaks for Git Bash Environment"
+project: "DevRulesStarterKit"
+priority: "high"
+type: "setup"
+tags: [gitleaks, security, p5, environment]
+status: "completed"
+
+description: |
+  Install gitleaks via Scoop and configure PATH for Git Bash usage.
+  Enables P5 (Security First) automated secret scanning.
+
+acceptance_criteria:
+  - "gitleaks installed via Scoop"
+  - "PATH configured in ~/.bashrc"
+  - "gitleaks version command succeeds"
+  - "Security scan detects .env API keys (expected)"
+  - ".env in .gitignore (verified safe)"
+
+commands:
+  - id: "01-install-scoop"
+    description: "Install Scoop package manager (PowerShell)"
+    exec:
+      cmd: "powershell"
+      args: ["irm", "get.scoop.sh", "|", "iex"]
+    cost_estimate_usd: 0.0
+
+  - id: "02-install-gitleaks"
+    description: "Install gitleaks via Scoop"
+    exec:
+      cmd: "scoop"
+      args: ["install", "gitleaks"]
+    cost_estimate_usd: 0.0
+
+  - id: "03-configure-path"
+    description: "Add Scoop shims to Git Bash PATH"
+    exec:
+      cmd: "echo"
+      args: ['export PATH="$PATH:/c/Users/user/scoop/shims"', ">>", "~/.bashrc"]
+    cost_estimate_usd: 0.0
+
+  - id: "04-verify"
+    description: "Verify gitleaks installation"
+    exec:
+      cmd: "gitleaks"
+      args: ["version"]
+    cost_estimate_usd: 0.0
+
+gates:
+  - type: "constitutional"
+    articles: ["P5"]
+    description: "Security First - Secret detection"
+
+evidence:
+  - "~/.bashrc"
+  - ".env"
+  - ".gitignore"
+
+results:
+  gitleaks_version: "8.28.0"
+  installation_method: "scoop"
+  path_configured: true
+  scan_result: ".env API key detected (safe, in .gitignore)"
+
+# Provenance
+provenance:
+  executed_at: "2025-10-31T16:00:00Z"
+  executor: "manual-setup"
+  verification_method: "version-check"
