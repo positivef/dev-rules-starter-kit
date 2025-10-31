@@ -233,8 +233,216 @@ def generate_devlog_content(commit_info: Dict[str, any]) -> str:
     return content
 
 
+def extract_topic_from_commit(commit_msg: str) -> str:
+    """Extract topic from commit message for file grouping
+
+    Examples:
+        "test: add Q1 2026 test infrastructure Phase 1" -> "Q1-Test-Infrastructure"
+        "feat: implement user authentication" -> "User-Authentication"
+        "fix: resolve login bug" -> "Login-Bug-Fix"
+    """
+    # Remove conventional commit prefix (feat:, test:, fix:, etc.)
+    msg = re.sub(r"^(feat|fix|test|docs|refactor|chore|style|perf|build|ci):\s*", "", commit_msg, flags=re.IGNORECASE)
+
+    # Remove phase indicators
+    msg = re.sub(r"\s+[Pp]hase\s+\d+", "", msg)
+    msg = re.sub(r"\s+-\s+[Pp]hase\s+\d+", "", msg)
+
+    # Extract first meaningful line (title)
+    first_line = msg.split("\n")[0].strip()
+
+    # Common topic patterns
+    # "add Q1 2026 test infrastructure" -> "Q1 Test Infrastructure"
+    # "implement user auth system" -> "User Auth System"
+    # "complete obsidian sync" -> "Obsidian Sync"
+
+    # Remove action verbs
+    first_line = re.sub(r"^(add|implement|complete|fix|update|create|improve|optimize)\s+", "", first_line, flags=re.IGNORECASE)
+
+    # Extract key words (capitalize important words)
+    words = first_line.split()
+
+    # Filter out common words
+    stop_words = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with"}
+    key_words = [w for w in words if w.lower() not in stop_words][:5]  # Max 5 words
+
+    if not key_words:
+        # Fallback to sanitized first line
+        key_words = words[:3]
+
+    # Create topic string
+    topic = "-".join(key_words)
+
+    # Clean for filename
+    topic = re.sub(r"[^\w\s-]", "", topic)
+    topic = re.sub(r"[-\s]+", "-", topic).strip("-")
+
+    # Capitalize
+    topic = "-".join(word.capitalize() for word in topic.split("-"))
+
+    return topic if topic else "General-Work"
+
+
+def get_obsidian_file_path(commit_info: Dict[str, any], vault_path: Path) -> Path:
+    """Get Obsidian file path with date folder and topic-based filename
+
+    Structure: 개발일지/YYYY-MM-DD/Topic.md
+
+    Returns:
+        Path to the devlog file
+    """
+    today = datetime.now().strftime("%Y-%m-%d")
+    topic = extract_topic_from_commit(commit_info["message"])
+
+    # Create date folder
+    date_folder = vault_path / "개발일지" / today
+    date_folder.mkdir(parents=True, exist_ok=True)
+
+    # Create topic-based filename
+    filename = f"{topic}.md"
+
+    return date_folder / filename
+
+
+def append_section_to_file(filepath: Path, commit_info: Dict[str, any]) -> None:
+    """Append new section to existing file or create new file
+
+    If file exists, adds time-based section
+    If file doesn't exist, creates with full template
+    """
+    now = datetime.now()
+    time_str = now.strftime("%H:%M")
+
+    # Generate section header
+    commit_lines = commit_info["message"].split("\n")
+    title = commit_lines[0]
+
+    # Extract phase if present
+    phase_match = re.search(r"[Pp]hase\s+(\d+)", title)
+    phase_str = f"Phase {phase_match.group(1)}" if phase_match else "Update"
+
+    section_header = f"\n\n## {time_str} - {phase_str}\n"
+
+    # Generate section content (simplified for append)
+    work_type = categorize_work(commit_info)
+    key_changes = extract_key_changes(commit_info)
+
+    section_content = f"""
+### 작업 내용
+- **커밋**: `{commit_info["hash"]}`
+- **유형**: {work_type}
+- **파일 수**: {commit_info["file_count"]}개
+
+### 주요 변경사항
+"""
+    for change in key_changes:
+        section_content += f"- {change}\n"
+
+    # Add description if present
+    description = "\n".join(commit_lines[1:]).strip() if len(commit_lines) > 1 else ""
+    if description:
+        section_content += f"\n### 상세 설명\n{description}\n"
+
+    if filepath.exists():
+        # Append to existing file
+        existing = filepath.read_text(encoding="utf-8")
+        updated = existing + section_header + section_content
+        filepath.write_text(updated, encoding="utf-8")
+        print(f"[UPDATE] Appended section to existing file: {filepath.name}")
+    else:
+        # Create new file with full template
+        content = generate_devlog_content(commit_info)
+        filepath.write_text(content, encoding="utf-8")
+        print(f"[CREATE] Created new file: {filepath.name}")
+
+
+def update_moc(vault_path: Path, date: str, topic: str) -> None:
+    """Update MOC (Map of Contents) with new devlog entry
+
+    Creates/updates 개발일지-MOC.md with links organized by date
+
+    Args:
+        vault_path: Path to Obsidian vault
+        date: Date string (YYYY-MM-DD)
+        topic: Topic name for the file
+    """
+    moc_path = vault_path / "개발일지" / "개발일지-MOC.md"
+
+    # Create link in Obsidian format
+    link = f"- [[{date}/{topic}]]"
+
+    # Check if MOC exists
+    if moc_path.exists():
+        content = moc_path.read_text(encoding="utf-8")
+
+        # Check if date section exists
+        date_section = f"## {date}"
+        if date_section in content:
+            # Date section exists, check if link already exists
+            if link not in content:
+                # Add link to existing date section
+                # Find the date section and append link
+                lines = content.split("\n")
+                new_lines = []
+                in_date_section = False
+                link_added = False
+
+                for i, line in enumerate(lines):
+                    new_lines.append(line)
+
+                    if line.strip() == date_section:
+                        in_date_section = True
+                    elif in_date_section and line.startswith("## "):
+                        # Next date section, insert before it
+                        new_lines.insert(-1, link)
+                        link_added = True
+                        in_date_section = False
+                    elif in_date_section and i == len(lines) - 1:
+                        # End of file
+                        new_lines.append(link)
+                        link_added = True
+
+                if not link_added and in_date_section:
+                    # Still in date section at end of file
+                    new_lines.append(link)
+
+                content = "\n".join(new_lines)
+        else:
+            # Date section doesn't exist, add new section at top
+            # Find first ## to insert before it, or append at end
+            lines = content.split("\n")
+            insert_pos = None
+
+            for i, line in enumerate(lines):
+                if line.startswith("## "):
+                    insert_pos = i
+                    break
+
+            new_section = f"\n{date_section}\n{link}\n"
+
+            if insert_pos is not None:
+                lines.insert(insert_pos, new_section)
+                content = "\n".join(lines)
+            else:
+                content = content.rstrip() + "\n" + new_section
+
+        moc_path.write_text(content, encoding="utf-8")
+        print(f"[MOC] Updated 개발일지-MOC.md")
+    else:
+        # Create new MOC
+        content = f"""# 개발일지 Map of Contents
+
+자동 생성된 개발일지 인덱스입니다.
+
+## {date}
+{link}
+"""
+        moc_path.write_text(content, encoding="utf-8")
+        print(f"[MOC] Created 개발일지-MOC.md")
+
+
 def sync_to_obsidian(commit_info: Dict[str, any]) -> bool:
-    """Sync to Obsidian using MCP"""
+    """Sync to Obsidian with date folder and topic-based organization"""
     try:
         # Load environment variables
         try:
@@ -252,37 +460,28 @@ def sync_to_obsidian(commit_info: Dict[str, any]) -> bool:
             print("[INFO] Obsidian integration disabled or path not configured")
             return False
 
-        # Generate devlog content
-        content = generate_devlog_content(commit_info)
-
-        # Generate filename
-        today = datetime.now().strftime("%Y-%m-%d")
-        commit_title = commit_info["message"].split("\n")[0]
-        # Clean title for filename
-        safe_title = re.sub(r"[^\w\s-]", "", commit_title)
-        safe_title = re.sub(r"[-\s]+", "-", safe_title).strip("-")[:50]
-        filename = f"{today}_{safe_title}.md"
-
-        # Use MCP Obsidian to append (since we're in Claude Code context)
-        # For now, write directly to file
         vault_path = Path(obsidian_path)
-        devlog_dir = vault_path / "개발일지"
-        devlog_dir.mkdir(parents=True, exist_ok=True)
 
-        filepath = devlog_dir / filename
+        # Get file path (date folder + topic-based filename)
+        filepath = get_obsidian_file_path(commit_info, vault_path)
 
-        # Check if file exists, if so append instead of overwrite
-        if filepath.exists():
-            existing = filepath.read_text(encoding="utf-8")
-            content = existing + "\n\n---\n\n" + content
+        # Append section or create new file
+        append_section_to_file(filepath, commit_info)
 
-        filepath.write_text(content, encoding="utf-8")
+        # Update MOC (Map of Contents)
+        today = datetime.now().strftime("%Y-%m-%d")
+        topic = extract_topic_from_commit(commit_info["message"])
+        update_moc(vault_path, today, topic)
 
-        print(f"[SUCCESS] Obsidian devlog created: {filename}")
+        # Show relative path for clarity
+        relative_path = filepath.relative_to(vault_path)
+        print(f"[SUCCESS] Obsidian devlog: {relative_path}")
         return True
 
     except Exception as e:
         print(f"[ERROR] Failed to sync to Obsidian: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
