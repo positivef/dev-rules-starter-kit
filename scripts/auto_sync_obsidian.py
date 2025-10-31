@@ -195,7 +195,7 @@ def extract_tags_from_commit(commit_info: Dict[str, any]) -> List[str]:
     # Specific domain detection
     if any("obsidian" in f.lower() for f in files):
         tags.append("domain/obsidian")
-    if any("q1" in message.lower() or "q1-2026" in message.lower()):
+    if "q1" in message.lower() or "q1-2026" in message.lower():
         tags.append("project/q1-2026")
     if any("strategy" in f.lower() for f in files) or "strategy" in message.lower():
         tags.append("project/strategy-b")
