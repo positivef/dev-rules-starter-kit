@@ -1,0 +1,292 @@
+task_id: "TEST-2025-11-01-01"
+title: "Q1 2026 Test Infrastructure - Phase 4: Unit Test Framework"
+status: "planned"
+created: "2025-11-01T04:15:00+09:00"
+
+objective: |
+  Establish import-based unit testing framework to improve code coverage from
+  0.18% to 15% by testing core functions directly instead of through subprocesses.
+
+context:
+  quarter: "Q1 2026"
+  theme: "Consolidation & Scale"
+  priority: "1 of 4 (Test Infrastructure - Phase 4)"
+  previous_phase: "Phase 3 completed (965 tests, 2.3x speedup, 0.18% coverage)"
+
+  phase_3_discoveries:
+    - subprocess_tests_limitation: "~700 tests don't contribute to coverage"
+    - integration_tests_value: "754 passing tests validate end-to-end functionality"
+    - performance_success: "22.74s execution time with parallel processing"
+    - architecture_insight: "System uses integration testing strategy primarily"
+
+  phase_4_strategy:
+    approach: "Add import-based unit tests alongside existing integration tests"
+    target_coverage: "15%"
+    target_new_tests: "100-200 unit tests"
+    philosophy: "Hybrid testing (integration + unit) for comprehensive validation"
+
+planned_work:
+
+  step_1_core_module_selection:
+    objective: "Identify high-value modules for unit testing"
+
+    criteria:
+      - critical_files: "Impact score >0.5 (executors, validators, analyzers)"
+      - function_rich: "Files with 10+ testable functions"
+      - low_coverage: "Currently <5% coverage from integration tests"
+      - constitutional_enforcement: "Tools that enforce P1-P15"
+
+    target_modules:
+      tier_1_critical:
+        - file: "scripts/task_executor.py"
+          functions: "~21 functions"
+          reason: "Core execution engine (P1, P2)"
+          priority: "highest"
+
+        - file: "scripts/constitutional_validator.py"
+          functions: "~15+ functions"
+          reason: "Compliance checker (all articles)"
+          priority: "highest"
+
+        - file: "scripts/deep_analyzer.py"
+          functions: "~20+ functions"
+          reason: "SOLID, security, hallucination checks (P4, P5, P7)"
+          priority: "high"
+
+      tier_2_important:
+        - file: "scripts/verification_cache.py"
+          reason: "Performance optimization (60% reduction)"
+          priority: "medium"
+
+        - file: "scripts/team_stats_aggregator.py"
+          reason: "Quality metrics (P6)"
+          priority: "medium"
+
+        - file: "scripts/context_provider.py"
+          reason: "Session context management"
+          priority: "medium"
+
+      tier_3_support:
+        - file: "scripts/obsidian_bridge.py"
+          reason: "Knowledge base sync (P3)"
+          priority: "low"
+
+  step_2_test_infrastructure:
+    objective: "Setup unit testing framework and patterns"
+
+    actions:
+      - action: "Create tests/unit/ directory structure"
+        structure: |
+          tests/unit/
+          ├── test_task_executor.py
+          ├── test_constitutional_validator.py
+          ├── test_deep_analyzer.py
+          ├── test_verification_cache.py
+          └── helpers/
+              ├── fixtures.py
+              └── mocks.py
+
+      - action: "Establish unit test patterns"
+        patterns:
+          - "Import-based: from scripts.module import function"
+          - "Isolated: Mock external dependencies"
+          - "Fast: <100ms per test"
+          - "Focused: One function per test"
+
+      - action: "Configure coverage.py for mixed testing"
+        config: |
+          # .coveragerc additions
+          [run]
+          source = scripts/
+
+          [report]
+          exclude_lines =
+              pragma: no cover
+              def __repr__
+              raise NotImplementedError
+
+  step_3_unit_test_implementation:
+    objective: "Write 100-200 unit tests for core functions"
+
+    milestone_1_task_executor:
+      target: "30-40 tests"
+      functions_to_test:
+        - "parse_yaml_contract()"
+        - "validate_task_structure()"
+        - "execute_command()"
+        - "check_security_gates()"
+        - "collect_evidence()"
+        - "handle_task_errors()"
+
+      test_examples:
+        - test_parse_valid_yaml_contract
+        - test_parse_invalid_yaml_returns_error
+        - test_validate_task_missing_required_fields
+        - test_execute_whitelisted_command_succeeds
+        - test_execute_blacklisted_command_blocked
+        - test_security_gate_detects_secrets
+
+    milestone_2_constitutional_validator:
+      target: "25-35 tests"
+      functions_to_test:
+        - "validate_article_compliance()"
+        - "check_yaml_first_principle()"
+        - "verify_evidence_collection()"
+        - "assess_quality_gates()"
+        - "detect_principle_conflicts()"
+
+      test_examples:
+        - test_validate_p1_yaml_first_compliance
+        - test_validate_p2_evidence_exists
+        - test_validate_p8_test_coverage_threshold
+        - test_detect_p11_principle_conflict
+
+    milestone_3_deep_analyzer:
+      target: "20-30 tests"
+      functions_to_test:
+        - "analyze_solid_principles()"
+        - "detect_security_patterns()"
+        - "check_hallucination_markers()"
+        - "calculate_complexity_score()"
+
+      test_examples:
+        - test_solid_single_responsibility_detection
+        - test_security_pattern_sql_injection
+        - test_hallucination_marker_always_works
+        - test_complexity_score_calculation
+
+    milestone_4_support_modules:
+      target: "25-35 tests"
+      modules:
+        - verification_cache
+        - team_stats_aggregator
+        - context_provider
+
+      test_types:
+        - "Cache hit/miss scenarios"
+        - "Stats calculation accuracy"
+        - "Context serialization/deserialization"
+
+  step_4_coverage_measurement:
+    objective: "Validate 15% coverage target achievement"
+
+    commands:
+      - exec: ["pytest", "tests/unit/", "-v", "--cov=scripts", "--cov-report=term-missing"]
+        description: "Run unit tests with coverage"
+
+      - exec: ["pytest", "tests/", "-v", "--cov=scripts", "--cov-report=html"]
+        description: "Generate HTML coverage report"
+
+    success_criteria:
+      - coverage_percentage: ">=15%"
+      - lines_covered: ">=2,687 lines (15% of 17,910)"
+      - unit_tests_passing: "100%"
+      - no_coverage_regression: "Integration tests still pass"
+
+    validation_checks:
+      - "Coverage includes target modules (task_executor, validators, analyzers)"
+      - "Unit tests are fast (<100ms each)"
+      - "No flaky tests (100% pass rate on re-run)"
+      - "Coverage report shows tested functions"
+
+  step_5_hybrid_testing_documentation:
+    objective: "Document hybrid testing strategy"
+
+    documentation:
+      - file: "docs/TESTING_STRATEGY.md"
+        content: |
+          # Hybrid Testing Strategy
+
+          ## Integration Tests (~760 tests)
+          - Purpose: End-to-end validation
+          - Method: subprocess.run() execution
+          - Coverage: Minimal (subprocess limitation)
+          - Value: Real-world functionality verification
+
+          ## Unit Tests (~100-200 tests)
+          - Purpose: Function-level validation
+          - Method: Import-based testing
+          - Coverage: High (15% target)
+          - Value: Granular validation, fast feedback
+
+          ## Combined Strategy
+          - Total tests: ~860-960 tests
+          - Execution time: <30s (parallel)
+          - Coverage: 15% (unit tests)
+          - Pass rate: >98%
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P8"]
+    checks:
+      - "YAML contract created (P1)"
+      - "Evidence collected (P2)"
+      - "Unit tests achieve >=15% coverage (P8)"
+
+  - type: "quality"
+    metrics:
+      - coverage: ">=15%"
+      - unit_test_pass_rate: "100%"
+      - execution_time: "<30s"
+      - no_integration_test_regression: true
+
+  - type: "p15_convergence"
+    check: "Stop at 15% coverage (good enough for Phase 4)"
+    rationale: |
+      15% represents meaningful improvement from 0.18% while maintaining
+      balance between coverage and development time. Further coverage
+      increases can be Phase 5 if ROI justifies it.
+
+commands:
+  - exec: ["pytest", "tests/unit/test_task_executor.py", "-v"]
+    description: "Test task executor unit tests"
+
+  - exec: ["pytest", "tests/unit/", "-v", "--cov=scripts", "--cov-report=term"]
+    description: "Run all unit tests with coverage"
+
+  - exec: ["pytest", "tests/", "-v", "--cov=scripts", "--cov-report=html", "--cov-report=json"]
+    description: "Full test suite with coverage reports"
+
+expected_outcomes:
+  coverage_improvement:
+    before: "0.18% (33 lines)"
+    after: "15% (2,687 lines)"
+    increase: "81x coverage improvement"
+
+  test_suite_composition:
+    integration_tests: "~760 tests (subprocess-based)"
+    unit_tests: "100-200 tests (import-based)"
+    total: "860-960 tests"
+
+  execution_performance:
+    unit_tests: "<5s (fast, isolated)"
+    integration_tests: "~20s (parallel)"
+    total_suite: "<30s (acceptable for CI/CD)"
+
+  strategic_value:
+    - "Granular function validation"
+    - "Fast feedback loop"
+    - "Coverage metrics become meaningful"
+    - "Foundation for further expansion"
+
+next_steps:
+  immediate:
+    - "Create tests/unit/ directory structure"
+    - "Write first 10 unit tests for task_executor.py"
+    - "Validate coverage measurement working"
+
+  phase_4_completion:
+    - "Achieve 15% coverage with 100-200 unit tests"
+    - "Document hybrid testing strategy"
+    - "Update CI/CD with unit test execution"
+
+  phase_5_future:
+    - "Consider 30% coverage target (if ROI justifies)"
+    - "Add mutation testing"
+    - "Performance benchmarking tests"
+
+metrics:
+  estimated_time: "4-6 hours"
+  target_coverage: "15%"
+  target_new_tests: "100-200 tests"
+  success_threshold: ">=15% coverage, 100% unit test pass rate"
