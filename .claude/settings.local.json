@@ -93,7 +93,13 @@
       "Bash(git prune:*)",
       "Bash(timeout 60 pytest:*)",
       "Bash(if exist .githooks dir .githooks /B)",
-      "Bash(timeout 30 pytest:*)"
+      "Bash(timeout 30 pytest:*)",
+      "mcp__codex-mcp__help",
+      "Bash(timeout 30 python:*)",
+      "Bash(pip show:*)",
+      "Bash(awk:*)",
+      "Bash(where:*)",
+      "Bash(gitleaks version)"
     ],
     "deny": [],
     "ask": []
