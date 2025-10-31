@@ -215,55 +215,105 @@ class CodeReviewAssistant:
                 )
 
     def _check_solid_principles(self, file_path: str, content: str):
-        """Check SOLID principle violations"""
+        """
+        Check SOLID principle violations.
+
+        Learning Point: Orchestrator - delegates specific checks to helpers.
+        Makes it easy to add new SOLID checks later!
+        """
         if not file_path.endswith(".py"):
             return
 
         try:
             tree = ast.parse(content)
-
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
-                    # Check Single Responsibility
-                    methods = [n for n in node.body if isinstance(n, ast.FunctionDef)]
-                    if len(methods) > 15:
-                        self._add_finding(
-                            severity="warning",
-                            category="solid",
-                            file=file_path,
-                            line=node.lineno,
-                            message=f"Class '{node.name}' has {len(methods)} methods (possible SRP violation)",
-                            suggestion="Consider splitting into smaller, focused classes",
-                            article="P4",
-                        )
-
-                    # Check for multiple responsibilities
-                    responsibilities = set()
-                    for method in methods:
-                        if method.name.startswith("get_"):
-                            responsibilities.add("getter")
-                        elif method.name.startswith("set_"):
-                            responsibilities.add("setter")
-                        elif method.name.startswith("validate_"):
-                            responsibilities.add("validation")
-                        elif method.name.startswith("save_") or method.name.startswith("load_"):
-                            responsibilities.add("persistence")
-                        elif method.name.startswith("render_") or method.name.startswith("display_"):
-                            responsibilities.add("presentation")
-
-                    if len(responsibilities) > 2:
-                        self._add_finding(
-                            severity="warning",
-                            category="solid",
-                            file=file_path,
-                            line=node.lineno,
-                            message=f"Class '{node.name}' has multiple responsibilities: {', '.join(responsibilities)}",
-                            suggestion="Apply Single Responsibility Principle",
-                            article="P4",
-                        )
-
+                    self._check_class_solid_violations(node, file_path)
         except SyntaxError:
             pass  # Invalid Python syntax
+
+    def _check_class_solid_violations(self, class_node: ast.ClassDef, file_path: str):
+        """
+        Check SOLID violations for a single class.
+
+        Learning Point: Single responsibility - only checks ONE class.
+        Easier to test and modify than checking all classes at once.
+        """
+        methods = [n for n in class_node.body if isinstance(n, ast.FunctionDef)]
+
+        # Check 1: Too many methods (SRP violation)
+        self._check_method_count_violation(class_node, methods, file_path)
+
+        # Check 2: Multiple responsibilities
+        self._check_responsibility_violation(class_node, methods, file_path)
+
+    def _check_method_count_violation(self, class_node: ast.ClassDef, methods: list, file_path: str):
+        """
+        Check if class has too many methods.
+
+        Learning Point: Magic number (15) is now in ONE place.
+        Want to change threshold? Just modify here!
+        """
+        MAX_METHODS = 15
+
+        if len(methods) > MAX_METHODS:
+            self._add_finding(
+                severity="warning",
+                category="solid",
+                file=file_path,
+                line=class_node.lineno,
+                message=f"Class '{class_node.name}' has {len(methods)} methods (possible SRP violation)",
+                suggestion="Consider splitting into smaller, focused classes",
+                article="P4",
+            )
+
+    def _check_responsibility_violation(self, class_node: ast.ClassDef, methods: list, file_path: str):
+        """
+        Check if class has multiple responsibilities.
+
+        Learning Point: Extract responsibility analysis to separate function.
+        Now we can test responsibility detection independently!
+        """
+        responsibilities = self._analyze_class_responsibilities(methods)
+
+        MAX_RESPONSIBILITIES = 2
+        if len(responsibilities) > MAX_RESPONSIBILITIES:
+            self._add_finding(
+                severity="warning",
+                category="solid",
+                file=file_path,
+                line=class_node.lineno,
+                message=f"Class '{class_node.name}' has multiple responsibilities: {', '.join(responsibilities)}",
+                suggestion="Apply Single Responsibility Principle",
+                article="P4",
+            )
+
+    def _analyze_class_responsibilities(self, methods: list) -> set:
+        """
+        Analyze what responsibilities a class has based on method names.
+
+        Learning Point: Pure function! Input → Output, no side effects.
+        Perfect for unit testing!
+
+        Returns:
+            Set of responsibility types (e.g., {'getter', 'validation'})
+        """
+        RESPONSIBILITY_PATTERNS = {
+            "getter": lambda name: name.startswith("get_"),
+            "setter": lambda name: name.startswith("set_"),
+            "validation": lambda name: name.startswith("validate_"),
+            "persistence": lambda name: name.startswith(("save_", "load_")),
+            "presentation": lambda name: name.startswith(("render_", "display_")),
+        }
+
+        responsibilities = set()
+        for method in methods:
+            for resp_type, pattern_check in RESPONSIBILITY_PATTERNS.items():
+                if pattern_check(method.name):
+                    responsibilities.add(resp_type)
+                    break  # One responsibility per method
+
+        return responsibilities
 
     def _check_security(self, file_path: str, content: str):
         """Check security issues"""
@@ -464,67 +514,155 @@ class CodeReviewAssistant:
 
 
 def format_report(report: ReviewReport, format: str = "text") -> str:
-    """Format report for output"""
+    """
+    Format report for output.
+
+    Learning Point: Main function delegates to specialized formatters.
+    Each formatter has ONE job (Single Responsibility Principle).
+    """
     if format == "json":
-        return json.dumps(asdict(report), indent=2, default=str)
+        return _format_json_report(report)
+    return _format_text_report(report)
 
-    # Text format
-    output = []
-    output.append("=" * 60)
-    output.append("CODE REVIEW REPORT")
-    output.append("=" * 60)
-    output.append(f"Commit: {report.commit}")
-    output.append(f"Score: {report.score}/100")
-    output.append(f"Summary: {report.summary}")
-    output.append("")
 
-    # Statistics
-    output.append("Statistics:")
-    for key, value in report.stats.items():
-        output.append(f"  - {key}: {value}")
-    output.append("")
+def _format_json_report(report: ReviewReport) -> str:
+    """Format report as JSON (single responsibility: JSON conversion)"""
+    return json.dumps(asdict(report), indent=2, default=str)
 
-    # Constitutional Compliance
-    output.append("Constitutional Compliance:")
-    for article, compliant in report.constitutional_compliance.items():
+
+def _format_text_report(report: ReviewReport) -> str:
+    """
+    Format report as text (orchestrator pattern).
+
+    Learning Point: This function ORCHESTRATES other functions.
+    It doesn't do the work itself - it delegates!
+    """
+    sections = [
+        _format_report_header(report),
+        _format_statistics_section(report.stats),
+        _format_compliance_section(report.constitutional_compliance),
+        _format_findings_section(report.findings),
+        _format_recommendations_section(report.recommendations),
+        "=" * 60,
+    ]
+    return "\n\n".join(filter(None, sections))
+
+
+def _format_report_header(report: ReviewReport) -> str:
+    """
+    Format report header section.
+
+    Learning Point: Small, focused function - easy to test!
+    If header format changes, only modify this function.
+    """
+    return "\n".join(
+        [
+            "=" * 60,
+            "CODE REVIEW REPORT",
+            "=" * 60,
+            f"Commit: {report.commit}",
+            f"Score: {report.score}/100",
+            f"Summary: {report.summary}",
+        ]
+    )
+
+
+def _format_statistics_section(stats: dict) -> str:
+    """
+    Format statistics as bullet list.
+
+    Learning Point: Reusable! Can use this function anywhere
+    you need to format a dict as bullet points.
+    """
+    if not stats:
+        return ""
+
+    lines = ["Statistics:"]
+    for key, value in stats.items():
+        lines.append(f"  - {key}: {value}")
+    return "\n".join(lines)
+
+
+def _format_compliance_section(compliance: dict) -> str:
+    """
+    Format constitutional compliance status.
+
+    Learning Point: Clear input/output makes testing trivial.
+    Input: dict, Output: string - easy to verify!
+    """
+    if not compliance:
+        return ""
+
+    lines = ["Constitutional Compliance:"]
+    for article, compliant in compliance.items():
         status = "[OK]" if compliant else "[X]"
-        output.append(f"  {status} {article}: {CodeReviewAssistant.CONSTITUTION_CHECKS.get(article, '')}")
-    output.append("")
+        article_desc = CodeReviewAssistant.CONSTITUTION_CHECKS.get(article, "")
+        lines.append(f"  {status} {article}: {article_desc}")
+    return "\n".join(lines)
 
-    # Findings by severity
-    if report.findings:
-        output.append("Findings:")
 
-        critical = [f for f in report.findings if f.severity == "critical"]
-        warnings = [f for f in report.findings if f.severity == "warning"]
-        suggestions = [f for f in report.findings if f.severity == "suggestion"]
+def _format_findings_section(findings: list) -> str:
+    """
+    Format findings grouped by severity.
 
-        if critical:
-            output.append("\nCRITICAL:")
-            for f in critical:
-                output.append(f"  - {f.file}:{f.line or '?'} - {f.message}")
-                if f.suggestion:
-                    output.append(f"    Suggestion: {f.suggestion}")
+    Learning Point: Extract-Transform-Load pattern.
+    1. Extract (filter by severity)
+    2. Transform (format each group)
+    3. Load (combine into output)
+    """
+    if not findings:
+        return "No issues found - excellent!"
 
-        if warnings:
-            output.append("\nWARNINGS:")
-            for f in warnings[:5]:  # Top 5
-                output.append(f"  - {f.file}:{f.line or '?'} - {f.message}")
+    critical = [f for f in findings if f.severity == "critical"]
+    warnings = [f for f in findings if f.severity == "warning"]
+    suggestions = [f for f in findings if f.severity == "suggestion"]
 
-        if suggestions:
-            output.append(f"\nSUGGESTIONS: {len(suggestions)} total")
-    else:
-        output.append("No issues found - excellent!")
+    sections = ["Findings:"]
 
-    # Recommendations
-    if report.recommendations:
-        output.append("\nRecommendations:")
-        for i, rec in enumerate(report.recommendations, 1):
-            output.append(f"  {i}. {rec}")
+    if critical:
+        sections.append(_format_critical_findings(critical))
 
-    output.append("\n" + "=" * 60)
+    if warnings:
+        sections.append(_format_warning_findings(warnings))
 
-    return "\n".join(output)
+    if suggestions:
+        sections.append(f"\nSUGGESTIONS: {len(suggestions)} total")
+
+    return "\n".join(sections)
+
+
+def _format_critical_findings(findings: list) -> str:
+    """Format critical findings with details"""
+    lines = ["\nCRITICAL:"]
+    for f in findings:
+        lines.append(f"  - {f.file}:{f.line or '?'} - {f.message}")
+        if f.suggestion:
+            lines.append(f"    Suggestion: {f.suggestion}")
+    return "\n".join(lines)
+
+
+def _format_warning_findings(warnings: list) -> str:
+    """Format warning findings (top 5 only)"""
+    lines = ["\nWARNINGS:"]
+    for f in warnings[:5]:  # Top 5
+        lines.append(f"  - {f.file}:{f.line or '?'} - {f.message}")
+    return "\n".join(lines)
+
+
+def _format_recommendations_section(recommendations: list) -> str:
+    """
+    Format numbered recommendations list.
+
+    Learning Point: Guard clause pattern.
+    Handle empty case first, then process normal case.
+    """
+    if not recommendations:
+        return ""
+
+    lines = ["Recommendations:"]
+    for i, rec in enumerate(recommendations, 1):
+        lines.append(f"  {i}. {rec}")
+    return "\n".join(lines)
 
 
 def main():
