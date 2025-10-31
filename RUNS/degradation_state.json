@@ -24,9 +24,33 @@
     {
       "date": "2025-10-31",
       "rate": 0.0
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.0
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.0
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.0
     }
   ],
   "quality_history": [
+    {
+      "date": "2025-10-31",
+      "score": 7.0
+    },
+    {
+      "date": "2025-10-31",
+      "score": 7.0
+    },
+    {
+      "date": "2025-10-31",
+      "score": 7.0
+    },
     {
       "date": "2025-10-31",
       "score": 7.0
@@ -76,9 +100,33 @@
     {
       "date": "2025-10-31",
       "rate": 0.25
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.2465753424657534
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.2465753424657534
+    },
+    {
+      "date": "2025-10-31",
+      "rate": 0.2602739726027397
     }
   ],
   "security_issues_history": [
+    {
+      "date": "2025-10-31",
+      "count": 0
+    },
+    {
+      "date": "2025-10-31",
+      "count": 0
+    },
+    {
+      "date": "2025-10-31",
+      "count": 0
+    },
     {
       "date": "2025-10-31",
       "count": 0
@@ -120,6 +168,14 @@
     {
       "timestamp": "2025-10-31T16:28:22.679617",
       "message": "======================================================================\nP14: DEGRADATION DETECTED\n======================================================================\n\n[ALERT] YAML compliance 25.0% < 30.0%\n  - ACTION: Encourage YAML contract usage for major tasks\n\nReview INNOVATION_SAFETY_PRINCIPLES.md for mitigation strategies.\n"
+    },
+    {
+      "timestamp": "2025-10-31T16:47:55.801963",
+      "message": "======================================================================\nP14: DEGRADATION DETECTED\n======================================================================\n\n[ALERT] YAML compliance 24.7% < 30.0%\n  - ACTION: Encourage YAML contract usage for major tasks\n\nReview INNOVATION_SAFETY_PRINCIPLES.md for mitigation strategies.\n"
+    },
+    {
+      "timestamp": "2025-10-31T17:13:07.933850",
+      "message": "======================================================================\nP14: DEGRADATION DETECTED\n======================================================================\n\n[ALERT] YAML compliance 24.7% < 30.0%\n  - ACTION: Encourage YAML contract usage for major tasks\n\nReview INNOVATION_SAFETY_PRINCIPLES.md for mitigation strategies.\n"
     }
   ]
 }

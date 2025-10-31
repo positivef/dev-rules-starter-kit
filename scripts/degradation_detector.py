@@ -341,9 +341,9 @@ class DegradationDetector:
             lines.append(f"  Rate: {override.get('rate', 0):.1%} (threshold: {override.get('threshold', 0.1):.1%})")
             lines.append(f"  Count: {override.get('count', 0)} overrides in last 7 days")
             lines.append(f"  Total commits: {override.get('total_commits', 0)}")
-            lines.append(
-                f"  Status: {override.get('status', 'UNKNOWN')} {'[WARNING]' if override.get('status') == 'ALERT' else '[CHECKMARK]'}"
-            )
+            status_text = override.get("status", "UNKNOWN")
+            indicator = " [WARNING]" if override.get("status") == "ALERT" else " [CHECKMARK]"
+            lines.append(f"  Status: {status_text}{indicator}")
         else:
             lines.append(f"  Error: {override['error']}")
         lines.append("")
@@ -353,9 +353,9 @@ class DegradationDetector:
         quality = results["quality_score"]
         if "error" not in quality:
             lines.append(f"  Score: {quality.get('score', 0)} (threshold: {quality.get('threshold', 7.0)})")
-            lines.append(
-                f"  Status: {quality.get('status', 'UNKNOWN')} {'[BLOCK]' if quality.get('status') == 'BLOCK' else '[CHECKMARK]'}"
-            )
+            status_text = quality.get("status", "UNKNOWN")
+            indicator = " [BLOCK]" if quality.get("status") == "BLOCK" else " [CHECKMARK]"
+            lines.append(f"  Status: {status_text}{indicator}")
         else:
             lines.append(f"  Error: {quality['error']}")
         lines.append("")
@@ -367,9 +367,9 @@ class DegradationDetector:
             lines.append(f"  Rate: {yaml_comp.get('rate', 0):.1%} (threshold: {yaml_comp.get('threshold', 0.3):.1%})")
             lines.append(f"  YAML files: {yaml_comp.get('yaml_count', 0)}")
             lines.append(f"  Total commits: {yaml_comp.get('total_commits', 0)}")
-            lines.append(
-                f"  Status: {yaml_comp.get('status', 'UNKNOWN')} {'[WARNING]' if yaml_comp.get('status') == 'ALERT' else '[CHECKMARK]'}"
-            )
+            status_text = yaml_comp.get("status", "UNKNOWN")
+            indicator = " [WARNING]" if yaml_comp.get("status") == "ALERT" else " [CHECKMARK]"
+            lines.append(f"  Status: {status_text}{indicator}")
         else:
             lines.append(f"  Error: {yaml_comp['error']}")
         lines.append("")
@@ -381,9 +381,9 @@ class DegradationDetector:
             lines.append("  Status: SKIPPED (gitleaks not installed)")
         elif "error" not in security:
             lines.append(f"  Count: {security.get('count', 0)} (threshold: {security.get('threshold', 0)})")
-            lines.append(
-                f"  Status: {security.get('status', 'UNKNOWN')} {'[CRITICAL]' if security.get('status') == 'CRITICAL' else '[CHECKMARK]'}"
-            )
+            status_text = security.get("status", "UNKNOWN")
+            indicator = " [CRITICAL]" if security.get("status") == "CRITICAL" else " [CHECKMARK]"
+            lines.append(f"  Status: {status_text}{indicator}")
         else:
             lines.append(f"  Error: {security['error']}")
         lines.append("")

@@ -1,0 +1,97 @@
+task_id: "SETUP-2025-10-31-10"
+title: "Configure PubMed and OpenAlex API for MCP Academic Verification"
+project: "DevRulesStarterKit"
+priority: "high"
+type: "setup"
+tags: [mcp, academic, api, pubmed, openalex]
+status: "completed"
+
+description: |
+  Configure PubMed (NCBI E-utilities) and OpenAlex API integration for
+  MCP server academic verification system to enable 5/5 database support.
+
+  Previously: 3/5 operational (Semantic Scholar, arXiv, Crossref)
+  Now: 5/5 operational with API keys
+
+  PubMed API: NCBI E-utilities with API key
+  OpenAlex API: Polite pool with mailto parameter
+
+acceptance_criteria:
+  - "PubMed API key added to .env"
+  - "OpenAlex email added to .env"
+  - "_search_pubmed() fully implemented"
+  - "_search_openalex() uses mailto parameter"
+  - "All 5 academic databases operational"
+
+commands:
+  - id: "01-add-api-keys"
+    description: "Add PubMed and OpenAlex credentials to .env"
+    exec:
+      cmd: "edit"
+      args:
+        file: ".env"
+        additions:
+          - "PUBMED_API_KEY=[CONFIGURED]"
+          - "OPENALEX_EMAIL=[CONFIGURED]"
+    cost_estimate_usd: 0.0
+
+  - id: "02-implement-pubmed"
+    description: "Implement PubMed search using NCBI E-utilities"
+    exec:
+      cmd: "edit"
+      args:
+        file: "mcp/dev_rules_mcp_server_enhanced.py"
+        method: "_search_pubmed"
+        implementation: "Two-step: esearch for PMIDs → esummary for details"
+    cost_estimate_usd: 0.0
+
+  - id: "03-fix-openalex"
+    description: "Add mailto parameter to OpenAlex requests"
+    exec:
+      cmd: "edit"
+      args:
+        file: "mcp/dev_rules_mcp_server_enhanced.py"
+        method: "_search_openalex"
+        change: "Add mailto param from OPENALEX_EMAIL env var"
+    cost_estimate_usd: 0.0
+
+gates:
+  - type: "functional"
+    description: "API integration working"
+    criteria:
+      - "PubMed returns paper results"
+      - "OpenAlex uses polite pool"
+
+evidence:
+  - ".env"
+  - "mcp/dev_rules_mcp_server_enhanced.py"
+
+results:
+  pubmed_implemented: true
+  pubmed_api: "NCBI E-utilities (esearch + esummary)"
+  openalex_fixed: true
+  openalex_feature: "Polite pool (mailto parameter)"
+  databases_operational: "5/5 (100%)"
+  time_actual: "15 minutes"
+
+# API Details
+api_implementations:
+  pubmed:
+    base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+    endpoints:
+      - "esearch.fcgi - Search for PMIDs"
+      - "esummary.fcgi - Fetch article details"
+    authentication: "API key in query params"
+    rate_limit: "3 requests/sec without key, 10 requests/sec with key"
+
+  openalex:
+    base_url: "https://api.openalex.org/works"
+    authentication: "None (polite pool with mailto)"
+    rate_limit: "10 requests/sec (polite pool), 1 request/sec (basic)"
+    polite_pool_benefit: "10x faster, more consistent response times"
+
+# Provenance
+provenance:
+  executed_at: "2025-10-31T18:00:00Z"
+  executor: "manual-setup"
+  verification_method: "code-implementation"

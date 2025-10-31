@@ -194,9 +194,9 @@ class ProjectValidator:
                                         stats["code_lines"] += 1
                                     elif stripped.startswith("#"):
                                         stats["comment_lines"] += 1
-                        except:
-                            pass
-            except:
+                        except (UnicodeDecodeError, OSError, IOError):
+                            pass  # Skip files that can't be read
+            except (PermissionError, OSError):
                 pass  # Skip files that can't be accessed
 
         return stats
@@ -377,8 +377,8 @@ class ProjectValidator:
                     )
                     score -= 30
 
-        except:
-            score -= 20
+        except (FileNotFoundError, json.JSONDecodeError, OSError, subprocess.SubprocessError):
+            score -= 20  # Node dependencies not found or npm not available
 
         return score
 
@@ -416,8 +416,8 @@ class ProjectValidator:
                         )
                         score -= 20
                         break
-            except:
-                pass
+            except (UnicodeDecodeError, OSError, IOError):
+                pass  # Skip files that can't be read
 
         # Check for .env in git
         if (self.project_root / ".env").exists():
@@ -559,8 +559,8 @@ class ProjectValidator:
                         score -= 30
                     elif total_coverage > 80:
                         self.passed_checks.append(f"Good test coverage: {total_coverage}%")
-                except:
-                    pass
+                except (json.JSONDecodeError, KeyError):
+                    pass  # Coverage data parsing failed
 
         return max(0, score)
 
@@ -680,8 +680,8 @@ class ProjectValidator:
                     ast.parse(content)
                     # This is a simplified check
                     return False
-            except:
-                pass
+            except (UnicodeDecodeError, OSError, IOError, SyntaxError):
+                pass  # Skip files that can't be read or parsed
         return True
 
     # Helper methods
@@ -703,8 +703,8 @@ class ProjectValidator:
                         complexity = sum(1 for _ in ast.walk(node) if isinstance(_, (ast.If, ast.For, ast.While)))
                         if complexity > 10:
                             complex_functions.append(f"{py_file.stem}.{node.name}")
-            except:
-                pass
+            except (UnicodeDecodeError, OSError, IOError, SyntaxError):
+                pass  # Skip files that can't be read or parsed
 
         return complex_functions
 
@@ -721,8 +721,8 @@ class ProjectValidator:
                     for line in f:
                         if "TODO" in line or "FIXME" in line:
                             count += 1
-            except:
-                pass
+            except (UnicodeDecodeError, OSError, IOError):
+                pass  # Skip files that can't be read
 
         return count
 
@@ -770,7 +770,7 @@ def auto_fix_issues(issues: List[ValidationIssue]) -> int:
                 subprocess.run(issue.fix_command, shell=True, check=True)
                 fixed_count += 1
                 print("  Fixed!")
-            except:
+            except (subprocess.CalledProcessError, OSError):
                 print("  Failed to fix automatically")
 
     return fixed_count
@@ -799,7 +799,11 @@ def generate_html_report(report: ValidationReport, output_file: Path):
     <div class="header">
         <h1>Project Validation Report</h1>
         <p>Generated: {report.timestamp}</p>
-        <div class="score {('good' if report.overall_score >= 70 else 'warning' if report.overall_score >= 50 else 'critical')}">
+        <div class="score {(
+            'good' if report.overall_score >= 70
+            else 'warning' if report.overall_score >= 50
+            else 'critical'
+        )}">
             Overall Score: {report.overall_score}/100
         </div>
     </div>
@@ -808,19 +812,30 @@ def generate_html_report(report: ValidationReport, output_file: Path):
         <h2>Score Breakdown</h2>
         <table>
             <tr><th>Category</th><th>Score</th><th>Status</th></tr>
-            <tr><td>Constitution</td><td>{report.constitution_score}</td><td>{'✅' if report.constitution_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Structure</td><td>{report.structure_score}</td><td>{'✅' if report.structure_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Dependencies</td><td>{report.dependency_score}</td><td>{'✅' if report.dependency_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Security</td><td>{report.security_score}</td><td>{'✅' if report.security_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Code Quality</td><td>{report.quality_score}</td><td>{'✅' if report.quality_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Tests</td><td>{report.test_score}</td><td>{'✅' if report.test_score >= 70 else '⚠️'}</td></tr>
-            <tr><td>Documentation</td><td>{report.docs_score}</td><td>{'✅' if report.docs_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Constitution</td><td>{report.constitution_score}</td>
+                <td>{'✅' if report.constitution_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Structure</td><td>{report.structure_score}</td>
+                <td>{'✅' if report.structure_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Dependencies</td><td>{report.dependency_score}</td>
+                <td>{'✅' if report.dependency_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Security</td><td>{report.security_score}</td>
+                <td>{'✅' if report.security_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Code Quality</td><td>{report.quality_score}</td>
+                <td>{'✅' if report.quality_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Tests</td><td>{report.test_score}</td>
+                <td>{'✅' if report.test_score >= 70 else '⚠️'}</td></tr>
+            <tr><td>Documentation</td><td>{report.docs_score}</td>
+                <td>{'✅' if report.docs_score >= 70 else '⚠️'}</td></tr>
         </table>
     </div>
 
     <div class="section">
         <h2>Issues ({len(report.issues)})</h2>
-        {''.join(f'<div class="issue {issue.severity}">[{issue.severity.upper()}] {issue.message}</div>' for issue in report.issues[:10])}
+        {''.join(
+            f'<div class="issue {issue.severity}">'
+            f'[{issue.severity.upper()}] {issue.message}</div>'
+            for issue in report.issues[:10]
+        )}
     </div>
 
     <div class="section">

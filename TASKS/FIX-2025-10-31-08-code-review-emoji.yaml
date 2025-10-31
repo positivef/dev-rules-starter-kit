@@ -1,0 +1,70 @@
+task_id: "FIX-2025-10-31-08"
+title: "Fix code_review_assistant.py Windows Emoji Bug"
+project: "DevRulesStarterKit"
+priority: "high"
+type: "fix"
+tags: [windows, encoding, p10, bug-fix, unicode]
+status: "completed"
+
+description: |
+  Fix UnicodeEncodeError in code_review_assistant.py caused by including
+  actual emoji characters in error messages on Windows console with cp949 encoding.
+
+  Bug:
+  - Line 331 included actual non-ASCII character in message
+  - Caused UnicodeEncodeError when printed to Windows console
+  - Error: 'cp949' codec can't encode character '\u2705'
+
+  Fix:
+  - Convert character to Unicode code point representation (U+XXXX)
+  - Safe to display on all platforms and encodings
+
+acceptance_criteria:
+  - "code_review_assistant.py runs without UnicodeEncodeError"
+  - "Non-ASCII characters displayed as U+XXXX format"
+  - "All functionality preserved"
+  - "Test passes with --commit HEAD"
+
+commands:
+  - id: "01-fix-emoji-display"
+    description: "Replace emoji character with Unicode code point"
+    exec:
+      cmd: "edit"
+      args:
+        file: "scripts/code_review_assistant.py"
+        line: 331
+        change: "Use char_repr with ord(c) to show U+XXXX instead of actual character"
+    cost_estimate_usd: 0.0
+
+  - id: "02-test-fix"
+    description: "Verify code_review_assistant works on Windows"
+    exec:
+      cmd: "python"
+      args: ["scripts/code_review_assistant.py", "--commit", "HEAD"]
+    cost_estimate_usd: 0.0
+
+gates:
+  - type: "constitutional"
+    articles: ["P10"]
+    description: "Windows UTF-8 compliance"
+
+evidence:
+  - "scripts/code_review_assistant.py"
+
+results:
+  bug_fixed: true
+  test_result: "Score: 100/100, no encoding errors"
+  time_actual: "10 minutes"
+  unicode_safe: true
+
+# Fix Details
+fix_applied:
+  before: "message=f\"Non-ASCII character '{char}' found\""
+  after: "char_repr = \", \".join(f\"U+{ord(c):04X}\" for c in char)"
+  example_output: "Non-ASCII character (U+2705) found"
+
+# Provenance
+provenance:
+  executed_at: "2025-10-31T17:00:00Z"
+  executor: "manual-fix"
+  verification_method: "python-execution"

@@ -1,0 +1,113 @@
+task_id: "REFACTOR-2025-10-31-09"
+title: "Complete Ruff Style Fixes - 23 Errors Resolved"
+project: "DevRulesStarterKit"
+priority: "medium"
+type: "refactor"
+tags: [code-quality, ruff, style, technical-debt]
+status: "completed"
+
+description: |
+  Fixed all 23 remaining Ruff linting issues from Scenario B+ implementation.
+  All issues were style-related (no functional bugs).
+
+  Fixed Issues:
+  - E501 (Line too long): 14 errors → 0 errors
+  - E722 (Bare except): 9 errors → 0 errors
+
+  Affected Files:
+  - scripts/convergence_monitor.py: 4 E501 fixed
+  - scripts/degradation_detector.py: 4 E501 fixed
+  - scripts/project_validator.py: 9 E722 + 6 E501 fixed
+
+acceptance_criteria:
+  - "All E501 errors fixed (lines wrapped/split)"
+  - "All E722 errors fixed (specific exceptions)"
+  - "Ruff check passes with 0 errors"
+  - "All tools still functional after changes"
+
+commands:
+  - id: "01-fix-convergence-monitor"
+    description: "Fix 4 E501 line-too-long errors"
+    changes:
+      - "Line 192: Split status text and checkmark"
+      - "Line 203: Split status text and checkmark"
+      - "Line 212: Split status text and checkmark"
+      - "Line 227: Split status text and indicator"
+    cost_estimate_usd: 0.0
+
+  - id: "02-fix-degradation-detector"
+    description: "Fix 4 E501 line-too-long errors"
+    changes:
+      - "Line 345: Split status text and indicator"
+      - "Line 357: Split status text and indicator"
+      - "Line 371: Split status text and indicator"
+      - "Line 385: Split status text and indicator"
+    cost_estimate_usd: 0.0
+
+  - id: "03-fix-project-validator-bare-except"
+    description: "Fix 9 E722 bare except errors"
+    changes:
+      - "Line 197: UnicodeDecodeError, OSError, IOError"
+      - "Line 199: PermissionError, OSError"
+      - "Line 380: FileNotFoundError, JSONDecodeError, OSError, SubprocessError"
+      - "Line 419: UnicodeDecodeError, OSError, IOError"
+      - "Line 562: JSONDecodeError, KeyError"
+      - "Line 683: UnicodeDecodeError, OSError, IOError, SyntaxError"
+      - "Line 706: UnicodeDecodeError, OSError, IOError, SyntaxError"
+      - "Line 724: UnicodeDecodeError, OSError, IOError"
+      - "Line 773: CalledProcessError, OSError"
+    cost_estimate_usd: 0.0
+
+  - id: "04-fix-project-validator-line-length"
+    description: "Fix 6 E501 line-too-long errors"
+    changes:
+      - "Line 802: Multi-line conditional for CSS class"
+      - "Lines 811-815: Split table row emoji conditionals"
+      - "Line 823: Multi-line list comprehension"
+    cost_estimate_usd: 0.0
+
+  - id: "05-verify-ruff"
+    description: "Verify all Ruff errors resolved"
+    exec:
+      cmd: "ruff"
+      args: ["check", "scripts/convergence_monitor.py", "scripts/degradation_detector.py", "scripts/project_validator.py"]
+    result: "All checks passed!"
+    cost_estimate_usd: 0.0
+
+gates:
+  - type: "quality"
+    description: "Code style compliance"
+    criteria:
+      - "Ruff: 0 errors"
+      - "No functional regressions"
+
+evidence:
+  - "scripts/convergence_monitor.py"
+  - "scripts/degradation_detector.py"
+  - "scripts/project_validator.py"
+
+results:
+  errors_fixed: 23
+  e501_fixed: 14
+  e722_fixed: 9
+  time_actual: "20 minutes"
+  ruff_status: "All checks passed!"
+  functionality_preserved: true
+
+# Fix Summary
+fix_patterns:
+  e501_pattern: "Split long f-strings into multiple lines or extract variables"
+  e722_pattern: "Specify exception types based on operations in try block"
+
+  exception_mapping:
+    file_operations: "UnicodeDecodeError, OSError, IOError"
+    ast_operations: "SyntaxError"
+    json_operations: "JSONDecodeError, KeyError"
+    subprocess_operations: "CalledProcessError, SubprocessError"
+    permission_issues: "PermissionError"
+
+# Provenance
+provenance:
+  executed_at: "2025-10-31T17:30:00Z"
+  executor: "manual-refactor"
+  verification_method: "ruff-check"

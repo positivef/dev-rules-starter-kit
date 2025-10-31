@@ -323,12 +323,14 @@ class CodeReviewAssistant:
                 if "#" in line and line.index("#") < match.start() - content.rfind("\n", 0, match.start()):
                     continue  # It's in a comment, might be okay
 
+                # Get Unicode code point for safe display
+                char_repr = ", ".join(f"U+{ord(c):04X}" for c in char)
                 self._add_finding(
                     severity="critical",
                     category="constitution",
                     file=file_path,
                     line=line_num,
-                    message=f"Non-ASCII character '{char}' found (violates P10 - Windows UTF-8)",
+                    message=f"Non-ASCII character ({char_repr}) found (violates P10 - Windows UTF-8)",
                     suggestion="Use ASCII alternatives in Python code",
                     article="P10",
                 )

@@ -188,9 +188,9 @@ class ConvergenceMonitor:
         dashboard.append(f"  Phase 2: {latest_roi.get('phase_2', 0):,}%")
         dashboard.append(f"  Phase 3: {latest_roi.get('phase_3', 0):,}%")
         dashboard.append(f"  Total:   {latest_roi.get('total', 0):,}% (threshold: {stop_config['roi_threshold']}%)")
-        dashboard.append(
-            f"  Status:  {'STOP CONDITION MET' if results['roi_met'] else 'Continue'} {'[CHECKMARK]' if results['roi_met'] else ''}"
-        )
+        status_text = "STOP CONDITION MET" if results["roi_met"] else "Continue"
+        checkmark = " [CHECKMARK]" if results["roi_met"] else ""
+        dashboard.append(f"  Status:  {status_text}{checkmark}")
         dashboard.append("")
 
         # Satisfaction Section
@@ -199,18 +199,18 @@ class ConvergenceMonitor:
             f"  Score: {latest_satisfaction.get('score', 0)}% (threshold: {stop_config['satisfaction_threshold']}%)"
         )
         dashboard.append(f"  Source: {latest_satisfaction.get('source', 'N/A')}")
-        dashboard.append(
-            f"  Status: {'STOP CONDITION MET' if results['satisfaction_met'] else 'Continue'} {'[CHECKMARK]' if results['satisfaction_met'] else ''}"
-        )
+        status_text = "STOP CONDITION MET" if results["satisfaction_met"] else "Continue"
+        checkmark = " [CHECKMARK]" if results["satisfaction_met"] else ""
+        dashboard.append(f"  Status: {status_text}{checkmark}")
         dashboard.append("")
 
         # Stability Section
         stable_days = self._calculate_stable_days()
         dashboard.append("[STABILITY]")
         dashboard.append(f"  Stable for: {stable_days} days (threshold: {stop_config['stable_duration_days']} days)")
-        dashboard.append(
-            f"  Status: {'STOP CONDITION MET' if results['stable_met'] else 'Continue'} {'[CHECKMARK]' if results['stable_met'] else ''}"
-        )
+        status_text = "STOP CONDITION MET" if results["stable_met"] else "Continue"
+        checkmark = " [CHECKMARK]" if results["stable_met"] else ""
+        dashboard.append(f"  Status: {status_text}{checkmark}")
         dashboard.append("")
 
         # Complexity Budget Section
@@ -223,9 +223,9 @@ class ConvergenceMonitor:
         dashboard.append(f"  Articles: {articles} / {max_articles} (max)")
         dashboard.append(f"  Lines:    {lines} / {max_lines} (max)")
         dashboard.append(f"  Remaining: {max_articles - articles} articles, {max_lines - lines} lines")
-        dashboard.append(
-            f"  Status: {'OK' if results['complexity_ok'] else 'EXCEEDED'} {'[CHECKMARK]' if results['complexity_ok'] else '[WARNING]'}"
-        )
+        status_text = "OK" if results["complexity_ok"] else "EXCEEDED"
+        indicator = " [CHECKMARK]" if results["complexity_ok"] else " [WARNING]"
+        dashboard.append(f"  Status: {status_text}{indicator}")
         dashboard.append("")
 
         # Overall Status

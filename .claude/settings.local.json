@@ -99,7 +99,10 @@
       "Bash(pip show:*)",
       "Bash(awk:*)",
       "Bash(where:*)",
-      "Bash(gitleaks version)"
+      "Bash(gitleaks version)",
+      "Bash(source ~/.bashrc)",
+      "Bash(timeout 30 gitleaks detect:*)",
+      "Bash(timeout 60 python:*)"
     ],
     "deny": [],
     "ask": []
