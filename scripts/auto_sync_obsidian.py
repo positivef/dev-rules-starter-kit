@@ -128,6 +128,130 @@ def categorize_work(commit_info: Dict[str, any]) -> str:
         return "general"
 
 
+def extract_commit_type(commit_msg: str) -> Optional[str]:
+    """Extract conventional commit type (feat, fix, test, etc.)"""
+    match = re.match(r"^(feat|fix|test|docs|refactor|chore|style|perf|build|ci):", commit_msg, re.IGNORECASE)
+    return match.group(1).lower() if match else None
+
+
+def parse_stats(stats_str: str) -> Dict[str, int]:
+    """Parse git diff stats string
+
+    Example: "3 files changed, 571 insertions(+), 12 deletions(-)"
+    Returns: {"files_changed": 3, "insertions": 571, "deletions": 12}
+    """
+    result = {"files_changed": 0, "insertions": 0, "deletions": 0}
+
+    if not stats_str:
+        return result
+
+    # Extract numbers
+    files_match = re.search(r"(\d+)\s+files?\s+changed", stats_str)
+    insertions_match = re.search(r"(\d+)\s+insertions?", stats_str)
+    deletions_match = re.search(r"(\d+)\s+deletions?", stats_str)
+
+    if files_match:
+        result["files_changed"] = int(files_match.group(1))
+    if insertions_match:
+        result["insertions"] = int(insertions_match.group(1))
+    if deletions_match:
+        result["deletions"] = int(deletions_match.group(1))
+
+    return result
+
+
+def extract_tags_from_commit(commit_info: Dict[str, any]) -> List[str]:
+    """Extract tags from commit info for YAML frontmatter
+
+    Generates hierarchical tags like:
+    - type/feature, type/fix
+    - domain/testing, domain/obsidian
+    - status/completed
+    """
+    tags = []
+    message = commit_info["message"]
+    files = commit_info.get("files", [])
+
+    # Type tag
+    commit_type = extract_commit_type(message)
+    if commit_type:
+        tags.append(f"type/{commit_type}")
+
+    # Domain tags from file paths
+    has_test = any("test" in f.lower() for f in files)
+    has_docs = any(".md" in f for f in files)
+    has_scripts = any("scripts/" in f for f in files)
+    has_config = any(f.endswith((".yaml", ".yml", ".json", ".toml")) for f in files)
+
+    if has_test:
+        tags.append("domain/testing")
+    if has_docs:
+        tags.append("domain/documentation")
+    if has_scripts:
+        tags.append("domain/scripts")
+    if has_config:
+        tags.append("domain/config")
+
+    # Specific domain detection
+    if any("obsidian" in f.lower() for f in files):
+        tags.append("domain/obsidian")
+    if any("q1" in message.lower() or "q1-2026" in message.lower()):
+        tags.append("project/q1-2026")
+    if any("strategy" in f.lower() for f in files) or "strategy" in message.lower():
+        tags.append("project/strategy-b")
+
+    # Status tag (always completed for post-commit)
+    tags.append("status/completed")
+
+    return tags
+
+
+def generate_yaml_frontmatter(commit_info: Dict[str, any]) -> str:
+    """Generate YAML frontmatter with metadata for Dataview queries
+
+    Returns YAML block with date, time, project, topic, tags, and stats
+    """
+    now = datetime.now()
+    topic = extract_topic_from_commit(commit_info["message"])
+    tags = extract_tags_from_commit(commit_info)
+    stats = parse_stats(commit_info["stats"])
+    work_type = categorize_work(commit_info)
+
+    # Extract phase if present
+    phase_match = re.search(r"[Pp]hase\s+(\d+)", commit_info["message"])
+    phase = int(phase_match.group(1)) if phase_match else None
+
+    # Extract project from topic or message
+    project = topic.replace("-", " ")
+
+    # Build YAML
+    yaml_lines = [
+        "---",
+        f'date: {now.strftime("%Y-%m-%d")}',
+        f'time: "{now.strftime("%H:%M")}"',
+        f'project: "{project}"',
+        f'topic: "{topic}"',
+        f'commit: "{commit_info["hash"]}"',
+        f"type: {work_type}",
+    ]
+
+    if phase:
+        yaml_lines.append(f"phase: {phase}")
+
+    yaml_lines.extend(
+        [
+            "status: completed",
+            f"tags: [{', '.join(tags)}]",
+            f"files_changed: {stats['files_changed']}",
+            f"lines_added: {stats['insertions']}",
+            f"lines_deleted: {stats['deletions']}",
+            "---",
+        ]
+    )
+
+    return "\n".join(yaml_lines)
+
+
 def extract_key_changes(commit_info: Dict[str, any]) -> List[str]:
     """Extract key changes from commit"""
     changes = []
@@ -156,7 +280,7 @@ def extract_key_changes(commit_info: Dict[str, any]) -> List[str]:
 
 
 def generate_devlog_content(commit_info: Dict[str, any]) -> str:
-    """Generate development log content"""
+    """Generate development log content with YAML frontmatter"""
     today = datetime.now().strftime("%Y-%m-%d")
     work_type = categorize_work(commit_info)
     key_changes = extract_key_changes(commit_info)
@@ -166,7 +290,12 @@ def generate_devlog_content(commit_info: Dict[str, any]) -> str:
     title = commit_lines[0]
     description = "\n".join(commit_lines[1:]).strip() if len(commit_lines) > 1 else ""
 
-    content = f"""# {today} {title}
+    # Generate YAML frontmatter
+    yaml_frontmatter = generate_yaml_frontmatter(commit_info)
+
+    content = f"""{yaml_frontmatter}
+
+# {today} {title}
 
 ## [TASK] 오늘의 작업
 
@@ -257,7 +386,12 @@ def extract_topic_from_commit(commit_msg: str) -> str:
     # "complete obsidian sync" -> "Obsidian Sync"
 
     # Remove action verbs
-    first_line = re.sub(r"^(add|implement|complete|fix|update|create|improve|optimize)\s+", "", first_line, flags=re.IGNORECASE)
+    first_line = re.sub(
+        r"^(add|implement|complete|fix|update|create|improve|optimize)\s+",
+        "",
+        first_line,
+        flags=re.IGNORECASE,
+    )
 
     # Extract key words (capitalize important words)
     words = first_line.split()
@@ -427,18 +561,47 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
                 content = content.rstrip() + "\n" + new_section
 
         moc_path.write_text(content, encoding="utf-8")
-        print(f"[MOC] Updated 개발일지-MOC.md")
+        print("[MOC] Updated 개발일지-MOC.md")
     else:
-        # Create new MOC
-        content = f"""# 개발일지 Map of Contents
+        # Create new MOC from template
+        template_path = Path(__file__).parent / "obsidian_moc_template.md"
 
-자동 생성된 개발일지 인덱스입니다.
+        if template_path.exists():
+            # Load template and replace placeholders
+            template_content = template_path.read_text(encoding="utf-8")
+            now = datetime.now()
+            content = template_content.replace("{last_update}", now.strftime("%Y-%m-%d %H:%M"))
+            content = content.replace("{creation_date}", now.strftime("%Y-%m-%d"))
+        else:
+            # Fallback to simple MOC if template not found
+            content = f"""# 개발일지 Map of Contents
+
+> 자동 생성 MOC - Dataview 플러그인이 설치되면 자동 쿼리가 실행됩니다
+
+---
+
+## 📅 최근 작업
+
+\`\`\`dataview
+TABLE
+  file.link AS "작업",
+  type AS "유형",
+  date AS "날짜",
+  time AS "시간"
+FROM "개발일지"
+WHERE file.folder != "개발일지/_backup_old_structure"
+SORT date DESC, time DESC
+LIMIT 20
+\`\`\`
+
+---
 
 ## {date}
 {link}
 """
+
         moc_path.write_text(content, encoding="utf-8")
-        print(f"[MOC] Created 개발일지-MOC.md")
+        print("[MOC] Created 개발일지-MOC.md with Dataview queries")
 
 
 def sync_to_obsidian(commit_info: Dict[str, any]) -> bool:
@@ -481,6 +644,7 @@ def sync_to_obsidian(commit_info: Dict[str, any]) -> bool:
     except Exception as e:
         print(f"[ERROR] Failed to sync to Obsidian: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
