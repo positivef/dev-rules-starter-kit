@@ -24,7 +24,17 @@ Usage:
 """
 
 import re
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
+
+# Import confidence calculator
+try:
+    from confidence_calculator import ConfidenceCalculator
+except ImportError:
+    try:
+        from scripts.confidence_calculator import ConfidenceCalculator
+    except ImportError:
+        # Fallback if confidence calculator not available
+        ConfidenceCalculator = None
 
 
 class Context7Client:
@@ -44,10 +54,70 @@ class Context7Client:
         """
         self.enabled = enabled
         self._cache = {}  # Simple cache for repeated queries
+        self.confidence_calc = ConfidenceCalculator() if ConfidenceCalculator else None
 
     def is_available(self) -> bool:
         """Check if Context7 is available"""
         return self.enabled
+
+    def search_with_confidence(
+        self, query: str, library: Optional[str] = None, filters: Optional[Dict] = None, context: Optional[Dict] = None
+    ) -> Tuple[Optional[str], float]:
+        """
+        Search Context7 and return solution with confidence score
+
+        Args:
+            query: Search query (usually error message)
+            library: Optional library/framework name
+            filters: Optional filters
+            context: Additional context for confidence calculation
+
+        Returns:
+            Tuple of (solution, confidence_score)
+            Example: ("pip install pandas", 0.95)
+        """
+        # Search for solution
+        solution = self.search(query, library, filters)
+
+        if not solution:
+            return None, 0.0
+
+        # Calculate confidence
+        if self.confidence_calc:
+            context = context or {}
+            confidence, explanation = self.confidence_calc.calculate(error_msg=query, solution=solution, context=context)
+            return solution, confidence
+        else:
+            # Fallback: simple heuristic
+            confidence = self._simple_confidence_heuristic(query, solution)
+            return solution, confidence
+
+    def _simple_confidence_heuristic(self, query: str, solution: str) -> float:
+        """
+        Simple confidence calculation when ConfidenceCalculator not available
+
+        Args:
+            query: Error message
+            solution: Proposed solution
+
+        Returns:
+            Confidence score (0.0-1.0)
+        """
+        confidence = 0.70  # Base score
+
+        # Bonus for simple install commands
+        if "pip install" in solution.lower() or "npm install" in solution.lower():
+            confidence += 0.15
+
+        # Penalty for dangerous commands
+        if any(cmd in solution.lower() for cmd in ["sudo", "rm -rf", "delete"]):
+            confidence -= 0.20
+
+        # Penalty for complex multi-step
+        if solution.count("\n") > 2:
+            confidence -= 0.10
+
+        return max(0.0, min(1.0, confidence))
 
     def search(self, query: str, library: Optional[str] = None, filters: Optional[Dict] = None) -> Optional[str]:
         """
