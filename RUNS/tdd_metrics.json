@@ -33,23 +33,40 @@
       },
       "code_lines": 32168,
       "test_code_ratio": 0.03634046257149963
+    },
+    {
+      "timestamp": "2025-11-01T17:05:00.039506",
+      "git_commit": "2fa339bd",
+      "coverage": {
+        "percent_covered": 0.6056137763968613,
+        "covered_lines": 115,
+        "num_statements": 18989,
+        "missing_lines": 18874
+      },
+      "tests": {
+        "total": 1192,
+        "unit": 184,
+        "integration": 113
+      },
+      "code_lines": 33085,
+      "test_code_ratio": 0.036028411666918544
     }
   ],
   "latest": {
-    "timestamp": "2025-11-01T09:47:13.858587",
-    "git_commit": "be6979d2",
+    "timestamp": "2025-11-01T17:05:00.039506",
+    "git_commit": "2fa339bd",
     "coverage": {
-      "percent_covered": 4.8264553156600165,
-      "covered_lines": 883,
-      "num_statements": 18295,
-      "missing_lines": 17412
+      "percent_covered": 0.6056137763968613,
+      "covered_lines": 115,
+      "num_statements": 18989,
+      "missing_lines": 18874
     },
     "tests": {
-      "total": 1169,
+      "total": 1192,
       "unit": 184,
       "integration": 113
     },
-    "code_lines": 32168,
-    "test_code_ratio": 0.03634046257149963
+    "code_lines": 33085,
+    "test_code_ratio": 0.036028411666918544
   }
 }
