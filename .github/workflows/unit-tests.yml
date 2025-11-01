@@ -33,6 +33,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install dependencies
+      shell: bash
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
@@ -43,6 +44,7 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}
         OBSIDIAN_ENABLED: false
+      shell: bash
       run: |
         python -X utf8 -m pytest tests/unit/ -v \
           --cov=scripts \
@@ -54,6 +56,7 @@ jobs:
 
     - name: Check Phase 4 coverage threshold
       id: coverage-check
+      shell: bash
       run: |
         python -c "
         import json
@@ -73,15 +76,16 @@ jobs:
         print(f'Phase 4 Threshold: {THRESHOLD}%')
 
         if total_coverage >= THRESHOLD:
-            print(f'✅ Phase 4 coverage target PASSED')
+            print(f'[PASS] Phase 4 coverage target PASSED')
             exit(0)
         else:
-            print(f'❌ Coverage check FAILED')
+            print(f'[FAIL] Coverage check FAILED')
             print(f'Coverage {total_coverage:.2f}% is below Phase 4 target {THRESHOLD}%')
             exit(1)
         "
 
     - name: Generate coverage summary
+      shell: bash
       run: |
         python -c "
         import json
@@ -114,7 +118,7 @@ jobs:
             if coverage > 0:
                 print(f'- {module}.py: {coverage:.1f}%')
         print(f'')
-        print('✅ Phase 4 Target: >=5% (Hybrid Testing Strategy)')
+        print('[OK] Phase 4 Target: >=5% (Hybrid Testing Strategy)')
         "
 
     - name: Upload coverage reports
@@ -202,4 +206,5 @@ jobs:
 
     - name: Fail if below Phase 4 threshold
       if: steps.coverage-check.outcome == 'failure'
+      shell: bash
       run: exit 1
