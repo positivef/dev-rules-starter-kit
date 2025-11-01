@@ -2,7 +2,7 @@
 """
 Auto Obsidian Context Provider for Claude
 
-Claude가 자동으로 Obsidian을 검색하여 과거 해결책을 찾도록 하는 시스템
+System that enables Claude to automatically search Obsidian for past solutions
 """
 
 import os
@@ -12,14 +12,14 @@ from typing import List, Dict
 
 class AutoObsidianContext:
     """
-    Claude 질문에서 키워드를 추출하여
-    자동으로 Obsidian을 검색하고 관련 문서를 제공
+    Extract keywords from Claude questions
+    Automatically search Obsidian and provide related documents
     """
 
     def __init__(self):
         self.obsidian_vault = os.getenv("OBSIDIAN_VAULT_PATH", "C:/Users/user/Documents/Obsidian Vault")
 
-        # 자주 발생하는 문제 키워드
+        # Frequently occurring problem keywords
         self.error_keywords = [
             r"\d{3}\s*error",  # 401 error, 500 error
             r"bug",
@@ -30,7 +30,7 @@ class AutoObsidianContext:
             r"not working",
         ]
 
-        # 기술 스택 키워드
+        # Tech stack keywords
         self.tech_keywords = [
             r"react",
             r"vue",
@@ -47,20 +47,20 @@ class AutoObsidianContext:
         ]
 
     def extract_keywords(self, user_query: str) -> List[str]:
-        """사용자 질문에서 키워드 추출"""
+        """Extract keywords from user question"""
         keywords = []
 
-        # 에러 코드 추출 (e.g., "401", "500")
+        # Extract error code (e.g., "401", "500")
         error_match = re.search(r"(\d{3})", user_query.lower())
         if error_match:
             keywords.append(error_match.group(1))
 
-        # 기술 키워드 추출
+        # Extract tech keywords
         for pattern in self.tech_keywords:
             if re.search(pattern, user_query.lower()):
                 keywords.append(pattern)
 
-        # 문제 유형 추출
+        # Extract problem type
         for pattern in self.error_keywords:
             if re.search(pattern, user_query.lower()):
                 keywords.append("debug")
@@ -70,11 +70,11 @@ class AutoObsidianContext:
 
     def search_obsidian(self, keywords: List[str]) -> List[Dict]:
         """
-        Obsidian MCP를 사용하여 검색
-        (실제로는 MCP 도구 호출)
+        Search using Obsidian MCP
+        (Actually calls MCP tool)
         """
-        # 이 부분은 Claude가 MCP 도구를 직접 호출
-        # 여기서는 검색 쿼리만 생성
+        # This part is where Claude calls MCP tool directly
+        # Here we just generate search queries
 
         search_queries = []
         for keyword in keywords:
@@ -84,17 +84,17 @@ class AutoObsidianContext:
         return search_queries
 
     def should_search_obsidian(self, user_query: str) -> bool:
-        """Obsidian 검색이 필요한지 판단"""
+        """Determine if Obsidian search is needed"""
 
-        # 디버깅/문제 해결 관련 질문?
-        debug_indicators = ["error", "bug", "fail", "fix", "solve", "problem", "issue", "broken", "해결", "에러"]
+        # Debugging/problem-solving related question?
+        debug_indicators = ["error", "bug", "fail", "fix", "solve", "problem", "issue", "broken"]
 
         for indicator in debug_indicators:
             if indicator in user_query.lower():
                 return True
 
-        # "어떻게" 질문? (과거 경험 필요)
-        how_questions = ["how to", "how do", "어떻게"]
+        # "How to" questions? (need past experience)
+        how_questions = ["how to", "how do"]
         for q in how_questions:
             if q in user_query.lower():
                 return True
@@ -103,7 +103,7 @@ class AutoObsidianContext:
 
     def generate_context_prompt(self, user_query: str) -> str:
         """
-        Claude에게 Obsidian을 검색하도록 하는 프롬프트 생성
+        Generate prompt to make Claude search Obsidian
         """
         if not self.should_search_obsidian(user_query):
             return ""
@@ -136,7 +136,7 @@ mcp__obsidian__obsidian_simple_search(
 
 def create_auto_context_hook():
     """
-    Claude Code가 시작될 때 자동으로 로드되는 Hook
+    Hook that automatically loads when Claude Code starts
     """
     return """
 # Auto Obsidian Context Hook
@@ -163,31 +163,31 @@ When user asks questions like:
 
 def demonstrate_auto_search():
     """
-    실제 작동 시연
+    Actual operation demonstration
     """
     print("=== Auto Obsidian Context Demo ===\n")
 
     auto_ctx = AutoObsidianContext()
 
-    # 실제 사용자 질문 시뮬레이션
-    user_question = "auth.py에서 401 error 발생"
+    # Simulate actual user question
+    user_question = "401 error occurs in auth.py"
 
     print(f"User Question: {user_question}\n")
 
-    # 1. 검색 필요성 판단
+    # 1. Determine search necessity
     should_search = auto_ctx.should_search_obsidian(user_question)
     print(f"Should search Obsidian? {should_search}\n")
 
     if should_search:
-        # 2. 키워드 추출
+        # 2. Extract keywords
         keywords = auto_ctx.extract_keywords(user_question)
         print(f"Extracted keywords: {keywords}\n")
 
-        # 3. MCP 도구로 검색 (실제로는 Claude가 수행)
+        # 3. Search with MCP tool (actually performed by Claude)
         print(">>> Triggering MCP Obsidian search...")
         print(f">>> mcp__obsidian__obsidian_simple_search(query='{' '.join(keywords)}')\n")
 
-        # 4. 컨텍스트 프롬프트 생성
+        # 4. Generate context prompt
         prompt = auto_ctx.generate_context_prompt(user_question)
         print("Generated prompt for Claude:")
         print(prompt)
@@ -196,21 +196,21 @@ def demonstrate_auto_search():
 if __name__ == "__main__":
     demonstrate_auto_search()
 
-    # 추가 테스트
+    # Additional tests
     print("\n" + "=" * 50)
     print("Additional Test Cases:\n")
 
     auto_ctx = AutoObsidianContext()
 
     test_queries = [
-        "401 error 해결 방법?",
-        "React useEffect 어떻게 써?",
+        "How to resolve 401 error?",
+        "How to use React useEffect?",
         "Payment transaction failed",
     ]
 
     for query in test_queries:
-        print(f"\n질문: {query}")
-        print(f"검색 필요? {auto_ctx.should_search_obsidian(query)}")
+        print(f"\nQuestion: {query}")
+        print(f"Need search? {auto_ctx.should_search_obsidian(query)}")
         if auto_ctx.should_search_obsidian(query):
             keywords = auto_ctx.extract_keywords(query)
-            print(f"키워드: {keywords}")
+            print(f"Keywords: {keywords}")
