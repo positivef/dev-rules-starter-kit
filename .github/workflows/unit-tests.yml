@@ -1,0 +1,205 @@
+name: Unit Tests (Phase 4)
+
+on:
+  push:
+    branches: [ main, develop, 'tier1/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  unit-tests:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest pytest-cov coverage[toml] pytest-json-report
+
+    - name: Run unit tests with coverage
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+        OBSIDIAN_ENABLED: false
+      run: |
+        python -X utf8 -m pytest tests/unit/ -v \
+          --cov=scripts \
+          --cov-report=json:coverage-unit.json \
+          --cov-report=html:htmlcov-unit \
+          --cov-report=term-missing \
+          --json-report \
+          --json-report-file=test-results-unit.json
+
+    - name: Check Phase 4 coverage threshold
+      id: coverage-check
+      run: |
+        python -c "
+        import json
+
+        # Load coverage data
+        with open('coverage-unit.json', 'r') as f:
+            data = json.load(f)
+
+        # Extract total coverage percentage
+        total_coverage = data['totals']['percent_covered']
+
+        # Phase 4 requirement: >= 5% coverage
+        # (Realistic target based on P15 Convergence)
+        THRESHOLD = 5.0
+
+        print(f'Total Coverage: {total_coverage:.2f}%')
+        print(f'Phase 4 Threshold: {THRESHOLD}%')
+
+        if total_coverage >= THRESHOLD:
+            print(f'✅ Phase 4 coverage target PASSED')
+            exit(0)
+        else:
+            print(f'❌ Coverage check FAILED')
+            print(f'Coverage {total_coverage:.2f}% is below Phase 4 target {THRESHOLD}%')
+            exit(1)
+        "
+
+    - name: Generate coverage summary
+      run: |
+        python -c "
+        import json
+
+        # Load coverage data
+        with open('coverage-unit.json', 'r') as f:
+            data = json.load(f)
+
+        total = data['totals']['percent_covered']
+        covered = data['totals']['covered_lines']
+        total_lines = data['totals']['num_statements']
+
+        # Core modules coverage
+        core_modules = {
+            'task_executor': 0,
+            'constitutional_validator': 0,
+            'deep_analyzer': 0
+        }
+
+        for file_path, file_data in data['files'].items():
+            for module in core_modules.keys():
+                if module in file_path:
+                    core_modules[module] = file_data['summary']['percent_covered']
+
+        print('## Phase 4 Unit Test Coverage Summary')
+        print(f'Total Coverage: {total:.2f}% ({covered}/{total_lines} lines)')
+        print(f'')
+        print('### Core Modules:')
+        for module, coverage in core_modules.items():
+            if coverage > 0:
+                print(f'- {module}.py: {coverage:.1f}%')
+        print(f'')
+        print('✅ Phase 4 Target: >=5% (Hybrid Testing Strategy)')
+        "
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: unit-coverage-report-${{ matrix.python-version }}
+        path: |
+          coverage-unit.json
+          htmlcov-unit/
+          test-results-unit.json
+
+    - name: Comment PR with unit test coverage
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+
+          // Read coverage data
+          const coverageData = JSON.parse(fs.readFileSync('coverage-unit.json', 'utf8'));
+          const testResults = JSON.parse(fs.readFileSync('test-results-unit.json', 'utf8'));
+
+          const totalCoverage = coverageData.totals.percent_covered;
+          const threshold = 5.0;  // Phase 4 realistic target
+          const passed = totalCoverage >= threshold;
+
+          // Find core modules
+          const coreModules = {};
+          for (const [file, data] of Object.entries(coverageData.files)) {
+            if (file.includes('task_executor')) {
+              coreModules['task_executor.py'] = data.summary.percent_covered;
+            } else if (file.includes('constitutional_validator')) {
+              coreModules['constitutional_validator.py'] = data.summary.percent_covered;
+            } else if (file.includes('deep_analyzer')) {
+              coreModules['deep_analyzer.py'] = data.summary.percent_covered;
+            }
+          }
+
+          // Create comment body
+          const body = `## 📊 Phase 4 Unit Test Coverage (Python ${{ matrix.python-version }})
+
+          ### Overall Coverage: ${totalCoverage.toFixed(2)}% ${passed ? '✅' : '❌'}
+
+          | Metric | Value |
+          |--------|-------|
+          | Lines Covered | ${coverageData.totals.covered_lines} / ${coverageData.totals.num_statements} |
+          | Unit Tests | ${testResults.summary.passed} / ${testResults.summary.total} |
+          | Test Duration | ${testResults.duration.toFixed(2)}s |
+          | Phase 4 Target | ≥5.0% |
+
+          ### Core Modules Coverage
+
+          | Module | Coverage |
+          |--------|----------|
+          ${Object.entries(coreModules)
+            .map(([file, coverage]) => `| ${file} | ${coverage.toFixed(1)}% |`)
+            .join('\n') || '| No core modules tested | N/A |'}
+
+          ### Hybrid Testing Strategy (Phase 4)
+
+          - **Integration Tests**: ~760 tests (subprocess-based, end-to-end)
+          - **Unit Tests**: ${testResults.summary.total} tests (import-based, coverage measurement)
+          - **Philosophy**: P15 Convergence - "good enough" > "perfect"
+          - **ROI**: 5% deep coverage on critical files > 15% shallow coverage
+
+          ${!passed ? `
+          ### ⚠️ Action Required
+          Coverage is below Phase 4 target (5%). Please review test coverage on core modules.
+          ` : `
+          ### ✅ Phase 4 Success
+          Coverage meets Phase 4 realistic target. Hybrid testing strategy validated!
+          `}
+
+          ---
+          📚 See [TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md) for details`;
+
+          // Post comment
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+    - name: Fail if below Phase 4 threshold
+      if: steps.coverage-check.outcome == 'failure'
+      run: exit 1
