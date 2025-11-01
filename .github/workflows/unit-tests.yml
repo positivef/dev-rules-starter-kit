@@ -159,9 +159,9 @@ jobs:
           }
 
           // Create comment body
-          const body = `## 📊 Phase 4 Unit Test Coverage (Python ${{ matrix.python-version }})
+          const body = `## Phase 4 Unit Test Coverage (Python ${{ matrix.python-version }})
 
-          ### Overall Coverage: ${totalCoverage.toFixed(2)}% ${passed ? '✅' : '❌'}
+          ### Overall Coverage: ${totalCoverage.toFixed(2)}% ${passed ? 'PASS' : 'FAIL'}
 
           | Metric | Value |
           |--------|-------|
@@ -186,15 +186,15 @@ jobs:
           - **ROI**: 5% deep coverage on critical files > 15% shallow coverage
 
           ${!passed ? `
-          ### ⚠️ Action Required
+          ### [WARNING] Action Required
           Coverage is below Phase 4 target (5%). Please review test coverage on core modules.
           ` : `
-          ### ✅ Phase 4 Success
+          ### [SUCCESS] Phase 4 Success
           Coverage meets Phase 4 realistic target. Hybrid testing strategy validated!
           `}
 
           ---
-          📚 See [TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md) for details`;
+          See [TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md) for details`;
 
           // Post comment
           github.rest.issues.createComment({
