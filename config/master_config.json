@@ -127,5 +127,26 @@
       "required_theories": ["SOLID", "DRY"],
       "min_compliance_score": 0.85
     }
+  },
+  "token_optimization": {
+    "enabled": true,
+    "mode": "adaptive",
+    "triggers": {
+      "context_usage_threshold": 0.75,
+      "large_operation_threshold": 100,
+      "user_flag": "--uc"
+    },
+    "techniques": {
+      "symbol_communication": true,
+      "abbreviation_system": true,
+      "compression_ratio": 0.5,
+      "min_info_quality": 0.95
+    },
+    "obsidian_integration": {
+      "auto_search_enabled": true,
+      "search_result_compression": true,
+      "reference_format": "symbol",
+      "max_result_tokens": 500
+    }
   }
 }

@@ -1,0 +1,55 @@
+{
+  "history": [
+    {
+      "timestamp": "2025-11-01T09:46:56.747015",
+      "git_commit": "be6979d2",
+      "coverage": {
+        "percent_covered": 4.8264553156600165,
+        "covered_lines": 883,
+        "num_statements": 18295,
+        "missing_lines": 17412
+      },
+      "tests": {
+        "total": 1169,
+        "unit": 184,
+        "integration": 113
+      },
+      "code_lines": 32168,
+      "test_code_ratio": 0.03634046257149963
+    },
+    {
+      "timestamp": "2025-11-01T09:47:13.858587",
+      "git_commit": "be6979d2",
+      "coverage": {
+        "percent_covered": 4.8264553156600165,
+        "covered_lines": 883,
+        "num_statements": 18295,
+        "missing_lines": 17412
+      },
+      "tests": {
+        "total": 1169,
+        "unit": 184,
+        "integration": 113
+      },
+      "code_lines": 32168,
+      "test_code_ratio": 0.03634046257149963
+    }
+  ],
+  "latest": {
+    "timestamp": "2025-11-01T09:47:13.858587",
+    "git_commit": "be6979d2",
+    "coverage": {
+      "percent_covered": 4.8264553156600165,
+      "covered_lines": 883,
+      "num_statements": 18295,
+      "missing_lines": 17412
+    },
+    "tests": {
+      "total": 1169,
+      "unit": 184,
+      "integration": 113
+    },
+    "code_lines": 32168,
+    "test_code_ratio": 0.03634046257149963
+  }
+}

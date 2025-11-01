@@ -10,6 +10,16 @@ repos:
         stages: [commit]
         always_run: false
 
+      - id: tdd-enforcer
+        name: TDD Enforcer (P8 Test-First Development)
+        entry: python scripts/tdd_enforcer.py
+        language: python
+        files: \.py$
+        pass_filenames: true
+        stages: [commit]
+        always_run: false
+        verbose: true
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
