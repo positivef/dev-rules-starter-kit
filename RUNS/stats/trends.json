@@ -1,1 +1,184 @@
-[]
+[
+  {
+    "timestamp": "2025-10-27T10:44:30.340821",
+    "quality_score": 9.866666666666667,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 33.33333333333333
+  },
+  {
+    "timestamp": "2025-10-29T19:21:06.500958",
+    "quality_score": 9.866666666666667,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 33.33333333333333
+  },
+  {
+    "timestamp": "2025-10-29T19:43:32.461957",
+    "quality_score": 9.866666666666667,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 33.33333333333333
+  },
+  {
+    "timestamp": "2025-10-29T19:44:01.127627",
+    "quality_score": 9.866666666666667,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 33.33333333333333
+  },
+  {
+    "timestamp": "2025-10-29T19:44:34.695062",
+    "quality_score": 0.17514792899408285,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 0.591715976331361
+  },
+  {
+    "timestamp": "2025-10-29T19:45:08.317026",
+    "quality_score": 9.997633136094674,
+    "violation_count": 2,
+    "security_issue_count": 0,
+    "pass_rate": 0.591715976331361
+  },
+  {
+    "timestamp": "2025-10-29T20:04:22.380434",
+    "quality_score": 8.709036144578311,
+    "violation_count": 288,
+    "security_issue_count": 40,
+    "pass_rate": 65.66265060240963
+  },
+  {
+    "timestamp": "2025-10-29T20:19:09.780486",
+    "quality_score": 8.774850299401201,
+    "violation_count": 290,
+    "security_issue_count": 29,
+    "pass_rate": 65.86826347305389
+  },
+  {
+    "timestamp": "2025-10-30T03:17:45.484721",
+    "quality_score": 8.817365269461078,
+    "violation_count": 263,
+    "security_issue_count": 28,
+    "pass_rate": 67.66467065868264
+  },
+  {
+    "timestamp": "2025-10-30T03:19:23.260554",
+    "quality_score": 8.825748502994013,
+    "violation_count": 256,
+    "security_issue_count": 28,
+    "pass_rate": 68.26347305389223
+  },
+  {
+    "timestamp": "2025-10-30T03:19:38.686193",
+    "quality_score": 8.825748502994012,
+    "violation_count": 256,
+    "security_issue_count": 28,
+    "pass_rate": 68.26347305389223
+  },
+  {
+    "timestamp": "2025-10-30T04:23:56.965396",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-30T04:24:06.769613",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-30T04:24:26.152304",
+    "quality_score": 8.832934131736529,
+    "violation_count": 250,
+    "security_issue_count": 28,
+    "pass_rate": 68.8622754491018
+  },
+  {
+    "timestamp": "2025-10-30T07:03:28.120571",
+    "quality_score": 8.851176470588232,
+    "violation_count": 253,
+    "security_issue_count": 28,
+    "pass_rate": 68.82352941176471
+  },
+  {
+    "timestamp": "2025-10-30T07:06:00.184621",
+    "quality_score": 8.787647058823527,
+    "violation_count": 311,
+    "security_issue_count": 28,
+    "pass_rate": 62.94117647058823
+  },
+  {
+    "timestamp": "2025-10-31T02:38:41.231218",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T15:31:31.484688",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T15:32:06.222338",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T15:49:52.615683",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T16:05:47.642610",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T16:28:11.106508",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T16:28:22.604347",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T16:47:55.727788",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T17:12:37.641227",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  },
+  {
+    "timestamp": "2025-10-31T17:15:05.142529",
+    "quality_score": 0.0,
+    "violation_count": 0,
+    "security_issue_count": 0,
+    "pass_rate": 0.0
+  }
+]

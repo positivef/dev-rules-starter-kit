@@ -1,0 +1,66 @@
+task_id: "REFACTOR-2025-10-31-05"
+title: "Code Quality Improvement - Ruff Lint Fixes"
+project: "DevRulesStarterKit"
+priority: "medium"
+type: "refactor"
+tags: [code-quality, ruff, lint, technical-debt]
+status: "pending"
+
+description: |
+  Fix 23 remaining Ruff linting issues identified during Scenario B+
+  implementation. All issues are style-related (no functional bugs).
+
+  Issues:
+  - E501 (Line too long): 15 errors
+  - E722 (Bare except): 8 errors
+
+  Affected files:
+  - scripts/convergence_monitor.py (4 issues)
+  - scripts/degradation_detector.py (4 issues)
+  - scripts/project_validator.py (15 issues)
+
+acceptance_criteria:
+  - "All E501 errors fixed (lines <= 125 chars)"
+  - "All E722 errors fixed (specific exceptions)"
+  - "Ruff check passes with 0 errors"
+  - "All tools still functional after changes"
+
+commands:
+  - id: "01-fix-convergence-monitor"
+    description: "Fix 4 line-length issues"
+    exec:
+      cmd: "ruff"
+      args: ["check", "scripts/convergence_monitor.py", "--fix"]
+    cost_estimate_usd: 0.0
+
+  - id: "02-fix-degradation-detector"
+    description: "Fix 4 line-length issues"
+    exec:
+      cmd: "ruff"
+      args: ["check", "scripts/degradation_detector.py", "--fix"]
+    cost_estimate_usd: 0.0
+
+  - id: "03-fix-project-validator"
+    description: "Fix 15 mixed issues"
+    exec:
+      cmd: "ruff"
+      args: ["check", "scripts/project_validator.py", "--fix", "--unsafe-fixes"]
+    cost_estimate_usd: 0.0
+
+gates:
+  - type: "quality"
+    description: "Code style compliance"
+    criteria:
+      - "Ruff: 0 errors"
+      - "No functional regressions"
+
+evidence:
+  - "scripts/convergence_monitor.py"
+  - "scripts/degradation_detector.py"
+  - "scripts/project_validator.py"
+
+# Provenance
+provenance:
+  executed_at: "pending"
+  executor: "manual-refactor"
+  verification_method: "ruff-check"

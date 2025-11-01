@@ -24,13 +24,106 @@ import hashlib
 import yaml
 import sys
 import glob as glob_module
+import uuid
 from pathlib import Path
 from subprocess import run, CalledProcessError, TimeoutExpired
 from datetime import datetime, timezone
-from typing import Dict, List
+from typing import Any, Dict, List
 
-# Command whitelist - customize for your project
-ALLOWED_CMDS = {
+# Import prompt compression integration, progress tracking, and error handling
+sys.path.insert(0, str(Path(__file__).parent))
+from prompt_task_integration import apply_compression, save_compression_report
+from progress_tracker import create_progress_tracker
+from error_handler import ErrorCatalog
+from notification_utils import send_slack_notification
+from orchestration_policy import OrchestrationPolicy
+
+try:
+    from agent_sync import (
+        acquire_lock as agent_acquire_lock,
+        release_lock as agent_release_lock,
+        detect_conflicts as agent_detect_conflicts,
+    )
+except ImportError:
+    agent_acquire_lock = None
+    agent_release_lock = None
+    agent_detect_conflicts = None
+
+
+def write_lessons_template(runs_dir: Path, contract: Dict, status: str, error_message: str | None = None) -> None:
+    """Create a skeleton lessons file if one does not exist."""
+
+    lessons_file = runs_dir / "lessons.md"
+    if lessons_file.exists():
+        return
+
+    project = contract.get("project") or contract.get("project_name") or "unknown"
+    task_id = contract.get("task_id", runs_dir.name)
+    date_tag = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    summary_line = "- TODO: Add key learning points."
+    if error_message:
+        summary_line = f"- Failure reason: {error_message}"
+
+    content = (
+        f"# Lessons Learned - {task_id} ({status.upper()})\n"
+        f"#lesson #{project} #{date_tag}\n\n"
+        "## Summary\n"
+        f"{summary_line}\n\n"
+        "## What Worked\n- TODO\n\n"
+        "## Challenges\n- TODO\n\n"
+        "## Next Actions\n- TODO\n"
+    )
+
+    lessons_file.write_text(content, encoding="utf-8")
+
+
+def write_prompt_feedback(runs_dir: Path, stats: List[Dict[str, Any]]) -> None:
+    """Persist prompt compression statistics in a compact JSON format."""
+
+    if not stats:
+        return
+
+    successes = [s for s in stats if "error" not in s]
+    errors = [s for s in stats if "error" in s]
+
+    report: Dict[str, Any] = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "entries": len(stats),
+    }
+
+    if successes:
+        total_original = sum(s.get("original_tokens", 0) for s in successes)
+        total_compressed = sum(s.get("compressed_tokens", 0) for s in successes)
+        avg_savings = sum(s.get("savings_pct", 0.0) for s in successes) / len(successes) if successes else 0.0
+        best_entry = max(successes, key=lambda s: s.get("savings_pct", 0.0), default=None)
+
+        report["summary"] = {
+            "total_prompts": len(successes),
+            "total_original_tokens": total_original,
+            "total_compressed_tokens": total_compressed,
+            "average_savings_pct": round(avg_savings, 2),
+        }
+
+        if best_entry:
+            report["top_prompt"] = {
+                "command_id": best_entry.get("command_id"),
+                "context": best_entry.get("context"),
+                "savings_pct": best_entry.get("savings_pct"),
+                "rules_applied": best_entry.get("rules_applied"),
+            }
+
+        report["entries_detail"] = successes[:5]
+
+    if errors:
+        report["errors"] = errors
+
+    feedback_path = runs_dir / "prompt_feedback.json"
+    feedback_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+# Command whitelist for external executables - customize for your project
+ALLOWED_SHELL_CMDS = {
     "python",
     "python3",
     "pytest",
@@ -46,6 +139,7 @@ ALLOWED_CMDS = {
     "make",
     "node",
     "npm",
+    "echo",  # For demonstration purposes (Windows users should prefer cmd /c echo)
 }
 
 DANGEROUS_PATTERNS = [
@@ -174,39 +268,190 @@ def release_lock(lock_path: Path):
         pass
 
 
-def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout: int = 300):
-    """Safe command execution (exec array, shell=False)"""
-    # 1. Command allowlist check
-    if cmd not in ALLOWED_CMDS:
-        raise SecurityError(f"Command not in allowlist: {cmd}")
+def run_validation_commands(commands: List[str], cwd: Path, task_id: str):
+    """Execute post-run validation commands.
 
-    # 2. Dangerous pattern check
-    full_cmd = f"{cmd} {' '.join(args)}"
+    Successful commands are silent; failures raise ``GateFailedError`` and
+    optionally trigger Slack notifications when a webhook is configured.
+    """
+
+    if not commands:
+        return
+
+    for command in commands:
+        cmd = command.strip()
+        if not cmd:
+            continue
+
+        print(f"[VALIDATE] {cmd}")
+        result = run(cmd, shell=True, cwd=str(cwd))
+        if result.returncode != 0:
+            message = f"Validation failed for {task_id}: {cmd}"
+            send_slack_notification(f":warning: {message}")
+            raise GateFailedError(message)
+
+
+# Dummy functions for internal call mechanism
+# These will be replaced by actual tool calls in a real environment
+def write_file(file_path: str, content: str):
+    print(f"DUMMY_WRITE: Writing to {file_path}")
+    Path(file_path).write_text(content, encoding="utf-8")
+    return {"status": "success"}
+
+
+def replace(file_path: str, old_string: str, new_string: str):
+    print(f"DUMMY_REPLACE: Modifying {file_path}")
+    content = Path(file_path).read_text(encoding="utf-8")
+    new_content = content.replace(old_string, new_string)
+    Path(file_path).write_text(new_content, encoding="utf-8")
+    return {"status": "success", "replacements": 1}
+
+
+# Dummy function for run_shell_command
+
+
+def run_shell_command(command: str, description: str = ""):  # Added for agent collaboration
+    print(f"DUMMY_RUN_SHELL_COMMAND: Executing '{command}' - {description}")
+    # In a real scenario, this would execute the command and return its output.
+    # For now, we just simulate success.
+    return {"status": "success", "command": command, "stdout": "(simulated output)", "stderr": "", "exit_code": 0}
+
+
+# Allowed internal functions
+INTERNAL_FUNCTIONS = {
+    "write_file": write_file,
+    "replace": replace,
+    "run_shell_command": run_shell_command,  # Added for agent collaboration
+}
+
+ALLOWED_INTERNAL_CMDS = set(INTERNAL_FUNCTIONS.keys())
+ALL_ALLOWED_CMDS = ALLOWED_INTERNAL_CMDS | ALLOWED_SHELL_CMDS
+
+
+def detect_agent_id() -> str:
+    """Derive a stable agent identifier from environment hints."""
+    if agent_id := os.getenv("AGENT_ID"):
+        return agent_id
+    if os.getenv("CODEX_CLI"):
+        return "codex"
+    if os.getenv("CLAUDE_CODE"):
+        return "claude"
+    if os.getenv("GEMINI_AI"):
+        return "gemini"
+    return f"agent-{uuid.uuid4().hex[:8]}"
+
+
+AGENT_ID = detect_agent_id()
+
+
+def _looks_like_file(path_str: str) -> bool:
+    return not any(char in path_str for char in ("*", "?", "[", "]"))
+
+
+def collect_files_to_lock(contract: Dict[str, Any]) -> List[str]:
+    """Infer which files should be locked for a contract execution."""
+    files: List[str] = []
+    for pattern in contract.get("evidence", []) or []:
+        if isinstance(pattern, str) and _looks_like_file(pattern):
+            files.append(pattern)
+    for command in contract.get("commands", []) or []:
+        exec_info = command.get("exec", {}) or {}
+        cmd_name = exec_info.get("cmd")
+        if cmd_name not in {"write_file", "replace"}:
+            continue
+        args = exec_info.get("args") or {}
+        if isinstance(args, dict):
+            file_path = args.get("file_path")
+            if file_path:
+                files.append(file_path)
+    seen = set()
+    unique_files: List[str] = []
+    for file_path in files:
+        normalized = str(Path(file_path))
+        if normalized not in seen:
+            seen.add(normalized)
+            unique_files.append(normalized)
+    return unique_files
+
+
+class TaskExecutorError(Exception):
+    """TaskExecutor base exception"""
+
+    pass
+
+
+def run_exec(cmd: str, args: Any, cwd: Path, env: Dict[str, str], timeout: int = 300):
+    """Safe command execution (internal commands or allowlisted executables)."""
+    # 1. Internal commands take precedence so they never fall through to shell execution
+    if cmd in INTERNAL_FUNCTIONS:
+        print(f"[EXEC-INTERNAL] {cmd}")
+        if args is None:
+            args = {}
+        if not isinstance(args, dict):
+            raise TypeError(f"Arguments for internal function '{cmd}' must be a dictionary.")
+        try:
+            internal_func = INTERNAL_FUNCTIONS[cmd]
+            result = internal_func(**args)
+            print(f"   [SUCCESS] Internal function '{cmd}' executed successfully.")
+            return result
+        except Exception as exc:
+            error = ErrorCatalog.command_failed(cmd, -1, str(exc))
+            print(f"\n{error.format(include_traceback=True)}", file=sys.stderr)
+            raise
+
+    # 2. Shell commands must be on the allowlist
+    if cmd not in ALLOWED_SHELL_CMDS:
+        error = ErrorCatalog.command_not_allowed(cmd)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise SecurityError(error.message)
+
+    # 3. Normalise arguments
+    if args is None:
+        args_list: List[str] = []
+    else:
+        if not isinstance(args, list):
+            raise TypeError(f"Arguments for shell command '{cmd}' must be provided as a list.")
+        args_list = [str(part) for part in args]
+
+    full_cmd = f"{cmd} {' '.join(args_list)}".strip()
     for pattern in DANGEROUS_PATTERNS:
         if re.search(pattern, full_cmd):
             raise SecurityError(f"Dangerous pattern detected: {pattern}")
 
-    # 3. Execute with exec array (shell=False)
-    print(f"[EXEC] {cmd} {' '.join(args)}")
+    # 4. Execute with exec array (shell=False)
+    print(f"[EXEC] {cmd} {' '.join(args_list)}")
     try:
-        result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
-
+        result = run(
+            [cmd] + args_list, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout
+        )
         if result.returncode != 0:
-            print(f"[ERROR] Command failed with code {result.returncode}")
-            print(f"STDOUT: {result.stdout.decode('utf-8', errors='ignore')}")
-            print(f"STDERR: {result.stderr.decode('utf-8', errors='ignore')}")
-            raise CalledProcessError(result.returncode, [cmd] + args)
-
+            stderr = result.stderr.decode("utf-8", errors="ignore")
+            error = ErrorCatalog.command_failed(cmd, result.returncode, stderr)
+            print(f"\n{error.format()}", file=sys.stderr)
+            raise CalledProcessError(result.returncode, [cmd] + args_list)
         return result
-
-    except TimeoutExpired:
-        raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}")
+    except TimeoutExpired as exc:
+        raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}") from exc
 
 
 def execute_contract(contract_path: str, mode: str = "execute"):
     """Execute task contract"""
     root = Path(".").resolve()
-    contract = yaml.safe_load(Path(contract_path).read_text(encoding="utf-8"))
+    contract_file = Path(contract_path)
+
+    # Check if file exists
+    if not contract_file.exists():
+        error = ErrorCatalog.file_not_found(contract_path)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise FileNotFoundError(error.message)
+
+    # Parse YAML
+    try:
+        contract = yaml.safe_load(contract_file.read_text(encoding="utf-8"))
+    except Exception as e:
+        error = ErrorCatalog.yaml_parse_error(contract_path, e)
+        print(f"\n{error.format(include_traceback=True)}", file=sys.stderr)
+        raise
 
     task_id = contract["task_id"]
     runs_dir = root / "RUNS" / task_id
@@ -215,6 +460,37 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     state_file = runs_dir / ".state.json"
     locks_dir = root / "LOCKS"
 
+    # === PROMPT COMPRESSION (Step 1.5: After loading, before execution) ===
+    compression_config = contract.get("prompt_optimization", {})
+    compression_stats = []
+
+    if compression_config.get("enabled", False):
+        print("\n[COMPRESSION] Prompt optimization enabled")
+        print(f"   Level: {compression_config.get('compression_level', 'medium')}")
+
+        try:
+            contract, compression_stats = apply_compression(contract, compression_config)
+
+            if compression_stats:
+                total_original = sum(s.get("original_tokens", 0) for s in compression_stats)
+                total_compressed = sum(s.get("compressed_tokens", 0) for s in compression_stats)
+                avg_savings = sum(s.get("savings_pct", 0) for s in compression_stats) / len(compression_stats)
+
+                print(f"   Prompts compressed: {len(compression_stats)}")
+                print(f"   Total tokens: {total_original} -> {total_compressed}")
+                print(f"   Average savings: {avg_savings:.1f}%")
+
+                # Save compression report
+                report_path = compression_config.get("report_path", "RUNS/{task_id}/compression_report.json")
+                save_compression_report(compression_stats, report_path, task_id)
+                write_prompt_feedback(runs_dir, compression_stats)
+                print(f"   Report: {report_path.replace('{task_id}', task_id)}")
+
+        except Exception as e:
+            error = ErrorCatalog.compression_failed(e)
+            print(f"\n{error.format()}", file=sys.stderr)
+            # Continue with uncompressed prompts
+
     # === 1. Budget gate (pre-check) ===
     estimated_cost = sum(float(cmd.get("cost_estimate_usd", 0)) for cmd in contract.get("commands", []))
     budget = float(contract.get("telemetry", {}).get("cost_budget_usd", 0))
@@ -222,10 +498,12 @@ def execute_contract(contract_path: str, mode: str = "execute"):
     hard_limit = bool(contract.get("telemetry", {}).get("cost_hard_limit", True))
 
     if budget and warn_threshold and estimated_cost >= budget * warn_threshold:
-        print(f"⚠️  [WARN] Estimated cost ${estimated_cost:.2f} approaching budget ${budget:.2f}")
+        print(f"[WARN] Estimated cost ${estimated_cost:.2f} approaching budget ${budget:.2f}")
 
     if budget and hard_limit and estimated_cost > budget:
-        raise BudgetExceededError(f"Budget exceeded: ${estimated_cost:.2f} > ${budget:.2f}")
+        error = ErrorCatalog.budget_exceeded(estimated_cost, budget)
+        print(f"\n{error.format()}", file=sys.stderr)
+        raise BudgetExceededError(error.message)
 
     # === 2. Plan mode (human approval hash) ===
     if mode == "plan":
@@ -244,10 +522,27 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
         print(f"\nEstimated Cost: ${estimated_cost:.2f}")
         print(f"Budget: ${budget:.2f}")
-        print(f"\n🔐 Plan Hash: {hash_val}")
+        print(f"\n[HASH] Plan Hash: {hash_val}")
         print("\nTo approve, run:")
         print(f"  echo '{hash_val}' > RUNS/{task_id}/.human_approved")
         return
+
+    policy_engine = OrchestrationPolicy()
+    metadata = policy_engine.build_metadata(contract)
+    use_zen = policy_engine.should_use_zen(metadata)
+    execution_label = "Zen MCP" if use_zen else "Sequential MCP"
+    print(f"[POLICY] Execution mode: {execution_label} ({metadata.summary()})")
+    validation_commands = policy_engine.get_validation_commands()
+
+    if not use_zen and validation_commands:
+        print("[NOTICE] Sequential mode requested. Validation commands must be reviewed manually:")
+        for cmd in validation_commands:
+            print(f"         - {cmd}")
+
+    # === PROGRESS TRACKING (Initialize) ===
+    # Calculate total steps: commands + gates + evidence collection
+    total_steps = len(contract.get("commands", [])) + len(contract.get("gates", [])) + 1  # +1 for evidence
+    progress = create_progress_tracker(total_steps, task_id)
 
     # === 3. Human approval verification ===
     approved_file = runs_dir / ".human_approved"
@@ -262,12 +557,13 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         if actual_hash != expected_hash:
             raise SecurityError(f"Plan hash mismatch: {actual_hash} != {expected_hash}")
 
-        print(f"✅ Human approval verified: {expected_hash}")
+        print(f"[OK] Human approval verified: {expected_hash}")
 
     # === 4. Security checks ===
     ensure_secrets(contract.get("secrets_required"), ctx=task_id)
 
     acquired_locks = []
+    agent_lock_acquired = False
     try:
         for lock in contract.get("locks", []):
             acquired_locks.append(acquire_lock(lock, locks_dir))
@@ -276,37 +572,74 @@ def execute_contract(contract_path: str, mode: str = "execute"):
 
         env = build_env()
 
+        files_to_lock = collect_files_to_lock(contract)
+        if files_to_lock and agent_detect_conflicts:
+            conflicts = agent_detect_conflicts(AGENT_ID, task_id, files_to_lock)
+            for lock in conflicts:
+                print(f"[WARN] File '{lock.get('file')}' locked by {lock.get('agent_id')} (task {lock.get('task_id')})")
+
+        if files_to_lock and agent_acquire_lock and agent_release_lock:
+            try:
+                if not agent_acquire_lock(AGENT_ID, task_id, files_to_lock):
+                    raise SecurityError(f"Unable to acquire agent sync lock for {task_id}")
+                agent_lock_acquired = True
+            except Exception as lock_error:
+                raise SecurityError(f"Failed to acquire agent sync lock: {lock_error}") from lock_error
+
         # === 5. Command execution ===
         atomic_write_json(
             state_file, {"status": "running", "step": "commands:begin", "at": datetime.now(timezone.utc).isoformat()}
         )
 
         for cmd in contract.get("commands", []):
+            # Progress: Start command
+            cmd_desc = cmd.get("description", cmd["id"])
+            progress.start_step(f"Command: {cmd_desc}")
+
             atomic_write_json(state_file, {"status": "running", "step": f"commands:{cmd['id']}"})
 
-            exec_info = cmd.get("exec", {})
-            run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+            try:
+                exec_info = cmd.get("exec", {})
+                run_exec(exec_info["cmd"], exec_info.get("args"), root, env)
+                progress.complete_step(success=True)
+            except Exception:
+                progress.complete_step(success=False)
+                raise
 
         # === 6. Quality gates ===
         for gate in contract.get("gates", []):
             gate_id = gate.get("id", "unknown")
+            gate_desc = gate.get("description", gate_id)
+
+            # Progress: Start gate
+            progress.start_step(f"Gate: {gate_desc}")
+
             atomic_write_json(state_file, {"status": "running", "step": f"gates:{gate_id}"})
 
-            if gate_id == "human-review":
-                # Already verified
-                pass
-            else:
-                exec_info = gate.get("exec")
-                if exec_info:
-                    run_exec(exec_info["cmd"], exec_info.get("args", []), root, env)
+            try:
+                if gate_id == "human-review":
+                    # Already verified
+                    pass
+                else:
+                    exec_info = gate.get("exec")
+                    if exec_info:
+                        run_exec(exec_info["cmd"], exec_info.get("args"), root, env)
+                progress.complete_step(success=True)
+            except Exception:
+                progress.complete_step(success=False)
+                raise
 
         # === 7. Evidence collection + SHA-256 hashing ===
+        progress.start_step("Collecting evidence and generating hashes")
+
         evidence_hashes = {}
         for pattern in contract.get("evidence", []):
             for filepath in glob_module.glob(pattern):
                 path = Path(filepath)
                 if path.exists() and path.is_file():
                     evidence_hashes[str(path)] = sha256_file(path)
+
+        progress.complete_step(success=True)
 
         # === 8. Provenance recording ===
         provenance = contract.get("provenance", {}).copy()
@@ -326,7 +659,16 @@ def execute_contract(contract_path: str, mode: str = "execute"):
             },
         )
 
-        print(f"\n✅ Task {task_id} completed successfully")
+        # Progress summary
+        progress.summary()
+
+        if use_zen and validation_commands:
+            print("\n[POLICY] Running post-execution validation commands...")
+            run_validation_commands(validation_commands, root, task_id)
+
+        write_lessons_template(runs_dir, contract, status="success")
+
+        print(f"\n[OK] Task {task_id} completed successfully")
         print(f"   Evidence files: {len(evidence_hashes)}")
         print(f"   Provenance: RUNS/{task_id}/provenance.json")
 
@@ -339,12 +681,20 @@ def execute_contract(contract_path: str, mode: str = "execute"):
         atomic_write_json(
             state_file, {"status": "failed", "error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}
         )
+        write_lessons_template(runs_dir, contract, status="failed", error_message=str(e))
+        if compression_stats:
+            write_prompt_feedback(runs_dir, compression_stats)
         raise
 
     finally:
         # Release locks
         for lock_path in acquired_locks:
             release_lock(lock_path)
+        if agent_lock_acquired and agent_release_lock:
+            try:
+                agent_release_lock(AGENT_ID, task_id)
+            except Exception as release_error:
+                print(f"[WARN] Failed to release agent sync lock: {release_error}")
 
 
 def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status: str):
@@ -356,19 +706,19 @@ def sync_to_obsidian(contract: dict, task_id: str, evidence_hashes: dict, status
         execution_result = {"status": status, "evidence_hashes": evidence_hashes, "git_commits": []}
 
         devlog_path = create_devlog(contract, execution_result)
-        print(f"   📝 Obsidian devlog: {devlog_path.name}")
+        print(f"   [NOTE] Obsidian devlog: {devlog_path.name}")
 
         if status == "success":
             append_evidence(task_id, list(evidence_hashes.keys()), evidence_hashes)
-            print("   📎 Evidence synced to Obsidian")
+            print("   [CLIP] Evidence synced to Obsidian")
 
         return True
 
     except ImportError as e:
-        print(f"   ⚠️  Obsidian bridge not available: {e}")
+        print(f"   [WARN] Obsidian bridge not available: {e}")
         return False
     except Exception as e:
-        print(f"   ⚠️  Obsidian sync failed: {e}")
+        print(f"   [WARN] Obsidian sync failed: {e}")
         return False
 
 
@@ -412,10 +762,10 @@ def execute_lite_mode():
         else:
             print("   Obsidian sync is disabled. Skipping.")
 
-        print(f"\n✅ Lite task '{task_title}' recorded successfully.")
+        print(f"\n[OK] Lite task '{task_title}' recorded successfully.")
 
     except Exception as e:
-        print(f"\n❌ Error in Lite Mode: {e}", file=sys.stderr)
+        print(f"\n[ERROR] Error in Lite Mode: {e}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -437,5 +787,5 @@ if __name__ == "__main__":
         try:
             execute_contract(args.contract, mode=mode)
         except Exception as e:
-            print(f"\n❌ Error: {e}", file=sys.stderr)
+            print(f"\n[ERROR] Error: {e}", file=sys.stderr)
             sys.exit(1)

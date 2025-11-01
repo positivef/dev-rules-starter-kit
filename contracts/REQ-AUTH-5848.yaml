@@ -1,0 +1,57 @@
+# EARS Template: Feature Request
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "REQ-AUTH-5848"
+  title: "Refactor auth"
+  type: feature
+  priority: medium
+  status: draft
+  created: "2025-10-24T19:25:54.464204"
+
+ears:
+  # Trigger condition
+  when: "User requests refactor auth"
+
+  # Precondition (optional)
+  if: "User is authenticated"
+
+  # System response (SHALL = mandatory requirement)
+  then: "System SHALL provide refactor auth"
+
+  # Environmental constraints
+  where: "Response time < 200ms"
+
+acceptance_criteria:
+  - "Functionality works as specified"
+  - "All tests pass"
+  - "Code review approved"
+
+non_functional:
+  performance:
+    response_time: "< 200ms"
+    throughput: "> 1000 req/s"
+
+  security:
+    authentication: required
+    authorization: role-based
+    data_encryption: at-rest and in-transit
+
+  reliability:
+    availability: "99.9%"
+    error_rate: "< 0.1%"
+
+traceability:
+  stakeholder: "Product Team"
+  business_value: "Enable user authentication"
+  related_requirements: []
+
+implementation:
+  estimated_effort: "8h"
+  complexity: medium
+  dependencies: []
+
+tags:
+  - "REQ-AUTH-5848"
+  - feature
+  - "authentication"

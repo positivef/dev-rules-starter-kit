@@ -1,28 +1,53 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: local
+    hooks:
+      - id: pre-execution-guard
+        name: Pre-Execution Guard (P7 Zero Hallucination)
+        entry: python scripts/pre_execution_guard.py
+        language: python
+        files: \.py$
+        pass_filenames: true
+        stages: [commit]
+        always_run: false
+
+      - id: tdd-enforcer
+        name: TDD Enforcer (P8 Test-First Development)
+        entry: python scripts/tdd_enforcer.py
+        language: python
+        files: \.py$
+        pass_filenames: true
+        stages: [commit]
+        always_run: false
+        verbose: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: check-json
-    -   id: check-merge-conflict
+      - id: trailing-whitespace
+        exclude: '\.md$'
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ['--unsafe']
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-merge-conflict
 
--   repo: https://github.com/astral-sh/ruff-pre-commit
+  - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.4.4
     hooks:
-    -   id: ruff
+      - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-    -   id: ruff-format
+      - id: ruff-format
 
--   repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.16.0
     hooks:
-    -   id: commitlint
+      - id: commitlint
         stages: [commit-msg]
         additional_dependencies: ['@commitlint/config-conventional']
 
--   repo: https://github.com/gitleaks/gitleaks
+  - repo: https://github.com/gitleaks/gitleaks
     rev: v8.18.0
     hooks:
-    -   id: gitleaks
+      - id: gitleaks

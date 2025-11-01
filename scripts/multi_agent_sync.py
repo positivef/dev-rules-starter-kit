@@ -20,6 +20,7 @@ from typing import Dict
 
 ROOT = Path(__file__).resolve().parent.parent
 STATE_FILE = ROOT / "dev-context" / "agent_sync_state.json"
+_LATEST_LOCKS: list[dict] = []
 
 
 def utc_now() -> str:
@@ -45,17 +46,47 @@ class AgentStatus:
         )
 
 
-def load_state() -> Dict[str, AgentStatus]:
+def _read_state() -> dict:
     if not STATE_FILE.exists():
-        return {}
-    raw = json.loads(STATE_FILE.read_text(encoding="utf-8"))
-    return {item["agent"]: AgentStatus.from_dict(item) for item in raw}
+        return {"agents": [], "locks": []}
+    try:
+        raw = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {"agents": [], "locks": []}
+    if isinstance(raw, list):
+        return {"agents": raw, "locks": []}
+    if isinstance(raw, dict):
+        agents = raw.get("agents", [])
+        locks = raw.get("locks", [])
+        if not isinstance(agents, list):
+            agents = []
+        if not isinstance(locks, list):
+            locks = []
+        return {"agents": agents, "locks": locks}
+    return {"agents": [], "locks": []}
+
+
+def load_state() -> Dict[str, AgentStatus]:
+    raw = _read_state()
+    agents_payload = raw.get("agents", [])
+    if isinstance(agents_payload, dict):
+        agents_payload = []
+    state: Dict[str, AgentStatus] = {}
+    for item in agents_payload:
+        try:
+            state[item["agent"]] = AgentStatus.from_dict(item)
+        except KeyError:
+            continue
+    global _LATEST_LOCKS
+    _LATEST_LOCKS = raw.get("locks", []) if isinstance(raw.get("locks"), list) else []
+    return state
 
 
 def save_state(state: Dict[str, AgentStatus]) -> None:
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     payload = [asdict(status) for status in state.values()]
-    STATE_FILE.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    raw_state = {"agents": payload, "locks": _LATEST_LOCKS}
+    STATE_FILE.write_text(json.dumps(raw_state, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def fmt_status(status: AgentStatus) -> str:

@@ -1,0 +1,122 @@
+# Task Contract for Prompt Feedback System Implementation
+# Complies with P1 (YAML First) and P2 (Evidence-Based)
+
+task_id: "PROMPT-FEEDBACK-2025-10-30"
+title: "Implement AI Prompt Feedback and MCP Advisory System"
+description: |
+  Create a comprehensive prompt engineering feedback system that:
+  - Analyzes prompt quality (clarity, logic, context, structure)
+  - Recommends optimal MCP servers and skills
+  - Tracks user improvement over time
+  - Provides actionable coaching
+
+constitution_compliance:
+  - P1: "YAML contract defines all implementation steps"
+  - P2: "All executions will be recorded as evidence"
+  - P4: "SOLID principles in code architecture"
+  - P5: "Security validation for user input"
+  - P7: "Only verifiable metrics and recommendations"
+  - P8: "Test-driven development approach"
+  - P10: "Windows UTF-8 encoding compliance"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P4", "P5", "P7", "P8", "P10"]
+  - type: "quality"
+    threshold: 80
+    metrics: ["test_coverage", "code_quality", "documentation"]
+
+phases:
+  - phase: "analysis"
+    tasks:
+      - id: "analyze_requirements"
+        description: "Analyze prompt engineering requirements"
+        evidence: "docs/PROMPT_FEEDBACK_SYSTEM.md"
+
+  - phase: "implementation"
+    tasks:
+      - id: "implement_analyzer"
+        description: "Create prompt quality analyzer"
+        files:
+          - "scripts/prompt_feedback_analyzer.py"
+        tests:
+          - "tests/test_prompt_feedback_analyzer.py"
+
+      - id: "implement_mcp_advisor"
+        description: "Create MCP/Skill advisor"
+        files:
+          - "scripts/prompt_mcp_advisor.py"
+        tests:
+          - "tests/test_prompt_mcp_advisor.py"
+
+      - id: "implement_coach"
+        description: "Create integrated coaching system"
+        files:
+          - "scripts/prompt_engineering_coach.py"
+        tests:
+          - "tests/test_prompt_engineering_coach.py"
+
+      - id: "implement_cli"
+        description: "Create CLI interface"
+        files:
+          - "scripts/prompt_feedback_cli.py"
+        tests:
+          - "tests/test_prompt_feedback_cli.py"
+
+  - phase: "validation"
+    tasks:
+      - id: "run_tests"
+        description: "Execute all tests with coverage"
+        commands:
+          - exec: ["pytest", "tests/test_prompt_*.py", "--cov=scripts", "--cov-report=term"]
+
+      - id: "security_check"
+        description: "Validate security compliance"
+        commands:
+          - exec: ["python", "scripts/deep_analyzer.py", "scripts/prompt_feedback_analyzer.py"]
+
+      - id: "constitutional_check"
+        description: "Verify constitutional compliance"
+        commands:
+          - exec: ["python", "scripts/constitutional_validator.py", "scripts/prompt*.py"]
+
+  - phase: "documentation"
+    tasks:
+      - id: "generate_docs"
+        description: "Generate system documentation"
+        outputs:
+          - "docs/PROMPT_FEEDBACK_SYSTEM.md"
+          - "docs/PROMPT_ENGINEERING_GUIDE.md"
+
+      - id: "obsidian_sync"
+        description: "Sync to Obsidian knowledge base"
+        commands:
+          - exec: ["python", "scripts/obsidian_bridge.py", "sync"]
+
+evidence:
+  directory: "RUNS/evidence/prompt_feedback/"
+  auto_collect: true
+  formats: ["json", "md", "html"]
+
+validation:
+  pre_execution:
+    - check: "file_exists"
+      paths: ["scripts/constitutional_validator.py", "scripts/deep_analyzer.py"]
+    - check: "environment"
+      variables: ["PYTHONPATH", "OBSIDIAN_VAULT_PATH"]
+
+  post_execution:
+    - check: "test_coverage"
+      threshold: 80
+    - check: "quality_score"
+      threshold: 8.0
+    - check: "constitutional_compliance"
+      required_articles: ["P1", "P2", "P4", "P5", "P7", "P8", "P10"]
+
+metadata:
+  author: "AI Engineering Team"
+  created: "2025-10-30"
+  version: "1.0.0"
+  tags: ["ai", "prompt-engineering", "mcp", "feedback-system"]
+  priority: "high"
+  estimated_time: "4 hours"

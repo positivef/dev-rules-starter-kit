@@ -1,0 +1,280 @@
+# Constitution Project Configuration
+# Purpose: Project-level settings for multi-session coordination
+# Use Case: 1 developer using 3-4 simultaneous AI sessions
+# Version: 1.0.0
+
+---
+
+# ==============================================================================
+# Multi-Session Coordination
+# ==============================================================================
+
+project:
+  name: "Dev Rules Starter Kit"
+  version: "1.0.0"
+  constitution_version: "1.0.0"  # Must match config/constitution.yaml
+
+  # Multi-session lock
+  # Prevents individual AI sessions from changing the adoption level
+  lock_config: true  # When true, sessions cannot override adoption_level
+
+  # Session consistency enforcement
+  # Ensures all AI sessions follow the same Constitution rules
+  enforce_consistency: true
+
+# ==============================================================================
+# Adoption Level (Project-Wide)
+# ==============================================================================
+
+adoption:
+  # Current adoption level (0-3)
+  # All AI sessions MUST follow this level
+  level: 2  # Standard
+
+  # Level descriptions:
+  # 0: Minimal (Commits only)
+  # 1: Light (Basic validation)
+  # 2: Standard (Main features + YAML for major tasks)
+  # 3: Full (Complete Constitution enforcement)
+
+  # Progression schedule
+  target_level: 3
+  upgrade_date: "2025-11-30"  # Auto-upgrade to Level 3
+
+  # Allow temporary downgrades for emergencies
+  allow_emergency_downgrade: true
+  emergency_max_duration: "24 hours"
+
+# ==============================================================================
+# Minimum Viable Constitution (Non-Negotiable)
+# ==============================================================================
+
+minimum_requirements:
+  # These rules apply at ALL levels (0-3)
+  # No session can bypass these
+
+  - rule: "conventional_commits"
+    enabled: true
+    severity: "critical"
+    description: "All commits must follow Conventional Commits format"
+
+  - rule: "branch_protection"
+    enabled: true
+    severity: "critical"
+    description: "Never commit directly to main/master"
+
+  - rule: "pr_for_major_changes"
+    enabled: true
+    threshold: "10 lines"
+    severity: "high"
+    description: "Changes >10 lines require PR"
+
+  - rule: "no_emojis_in_code"
+    enabled: true
+    severity: "medium"
+    description: "No emojis in Python/YAML/Shell (P10)"
+    files: ["*.py", "*.yaml", "*.yml", "*.sh", "*.bat"]
+
+# ==============================================================================
+# Override Tracking
+# ==============================================================================
+
+overrides:
+  # Track SKIP_CONSTITUTION usage
+  enabled: true
+  log_file: "RUNS/overrides.log"
+
+  # Escalation thresholds
+  max_rate: 0.1  # 10% of commits
+  alert_rate: 0.2  # 20% triggers warning
+
+  # Auto-escalation
+  escalate_after: 5  # After 5 overrides in 7 days
+  escalate_to: "project_review"  # Triggers quarterly review
+
+# ==============================================================================
+# Quality Gates (Project-Wide)
+# ==============================================================================
+
+quality_gates:
+  # These apply based on adoption level
+
+  level_0:
+    - "conventional_commits: 100%"
+
+  level_1:
+    - "conventional_commits: 100%"
+    - "ruff_pass_rate: >80%"
+
+  level_2:
+    - "conventional_commits: 100%"
+    - "ruff_pass_rate: >90%"
+    - "yaml_compliance: >60%"  # Major tasks in YAML
+    - "security_critical: 0"
+
+  level_3:
+    - "conventional_commits: 100%"
+    - "quality_score: >=7.0"
+    - "test_coverage: >=90%"
+    - "security_critical: 0"
+    - "yaml_compliance: >90%"
+
+# ==============================================================================
+# Multi-AI Session Settings
+# ==============================================================================
+
+sessions:
+  # Maximum concurrent AI sessions
+  max_concurrent: 4
+
+  # Session coordination
+  coordination:
+    enabled: true
+    method: "agent_sync.py"  # Use existing agent_sync system
+    lock_file: "dev-context/agent_sync_state.json"
+
+  # Context sharing
+  shared_context:
+    enabled: true
+    location: "RUNS/context/shared_state.json"
+    sync_frequency: "real-time"  # Update on every change
+
+  # Session roles (optional labeling)
+  roles:
+    - "frontend"
+    - "backend"
+    - "testing"
+    - "assistant"  # Real-time code assist (Cursor/Copilot)
+
+# ==============================================================================
+# Protection Mechanisms (P14 Second-Order Effects)
+# ==============================================================================
+
+protection:
+  # Prevent flexibility abuse
+  stagnation_detection:
+    enabled: true
+
+    # Alert if stuck at Level 0 too long
+    level_0_max_weeks: 2
+    level_1_max_weeks: 8
+
+    # Auto-upgrade if stagnant
+    auto_upgrade: true
+    auto_upgrade_conditions:
+      - "level_0 for >2 weeks"
+      - "override_rate <5%"
+      - "team_satisfaction >70%"
+
+  # Monitor for degradation
+  degradation_detection:
+    enabled: true
+
+    metrics:
+      - name: "override_rate"
+        threshold: 0.1  # 10%
+        action: "alert"
+
+      - name: "quality_score"
+        threshold: 7.0
+        action: "block_pr"
+
+      - name: "yaml_compliance"
+        threshold: 0.3  # 30% minimum
+        action: "alert"
+
+  # Rollback capability
+  rollback:
+    enabled: true
+    max_rollback_time: "5 minutes"
+    preserve_evidence: true
+
+# ==============================================================================
+# Convergence Settings (P15)
+# ==============================================================================
+
+convergence:
+  # Stop improving when these conditions are met
+  stop_conditions:
+    roi_threshold: 300  # ROI >300%
+    satisfaction_threshold: 80  # >80% satisfaction
+    stable_duration_days: 90  # 3 months stable
+    new_proposal_roi_min: 150  # New ideas must have ROI >150%
+
+  # Complexity budget (P15)
+  complexity_budget:
+    max_articles: 20
+    max_lines_per_article: 150
+    max_total_lines: 1500
+    current_articles: 15  # P1-P15
+    current_lines: 1400  # Estimated
+
+  # Quarterly review
+  review_schedule:
+    frequency: "quarterly"
+    next_review: "2026-01-31"
+    checklist:
+      - "ROI review per article"
+      - "Complexity measurement"
+      - "Usage frequency analysis"
+      - "Integration opportunities"
+      - "Removal candidates"
+
+# ==============================================================================
+# Monitoring & Alerts
+# ==============================================================================
+
+monitoring:
+  # Dashboard
+  dashboard:
+    enabled: true
+    url: "http://localhost:8501"
+    auto_refresh: 30  # seconds
+
+  # Alerts
+  alerts:
+    enabled: true
+    channels:
+      - "console"  # Print warnings
+      - "log_file"  # RUNS/alerts.log
+
+    triggers:
+      - condition: "override_rate >0.2"
+        severity: "warning"
+        message: "Override usage exceeds 20%!"
+
+      - condition: "quality_score <7.0"
+        severity: "critical"
+        message: "Quality Gate FAILED!"
+
+      - condition: "level_0_duration >14 days"
+        severity: "info"
+        message: "Consider upgrading to Level 1"
+
+# ==============================================================================
+# Documentation & Help
+# ==============================================================================
+
+help:
+  quick_start: "See CLAUDE.md for multi-session workflow"
+  troubleshooting: "Run: python scripts/constitutional_validator.py --help"
+
+  common_commands:
+    check_status: "python scripts/constitutional_validator.py --status"
+    upgrade_level: "python scripts/adoption_manager.py upgrade"
+    view_overrides: "cat RUNS/overrides.log"
+    session_status: "python scripts/agent_sync_status.py"
+
+# ==============================================================================
+# Version History
+# ==============================================================================
+
+version_history:
+  - version: "1.0.0"
+    date: "2025-10-31"
+    changes:
+      - "Initial project configuration"
+      - "Multi-session coordination settings"
+      - "P14/P15 integration"
+      - "Minimum Viable Constitution enforcement"
+    rationale: "Support 1-dev + 3-4 AI sessions workflow"

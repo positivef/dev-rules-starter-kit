@@ -1,0 +1,31 @@
+{
+  "session_id": "session_20251026_234632_5a7c9045",
+  "started_at": "2025-10-26T14:46:32.737737+00:00",
+  "last_checkpoint": "2025-10-26T14:46:32.792436+00:00",
+  "context_hash": "585c37eae1435c89",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "test_key": "test_value",
+      "current_task": {
+        "task_id": "TEST-HOOK-001",
+        "title": "Unknown Task",
+        "status": "running",
+        "started_at": "2025-10-26T14:46:32.784744+00:00",
+        "yaml_path": ""
+      },
+      "task_history": [
+        {
+          "task_id": "TEST-HOOK-001",
+          "started_at": "2025-10-26T14:46:32.792427+00:00",
+          "status": "started"
+        }
+      ]
+    },
+    "user": {
+      "user_pref": "dark_mode"
+    },
+    "app": {},
+    "temp": {}
+  }
+}

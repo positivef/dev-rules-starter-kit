@@ -26,6 +26,39 @@
       "focus": "plan validation"
     }
   },
+  "tier1_integration": {
+    "enabled": true,
+    "modules": {
+      "tag_extractor": {
+        "enabled": true,
+        "file_extensions": [".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".cpp", ".c", ".h", ".go"],
+        "ignored_dirs": ["node_modules", "__pycache__", ".git", ".venv", "venv", "dist", "build"],
+        "max_workers": 4
+      },
+      "security": {
+        "enabled": true,
+        "path_validation": true,
+        "file_locking": true,
+        "memory_management": true,
+        "lock_timeout": 30
+      },
+      "performance": {
+        "parallel_processing": true,
+        "max_workers": 8,
+        "batch_size": 100,
+        "cache_enabled": true
+      },
+      "error_handling": {
+        "enabled": true,
+        "retry_enabled": true,
+        "max_retries": 3,
+        "backoff_base": 2,
+        "circuit_breaker_enabled": true,
+        "failure_threshold": 5,
+        "recovery_timeout": 60
+      }
+    }
+  },
   "sync": {
     "context_schema_version": "c7-sync-1.0",
     "required_env_keys": [
@@ -93,6 +126,27 @@
       "enabled": true,
       "required_theories": ["SOLID", "DRY"],
       "min_compliance_score": 0.85
+    }
+  },
+  "token_optimization": {
+    "enabled": true,
+    "mode": "adaptive",
+    "triggers": {
+      "context_usage_threshold": 0.75,
+      "large_operation_threshold": 100,
+      "user_flag": "--uc"
+    },
+    "techniques": {
+      "symbol_communication": true,
+      "abbreviation_system": true,
+      "compression_ratio": 0.5,
+      "min_info_quality": 0.95
+    },
+    "obsidian_integration": {
+      "auto_search_enabled": true,
+      "search_result_compression": true,
+      "reference_format": "symbol",
+      "max_result_tokens": 500
     }
   }
 }

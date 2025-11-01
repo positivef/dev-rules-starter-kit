@@ -1,0 +1,41 @@
+{
+  "enabled": true,
+  "schedules": {
+    "daily": {
+      "enabled": false,
+      "time": "09:00",
+      "format": "html",
+      "send_email": false,
+      "send_slack": false
+    },
+    "weekly": {
+      "enabled": true,
+      "day": "monday",
+      "time": "09:00",
+      "format": "html",
+      "send_email": false,
+      "send_slack": true
+    },
+    "monthly": {
+      "enabled": false,
+      "day": 1,
+      "time": "09:00",
+      "format": "html",
+      "send_email": true,
+      "send_slack": true
+    }
+  },
+  "email": {
+    "enabled": false,
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "from_email": "",
+    "from_password": "",
+    "to_emails": [],
+    "use_tls": true
+  },
+  "slack": {
+    "enabled": false,
+    "webhook_url": ""
+  }
+}

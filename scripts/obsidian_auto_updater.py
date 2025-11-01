@@ -63,9 +63,11 @@ from pathlib import Path
 
 # MCP Obsidian 서버 사용 가정
 try:
-    from mcp_obsidian import ObsidianClient
+    import importlib.util
 
-    MCP_AVAILABLE = True
+    MCP_AVAILABLE = bool(importlib.util.find_spec("mcp_obsidian"))
+    if not MCP_AVAILABLE:
+        print("Warning: MCP Obsidian not available, using fallback mode")
 except ImportError:
     MCP_AVAILABLE = False
     print("Warning: MCP Obsidian not available, using fallback mode")
@@ -122,7 +124,7 @@ class ObsidianUpdater:
 """
         if tasks:
             for task in tasks:
-                content += f"- ✅ {task}\n"
+                content += f"- [OK] {task}\n"
         else:
             content += "- (작업 내용 기록)\n"
 
@@ -227,7 +229,7 @@ class ObsidianUpdater:
 - Failed: {failed}
 - Duration: {duration:.2f}s
 
-**Status**: {"✅ ALL PASS" if failed == 0 else f"⚠️ {failed} FAILED"}
+**Status**: {"[OK] ALL PASS" if failed == 0 else f"[WARN] {failed} FAILED"}
 
 ---
 
@@ -309,15 +311,15 @@ class ObsidianUpdater:
 
 ## 통계
 
-- 📝 커밋: {commits}개
-- ✅ 테스트: {tests_passed}개 통과
-- 📊 평균 품질: {avg_quality:.1f}/10
+- [LOG] 커밋: {commits}개
+- [OK] 테스트: {tests_passed}개 통과
+- [STATUS] 평균 품질: {avg_quality:.1f}/10
 
 ## 주요 성과
 
 """
         for highlight in highlights:
-            content += f"- ✨ {highlight}\n"
+            content += f"- [SUCCESS] {highlight}\n"
 
         content += """
 ## 다음 주 계획

@@ -1,0 +1,290 @@
+{
+  "metadata": {
+    "period": "daily",
+    "days": 1,
+    "generated_at": "2025-10-26T15:06:54.353602+00:00",
+    "timestamp": "20251027_000654"
+  },
+  "analysis": {
+    "task_patterns": {
+      "most_frequent_tasks": [
+        [
+          "TEST-HOOK-001",
+          17
+        ],
+        [
+          "VERIFY-001",
+          3
+        ],
+        [
+          "TEST-2025-10-26-77",
+          3
+        ],
+        [
+          "TEST-2025-10-26-E2E",
+          3
+        ],
+        [
+          "PERF-2025-10-26-40",
+          2
+        ],
+        [
+          "TEST-2025-10-26-21",
+          2
+        ],
+        [
+          "FIX-2025-10-26-40",
+          2
+        ],
+        [
+          "FIX-2025-10-26-12",
+          2
+        ],
+        [
+          "FIX-2025-10-26-38",
+          2
+        ],
+        [
+          "BUILD-2025-10-26-39",
+          2
+        ]
+      ],
+      "failed_tasks": [
+        [
+          "STYLE-2025-10-26-88",
+          1
+        ],
+        [
+          "TEST-2025-10-26-72",
+          1
+        ],
+        [
+          "TEST-2025-10-26-59",
+          1
+        ],
+        [
+          "TEST-2025-10-26-06",
+          1
+        ],
+        [
+          "REFACTOR-2025-10-26-22",
+          1
+        ],
+        [
+          "FIX-2025-10-26-33",
+          1
+        ],
+        [
+          "FIX-2025-10-26-DB",
+          1
+        ]
+      ],
+      "task_execution_times": {
+        "VERIFY-001": {
+          "avg": 1.5,
+          "min": 1.5,
+          "max": 1.5,
+          "count": 1
+        },
+        "TEST-HOOK-001": {
+          "avg": 10.5,
+          "min": 10.5,
+          "max": 10.5,
+          "count": 5
+        },
+        "TEST-2025-10-26-06": {
+          "avg": 100.99059283998794,
+          "min": 100.99059283998794,
+          "max": 100.99059283998794,
+          "count": 1
+        },
+        "TEST-2025-10-26-77": {
+          "avg": 49.64642292418463,
+          "min": 49.64642292418463,
+          "max": 49.64642292418463,
+          "count": 1
+        },
+        "TEST-2025-10-26-E2E": {
+          "avg": 180.7,
+          "min": 180.7,
+          "max": 180.7,
+          "count": 1
+        }
+      },
+      "command_patterns": [
+        [
+          "make",
+          10
+        ],
+        [
+          "mypy",
+          9
+        ],
+        [
+          "docker",
+          8
+        ],
+        [
+          "python",
+          8
+        ],
+        [
+          "pytest",
+          6
+        ],
+        [
+          "ruff",
+          6
+        ],
+        [
+          "npm",
+          5
+        ],
+        [
+          "git",
+          4
+        ]
+      ],
+      "total_unique_tasks": 20,
+      "total_failed_tasks": 7
+    },
+    "productivity": {
+      "peak_hours": [
+        [
+          14,
+          18
+        ],
+        [
+          7,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "peak_days": [
+        [
+          "Sunday",
+          21
+        ]
+      ],
+      "avg_session_duration_minutes": 0.04175807857142857,
+      "total_sessions": 21,
+      "hourly_distribution": {
+        "15": 1,
+        "14": 18,
+        "7": 2
+      },
+      "daily_distribution": {
+        "Sunday": 21
+      }
+    },
+    "error_patterns": {
+      "common_errors": [
+        [
+          "Connection timeout: Server not responding",
+          2
+        ],
+        [
+          "Syntax error: Unexpected token",
+          1
+        ],
+        [
+          "File not found: Path does not exist",
+          1
+        ],
+        [
+          "Memory error: Out of memory",
+          1
+        ],
+        [
+          "Build error: Dependency not satisfied",
+          1
+        ],
+        [
+          "Connection timeout: Database server not responding",
+          1
+        ]
+      ],
+      "error_tasks": {
+        "Connection timeout: Server not responding": [
+          "STYLE-2025-10-26-88",
+          "TEST-2025-10-26-59"
+        ],
+        "Syntax error: Unexpected token": [
+          "TEST-2025-10-26-72"
+        ],
+        "File not found: Path does not exist": [
+          "TEST-2025-10-26-06"
+        ],
+        "Memory error: Out of memory": [
+          "REFACTOR-2025-10-26-22"
+        ],
+        "Build error: Dependency not satisfied": [
+          "FIX-2025-10-26-33"
+        ],
+        "Connection timeout: Database server not responding": [
+          "FIX-2025-10-26-DB"
+        ]
+      },
+      "error_timeline": [
+        {
+          "timestamp": "2025-10-26T07:05:48.516373+00:00",
+          "task_id": "FIX-2025-10-26-DB",
+          "error": "Connection timeout: Database server not responding"
+        },
+        {
+          "timestamp": "2025-10-26T07:14:40.599896+00:00",
+          "task_id": "REFACTOR-2025-10-26-22",
+          "error": "Memory error: Out of memory"
+        },
+        {
+          "timestamp": "2025-10-26T07:14:43.618603+00:00",
+          "task_id": "FIX-2025-10-26-33",
+          "error": "Build error: Dependency not satisfied"
+        },
+        {
+          "timestamp": "2025-10-26T14:39:32.893997+00:00",
+          "task_id": "STYLE-2025-10-26-88",
+          "error": "Connection timeout: Server not responding"
+        },
+        {
+          "timestamp": "2025-10-26T14:39:36.403022+00:00",
+          "task_id": "TEST-2025-10-26-72",
+          "error": "Syntax error: Unexpected token"
+        },
+        {
+          "timestamp": "2025-10-26T14:39:43.956427+00:00",
+          "task_id": "TEST-2025-10-26-59",
+          "error": "Connection timeout: Server not responding"
+        },
+        {
+          "timestamp": "2025-10-26T14:39:58.496516+00:00",
+          "task_id": "TEST-2025-10-26-06",
+          "error": "File not found: Path does not exist"
+        }
+      ],
+      "total_unique_errors": 6,
+      "total_errors": 7
+    },
+    "execution_stats": {
+      "total_tasks": 24,
+      "successful_tasks": 17,
+      "failed_tasks": 7,
+      "success_rate": 70.83333333333334,
+      "total_execution_hours": 0.4104967557296036,
+      "avg_execution_time": 61.57451335944054
+    },
+    "insights": {
+      "recommendations": [
+        "평균 세션 시간이 30분 미만 - 더 긴 집중 시간 확보 권장",
+        "가장 생산적인 시간대: 14시, 7시"
+      ],
+      "warnings": [
+        "작업 성공률이 70.8%로 낮음 - 프로세스 개선 필요"
+      ],
+      "positive_patterns": []
+    }
+  }
+}

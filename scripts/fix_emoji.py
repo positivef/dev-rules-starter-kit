@@ -5,10 +5,10 @@ with open("scripts/enhanced_task_executor.py", "r", encoding="utf-8") as f:
 
 # Replace all emoji with ASCII equivalents
 replacements = {
-    "⚠️": "[WARN]",
-    "✅": "[PASS]",
-    "❌": "[FAIL]",
-    "📝": "[DOC]",
+    "[WARN]": "[WARN]",
+    "[OK]": "[PASS]",
+    "[FAIL]": "[FAIL]",
+    "[LOG]": "[DOC]",
     "📎": "[ATTACH]",
     "⚡": "[PARALLEL]",
     "→": "->",

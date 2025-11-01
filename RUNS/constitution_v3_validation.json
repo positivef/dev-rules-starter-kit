@@ -1,0 +1,271 @@
+{
+  "timestamp": "2025-10-28T18:08:56.046597",
+  "total_articles": 20,
+  "passed": 15,
+  "score": 0.737295156912187,
+  "grade": "C",
+  "layer_results": {
+    "L1_Foundation": {
+      "layer": "Foundation",
+      "passed": 5,
+      "total": 5,
+      "score": 0.9333333333333333,
+      "compliance": "5/5",
+      "percentage": "93.3%"
+    },
+    "L2_Quality": {
+      "layer": "Quality",
+      "passed": 3,
+      "total": 5,
+      "score": 0.6858472943154148,
+      "compliance": "3/5",
+      "percentage": "68.6%"
+    },
+    "L3_AI_Automation": {
+      "layer": "AI & Automation",
+      "passed": 5,
+      "total": 5,
+      "score": 0.9,
+      "compliance": "5/5",
+      "percentage": "90.0%"
+    },
+    "L4_Governance": {
+      "layer": "Governance",
+      "passed": 2,
+      "total": 5,
+      "score": 0.43,
+      "compliance": "2/5",
+      "percentage": "43.0%"
+    }
+  },
+  "detailed_results": [
+    {
+      "article_id": "C1",
+      "article_name": "Executable Specification",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "yaml_contracts": 7,
+        "markdown_specs": 5
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C2",
+      "article_name": "Library-First Architecture",
+      "passed": true,
+      "score": 0.6666666666666666,
+      "evidence": {
+        "__init__.py": false,
+        "setup.py": true,
+        "src_directory": true
+      },
+      "recommendations": [
+        "Add __init__.py to make modules importable"
+      ]
+    },
+    {
+      "article_id": "C3",
+      "article_name": "CLI Accessibility",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "cli_modules": 13,
+        "cli_scripts": 1
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C4",
+      "article_name": "Evidence-Based Development",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "evidence_directory": true,
+        "evidence_files": 5129
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C5",
+      "article_name": "Knowledge Capitalization",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "obsidian_bridge": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C6",
+      "article_name": "Test-First Development",
+      "passed": false,
+      "score": 0.04625774817281894,
+      "evidence": {
+        "coverage": "4.6%"
+      },
+      "recommendations": [
+        "Increase test coverage to 90%"
+      ]
+    },
+    {
+      "article_id": "C7",
+      "article_name": "Integration-First Testing",
+      "passed": false,
+      "score": 0.3829787234042553,
+      "evidence": {
+        "integration_tests": 9,
+        "total_tests": 47
+      },
+      "recommendations": [
+        "Add more integration tests"
+      ]
+    },
+    {
+      "article_id": "C8",
+      "article_name": "SOLID & Clean Code",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "deep_analyzer": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C9",
+      "article_name": "Security Gates",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "security_scan": "passed"
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C10",
+      "article_name": "Quality Metrics Gate",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "team_stats_aggregator": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C11",
+      "article_name": "Academic Verification",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "academic_verification": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C12",
+      "article_name": "Principle Conflict Detection",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "conflict_detector": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C13",
+      "article_name": "Trade-off Analysis",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "tradeoff_analyzer": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C14",
+      "article_name": "Observability & Logging",
+      "passed": true,
+      "score": 0.5,
+      "evidence": {
+        "log_files": 3,
+        "structured_json": false
+      },
+      "recommendations": [
+        "Implement structured JSON logging"
+      ]
+    },
+    {
+      "article_id": "C15",
+      "article_name": "Parallel Execution",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "parallel_executor": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C16",
+      "article_name": "Conventional Commits",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "commitlint_configured": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C17",
+      "article_name": "Simplicity & YAGNI",
+      "passed": false,
+      "score": 0.15000000000000002,
+      "evidence": {
+        "project_directories": 27
+      },
+      "recommendations": [
+        "Reduce project complexity"
+      ]
+    },
+    {
+      "article_id": "C18",
+      "article_name": "Windows Compatibility",
+      "passed": false,
+      "score": 0.0,
+      "evidence": {
+        "emoji_free": false
+      },
+      "recommendations": [
+        "Remove emojis for Windows compatibility"
+      ]
+    },
+    {
+      "article_id": "C19",
+      "article_name": "Constitutional Amendment",
+      "passed": true,
+      "score": 1.0,
+      "evidence": {
+        "user_approval_required": true
+      },
+      "recommendations": []
+    },
+    {
+      "article_id": "C20",
+      "article_name": "Phase-Based Execution",
+      "passed": false,
+      "score": 0.0,
+      "evidence": {
+        "phase_structured_tasks": 0
+      },
+      "recommendations": [
+        "Implement phase-based task structure"
+      ]
+    }
+  ],
+  "recommendations": [
+    "C17: Reduce project complexity",
+    "C18: Remove emojis for Windows compatibility",
+    "C6: Increase test coverage to 90%",
+    "C7: Add more integration tests",
+    "C20: Implement phase-based task structure"
+  ]
+}

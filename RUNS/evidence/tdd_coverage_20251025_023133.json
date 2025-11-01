@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-25T02:31:33.048364",
+  "tool": "tdd_enforcer_lite",
+  "success": false,
+  "threshold": 85.0,
+  "coverage": 41.232095675149495,
+  "tests_passed": false,
+  "strict_mode": false,
+  "quick_mode": false
+}

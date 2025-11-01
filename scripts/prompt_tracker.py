@@ -60,9 +60,7 @@ class PromptTracker:
         """Save prompt database to JSON file (atomic write)."""
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.db_path.with_suffix(".tmp")
-        tmp.write_text(
-            json.dumps(self.prompts, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
+        tmp.write_text(json.dumps(self.prompts, indent=2, ensure_ascii=False), encoding="utf-8")
         tmp.replace(self.db_path)
 
     def track_interaction(
@@ -132,9 +130,7 @@ class PromptTracker:
         self._save_db()
         return interaction_id
 
-    def _calculate_cost(
-        self, model: str, tokens_input: int, tokens_output: int
-    ) -> float:
+    def _calculate_cost(self, model: str, tokens_input: int, tokens_output: int) -> float:
         """Calculate cost in USD for token usage."""
         if model not in self.token_costs:
             return 0.0
@@ -144,9 +140,7 @@ class PromptTracker:
         cost_output = (tokens_output / 1000) * costs["output"]
         return round(cost_input + cost_output, 6)
 
-    def get_stats(
-        self, days: Optional[int] = None, tags: Optional[List[str]] = None
-    ) -> Dict:
+    def get_stats(self, days: Optional[int] = None, tags: Optional[List[str]] = None) -> Dict:
         """
         Get prompt tracking statistics.
 
@@ -178,15 +172,11 @@ class PromptTracker:
             "total_tokens": total_tokens,
             "total_cost": round(total_cost, 2),
             "success_rate": round(success_rate, 1),
-            "avg_tokens_per_interaction": round(
-                total_tokens / len(filtered_prompts), 0
-            ),
+            "avg_tokens_per_interaction": round(total_tokens / len(filtered_prompts), 0),
             "most_used_model": self._get_most_used_model(filtered_prompts),
         }
 
-    def _filter_prompts(
-        self, days: Optional[int], tags: Optional[List[str]]
-    ) -> Dict[str, Dict]:
+    def _filter_prompts(self, days: Optional[int], tags: Optional[List[str]]) -> Dict[str, Dict]:
         """Filter prompts by time and tags."""
         filtered = {}
 

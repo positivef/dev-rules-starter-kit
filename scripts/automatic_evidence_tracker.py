@@ -190,7 +190,7 @@ class AutomaticEvidenceTracker:
 """
 
         for event in self.events:
-            status_emoji = "✅" if event["status"] == "SUCCESS" else "❌"
+            status_emoji = "[OK]" if event["status"] == "SUCCESS" else "[FAIL]"
             content += f"""### {status_emoji} {event['task_id']}: {event['description']}
 
 - **Status**: {event['status']}

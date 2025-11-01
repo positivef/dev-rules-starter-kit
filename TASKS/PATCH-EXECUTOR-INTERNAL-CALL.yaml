@@ -1,0 +1,135 @@
+task_id: "PATCH-EXECUTOR-INTERNAL-CALL-001"
+title: "TaskExecutor 패치: 내장 함수 직접 호출 기능 추가"
+description: |
+  TaskExecutor가 `replace`, `write_file`과 같은 시스템 내장 함수를 `subprocess`를 통하지 않고 직접 호출할 수 있도록 `run_exec` 함수를 수정합니다.
+  이를 통해 보안을 유지하면서 에이전트의 파일 시스템 접근 능력을 확장합니다.
+project: "dev-rules-starter-kit"
+priority: "critical"
+tags: [patch, task-executor, core-logic]
+
+acceptance_criteria:
+  - "`run_exec` 함수 내에 내장 함수를 직접 호출하는 로직이 추가되어야 한다."
+  - "`replace` 명령어가 성공적으로 실행되어야 한다."
+
+commands:
+  - id: "01-patch-run-exec-function"
+    description: "run_exec 함수를 수정하여 내장 함수 호출을 지원합니다."
+    exec:
+      cmd: "replace"
+      args:
+        file_path: "scripts/task_executor.py"
+        old_string: |
+          def run_exec(cmd: str, args: List[str], cwd: Path, env: Dict[str, str], timeout: int = 300):
+              """Safe command execution (exec array, shell=False)"""
+              # 1. Command allowlist check
+              if cmd not in ALLOWED_CMDS:
+                  error = ErrorCatalog.command_not_allowed(cmd)
+                  print(f"\n{error.format()}", file=sys.stderr)
+                  raise SecurityError(error.message)
+
+              # 2. Dangerous pattern check
+              full_cmd = f"{cmd} {' '.join(args)}"
+              for pattern in DANGEROUS_PATTERNS:
+                  if re.search(pattern, full_cmd):
+                      raise SecurityError(f"Dangerous pattern detected: {pattern}")
+
+              # 3. Execute with exec array (shell=False)
+              print(f"[EXEC] {cmd} {' '.join(args)}")
+              try:
+                  result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
+
+                  if result.returncode != 0:
+                      stderr = result.stderr.decode("utf-8", errors="ignore")
+                      error = ErrorCatalog.command_failed(cmd, result.returncode, stderr)
+                      print(f"\n{error.format()}", file=sys.stderr)
+                      raise CalledProcessError(result.returncode, [cmd] + args)
+
+                  return result
+
+              except TimeoutExpired:
+                  raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}")
+        new_string: |
+          # Allowed internal functions
+          INTERNAL_FUNCTIONS = {
+              "write_file": write_file,
+              "replace": replace,
+          }
+
+          def run_exec(cmd: str, args: Dict[str, Any], cwd: Path, env: Dict[str, str], timeout: int = 300):
+              """Safe command execution (exec array or internal function call)"""
+              # 1. Command allowlist check
+              if cmd not in ALLOWED_CMDS:
+                  error = ErrorCatalog.command_not_allowed(cmd)
+                  print(f"\n{error.format()}", file=sys.stderr)
+                  raise SecurityError(error.message)
+
+              # 2. Check if it's an internal function call
+              if cmd in INTERNAL_FUNCTIONS:
+                  print(f"[EXEC-INTERNAL] {cmd}")
+                  try:
+                      # Ensure args is a dictionary for internal calls
+                      if not isinstance(args, dict):
+                          raise TypeError(f"Arguments for internal function '{cmd}' must be a dictionary.")
+
+                      # Dynamically call the function
+                      internal_func = INTERNAL_FUNCTIONS[cmd]
+                      result = internal_func(**args)
+                      print(f"   [SUCCESS] Internal function '{cmd}' executed successfully.")
+                      return result
+                  except Exception as e:
+                      error = ErrorCatalog.command_failed(cmd, -1, str(e))
+                      print(f"\n{error.format(include_traceback=True)}", file=sys.stderr)
+                      raise
+
+              # 3. Dangerous pattern check for shell commands
+              full_cmd = f"{cmd} {' '.join(args)}"
+              for pattern in DANGEROUS_PATTERNS:
+                  if re.search(pattern, full_cmd):
+                      raise SecurityError(f"Dangerous pattern detected: {pattern}")
+
+              # 4. Execute with exec array (shell=False)
+              print(f"[EXEC] {cmd} {' '.join(args)}")
+              try:
+                  # Ensure args is a list for shell commands
+                  if not isinstance(args, list):
+                      raise TypeError(f"Arguments for shell command '{cmd}' must be a list.")
+
+                  result = run([cmd] + args, cwd=str(cwd), env=env, capture_output=True, shell=False, check=False, timeout=timeout)
+
+                  if result.returncode != 0:
+                      stderr = result.stderr.decode("utf-8", errors="ignore")
+                      error = ErrorCatalog.command_failed(cmd, result.returncode, stderr)
+                      print(f"\n{error.format()}", file=sys.stderr)
+                      raise CalledProcessError(result.returncode, [cmd] + args)
+
+                  return result
+
+              except TimeoutExpired:
+                  raise TaskExecutorError(f"Command timeout ({timeout}s): {cmd}")
+
+  - id: "02-define-internal-functions"
+    description: "`write_file`과 `replace` 함수를 정의하여 `run_exec`에서 사용할 수 있도록 합니다."
+    exec:
+      cmd: "replace"
+      args:
+        file_path: "scripts/task_executor.py"
+        old_string: "from orchestration_policy import OrchestrationPolicy"
+        new_string: |
+          from orchestration_policy import OrchestrationPolicy
+
+          # Dummy functions for internal call mechanism
+          # These will be replaced by actual tool calls in a real environment
+          def write_file(file_path: str, content: str):
+              print(f"DUMMY_WRITE: Writing to {file_path}")
+              Path(file_path).write_text(content, encoding='utf-8')
+              return {"status": "success"}
+
+          def replace(file_path: str, old_string: str, new_string: str):
+              print(f"DUMMY_REPLACE: Modifying {file_path}")
+              content = Path(file_path).read_text(encoding='utf-8')
+              new_content = content.replace(old_string, new_string)
+              Path(file_path).write_text(new_content, encoding='utf-8')
+              return {"status": "success", "replacements": 1}
+
+evidence:
+  - "scripts/task_executor.py"

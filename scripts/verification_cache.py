@@ -39,7 +39,7 @@ from collections import OrderedDict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -269,6 +269,60 @@ class VerificationCache:
                 del self._cache[cache_key]
                 self._save_cache()
                 logger.debug(f"[CACHE] Invalidated: {file_path.name}")
+
+    def validate_integrity(self) -> Dict[str, List[str]]:
+        """Validate cache integrity and remove orphaned entries (P2, P7 compliance)
+
+        Checks for:
+        1. Orphaned entries (files that no longer exist)
+        2. Hash mismatches (files that changed without cache update)
+        3. Expired entries beyond cleanup threshold
+
+        Returns:
+            Dictionary with lists of issues found and fixed
+        """
+        with self._lock:
+            issues = {"orphaned": [], "hash_mismatch": [], "expired": [], "fixed": []}
+
+            entries_to_remove = []
+
+            for cache_key, entry in self._cache.items():
+                file_path = Path(cache_key)
+
+                # Check if file exists
+                if not file_path.exists():
+                    issues["orphaned"].append(cache_key)
+                    entries_to_remove.append(cache_key)
+                    logger.warning(f"[INTEGRITY] Orphaned entry: {file_path.name}")
+                    continue
+
+                # Check hash
+                current_hash = self._compute_hash(file_path)
+                if current_hash and entry.file_hash != current_hash:
+                    issues["hash_mismatch"].append(cache_key)
+                    entries_to_remove.append(cache_key)
+                    logger.warning(f"[INTEGRITY] Hash mismatch: {file_path.name}")
+                    continue
+
+                # Check expiration (remove if expired > 2x TTL)
+                if entry.timestamp:
+                    age_seconds = (datetime.now() - datetime.fromisoformat(entry.timestamp)).total_seconds()
+                    if age_seconds > self.ttl_seconds * 2:
+                        issues["expired"].append(cache_key)
+                        entries_to_remove.append(cache_key)
+                        logger.warning(f"[INTEGRITY] Very expired: {file_path.name} ({age_seconds:.0f}s old)")
+
+            # Remove problematic entries
+            for cache_key in entries_to_remove:
+                del self._cache[cache_key]
+                issues["fixed"].append(cache_key)
+
+            # Persist cleaned cache
+            if entries_to_remove:
+                self._save_cache()
+                logger.info(f"[INTEGRITY] Fixed {len(entries_to_remove)} issues, cache cleaned")
+
+            return issues
 
     def clear(self) -> None:
         """Remove all cache entries
@@ -514,8 +568,17 @@ class VerificationCache:
 
 
 def main():
-    """CLI entry point for testing"""
+    """CLI entry point for testing and maintenance"""
     import sys
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Verification Cache Management (P2, P7 compliant)")
+    parser.add_argument("file", nargs="?", help="File to check in cache")
+    parser.add_argument("--validate", action="store_true", help="Validate cache integrity and fix issues")
+    parser.add_argument("--clear", action="store_true", help="Clear all cache entries")
+    parser.add_argument("--rebuild", action="store_true", help="Clear and rebuild cache")
+    parser.add_argument("--stats", action="store_true", help="Show cache statistics")
+    args = parser.parse_args()
 
     # Setup logging
     logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -526,7 +589,36 @@ def main():
 
     print(f"\nCache initialized: {cache.stats()}\n")
 
-    if len(sys.argv) > 1:
+    # Handle commands
+    if args.validate:
+        print("[P2/P7] Validating cache integrity...")
+        issues = cache.validate_integrity()
+        print(f"Orphaned entries: {len(issues['orphaned'])}")
+        print(f"Hash mismatches: {len(issues['hash_mismatch'])}")
+        print(f"Expired entries: {len(issues['expired'])}")
+        print(f"Fixed entries: {len(issues['fixed'])}")
+        if not issues["fixed"]:
+            print("[OK] Cache is clean, no issues found")
+        return 0
+
+    if args.clear:
+        cache.clear()
+        print("[OK] Cache cleared")
+        return 0
+
+    if args.rebuild:
+        cache.clear()
+        print("[OK] Cache cleared, ready for rebuild")
+        # Rebuild logic would go here
+        return 0
+
+    if args.stats:
+        stats = cache.stats()
+        for key, value in stats.items():
+            print(f"{key}: {value}")
+        return 0
+
+    if args.file:
         file_path = Path(sys.argv[1])
 
         # Try to get from cache

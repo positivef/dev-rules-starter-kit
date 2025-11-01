@@ -37,12 +37,15 @@ from task_executor import (
     build_env,
     TaskExecutorError,
     SecurityError,
+    run_validation_commands,
+    write_lessons_template,
 )
 
 # Import v1.1.0 components (Trust Score 8.0+ patterns)
 from project_steering import ProjectSteering
 from automatic_evidence_tracker import AutomaticEvidenceTracker
 from context_aware_loader import ContextAwareConstitutionalLoader
+from orchestration_policy import OrchestrationPolicy
 
 
 @dataclass
@@ -282,6 +285,17 @@ class EnhancedTaskExecutor:
             self.log(f"Evidence files: {len(evidence_hashes)}")
             self.log(f"Provenance: RUNS/{task_id}/provenance.json\n")
 
+            write_lessons_template(runs_dir, {"task_id": task_id, "project": "spec-kit"}, status="success")
+
+            try:
+                validation_commands = OrchestrationPolicy().get_validation_commands()
+            except FileNotFoundError:
+                validation_commands = []
+
+            if validation_commands:
+                self.log("[STEP 6] Running validation commands after Enhanced execution...")
+                run_validation_commands(validation_commands, self.root, task_id)
+
             # === 10. Obsidian Sync ===
             if os.getenv("OBSIDIAN_ENABLED", "false").lower() == "true":
                 self.log("[STEP 7] Syncing to Obsidian...")
@@ -307,6 +321,12 @@ class EnhancedTaskExecutor:
             )
 
             self.log(f"\n[FAIL] EXECUTION FAILED: {e}\n")
+            write_lessons_template(
+                runs_dir,
+                {"task_id": task_id, "project": "spec-kit"},
+                status="failed",
+                error_message=str(e),
+            )
             raise
 
     def _check_checklists(self, tasks_file: Path) -> bool:

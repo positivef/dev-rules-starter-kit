@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Dev Rules master configuration schema",
+  "type": "object",
+  "required": [
+    "version",
+    "project",
+    "paths",
+    "agents",
+    "sync",
+    "precision_system"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "project": {
+      "type": "object",
+      "required": ["name", "code", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "code": {"type": "string"},
+        "description": {"type": "string"}
+      }
+    },
+    "paths": {
+      "type": "object",
+      "required": ["repo_root", "obsidian_vault", "docs_root", "tasks_root"],
+      "additionalProperties": false,
+      "properties": {
+        "repo_root": {"type": "string"},
+        "obsidian_vault": {"type": "string"},
+        "docs_root": {"type": "string"},
+        "tasks_root": {"type": "string"}
+      }
+    },
+    "agents": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["role", "focus"],
+        "additionalProperties": true,
+        "properties": {
+          "role": {"type": "string"},
+          "focus": {"type": "string"}
+        }
+      }
+    },
+    "sync": {
+      "type": "object",
+      "required": ["context_schema_version", "required_env_keys"],
+      "additionalProperties": true,
+      "properties": {
+        "context_schema_version": {"type": "string"},
+        "required_env_keys": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "precision_system": {
+      "type": "object",
+      "required": ["enabled", "orchestration_policy"],
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "verification_level": {"type": "string"},
+        "orchestration_policy": {
+          "type": "object",
+          "required": [
+            "risk_threshold",
+            "failure_rate_limit",
+            "zen_mcp_enabled",
+            "auto_validation_commands"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "risk_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "failure_rate_limit": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "zen_mcp_enabled": {"type": "boolean"},
+            "min_confidence_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "auto_validation_commands": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

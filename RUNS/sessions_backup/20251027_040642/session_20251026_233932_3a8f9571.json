@@ -1,0 +1,317 @@
+{
+  "session_id": "session_20251026_233932_3a8f9571",
+  "started_at": "2025-10-26T14:39:32.392180+00:00",
+  "last_checkpoint": "2025-10-26T14:39:58.496626+00:00",
+  "context_hash": "c3c26eb546cbd651",
+  "state_data": {},
+  "scope_data": {
+    "session": {
+      "current_task": {
+        "task_id": "TEST-2025-10-26-06",
+        "title": "성능 최적화 - 49",
+        "status": "failed",
+        "started_at": "2025-10-26T14:39:55.993118+00:00",
+        "yaml_path": "",
+        "completed_at": "2025-10-26T14:39:58.496311+00:00",
+        "execution_time": 100.99059283998794,
+        "error": "File not found: Path does not exist"
+      },
+      "task_history": [
+        {
+          "task_id": "STYLE-2025-10-26-88",
+          "started_at": "2025-10-26T14:39:32.393607+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "TEST-2025-10-26-72",
+          "started_at": "2025-10-26T14:39:33.899576+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "PERF-2025-10-26-40",
+          "started_at": "2025-10-26T14:39:37.411551+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "TEST-2025-10-26-21",
+          "started_at": "2025-10-26T14:39:39.948096+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "TEST-2025-10-26-59",
+          "started_at": "2025-10-26T14:39:42.955290+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "FIX-2025-10-26-40",
+          "started_at": "2025-10-26T14:39:44.963136+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "FIX-2025-10-26-12",
+          "started_at": "2025-10-26T14:39:48.469875+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "FIX-2025-10-26-38",
+          "started_at": "2025-10-26T14:39:49.975558+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "BUILD-2025-10-26-39",
+          "started_at": "2025-10-26T14:39:53.482726+00:00",
+          "status": "started"
+        },
+        {
+          "task_id": "TEST-2025-10-26-06",
+          "started_at": "2025-10-26T14:39:55.993323+00:00",
+          "status": "started"
+        }
+      ],
+      "failed_tasks": {
+        "STYLE-2025-10-26-88": {
+          "error": "Connection timeout: Server not responding",
+          "timestamp": "2025-10-26T14:39:32.893997+00:00"
+        },
+        "TEST-2025-10-26-72": {
+          "error": "Syntax error: Unexpected token",
+          "timestamp": "2025-10-26T14:39:36.403022+00:00"
+        },
+        "TEST-2025-10-26-59": {
+          "error": "Connection timeout: Server not responding",
+          "timestamp": "2025-10-26T14:39:43.956427+00:00"
+        },
+        "TEST-2025-10-26-06": {
+          "error": "File not found: Path does not exist",
+          "timestamp": "2025-10-26T14:39:58.496516+00:00"
+        }
+      },
+      "completed_tasks": [
+        "PERF-2025-10-26-40",
+        "TEST-2025-10-26-21",
+        "FIX-2025-10-26-40",
+        "FIX-2025-10-26-12",
+        "FIX-2025-10-26-38",
+        "BUILD-2025-10-26-39"
+      ]
+    },
+    "user": {
+      "execution_stats": {
+        "total_executions": 10,
+        "failed": 4,
+        "total_time": 811.4063436935761,
+        "avg_time": 81.14063436935761,
+        "successful": 6
+      }
+    },
+    "app": {},
+    "temp": {
+      "command_log": [
+        {
+          "command": "mypy .",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:32.393654+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:33.899633+00:00",
+          "success": true
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:34.399913+00:00",
+          "success": true
+        },
+        {
+          "command": "git status",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:34.900663+00:00",
+          "success": true
+        },
+        {
+          "command": "pytest tests/",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:35.401380+00:00",
+          "success": false
+        },
+        {
+          "command": "git status",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:35.901996+00:00",
+          "success": true
+        },
+        {
+          "command": "docker build",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:37.411615+00:00",
+          "success": false
+        },
+        {
+          "command": "pytest tests/",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:37.911829+00:00",
+          "success": false
+        },
+        {
+          "command": "python scripts/test.py",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:38.441197+00:00",
+          "success": true
+        },
+        {
+          "command": "python scripts/test.py",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:39.948166+00:00",
+          "success": true
+        },
+        {
+          "command": "ruff check",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:40.448433+00:00",
+          "success": true
+        },
+        {
+          "command": "docker build",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:40.949015+00:00",
+          "success": false
+        },
+        {
+          "command": "python scripts/test.py",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:41.449559+00:00",
+          "success": false
+        },
+        {
+          "command": "pytest tests/",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:42.955349+00:00",
+          "success": true
+        },
+        {
+          "command": "docker build",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:43.455948+00:00",
+          "success": true
+        },
+        {
+          "command": "docker build",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:44.963226+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:45.463606+00:00",
+          "success": true
+        },
+        {
+          "command": "ruff check",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:45.964198+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:46.464485+00:00",
+          "success": true
+        },
+        {
+          "command": "ruff check",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:46.964914+00:00",
+          "success": true
+        },
+        {
+          "command": "pytest tests/",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:48.469976+00:00",
+          "success": false
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:49.975655+00:00",
+          "success": true
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:50.476769+00:00",
+          "success": true
+        },
+        {
+          "command": "git status",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:50.977392+00:00",
+          "success": false
+        },
+        {
+          "command": "docker build",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:51.478019+00:00",
+          "success": true
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:51.978630+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:53.482837+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:53.983527+00:00",
+          "success": false
+        },
+        {
+          "command": "git status",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:54.484022+00:00",
+          "success": false
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:55.993450+00:00",
+          "success": false
+        },
+        {
+          "command": "python scripts/test.py",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:56.493951+00:00",
+          "success": true
+        },
+        {
+          "command": "mypy .",
+          "exit_code": 1,
+          "timestamp": "2025-10-26T14:39:56.994462+00:00",
+          "success": false
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:57.494944+00:00",
+          "success": true
+        },
+        {
+          "command": "make all",
+          "exit_code": 0,
+          "timestamp": "2025-10-26T14:39:57.995600+00:00",
+          "success": true
+        }
+      ]
+    }
+  }
+}

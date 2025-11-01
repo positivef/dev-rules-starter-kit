@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Report - Weekly (7 days)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .metric-label {
+            color: #666;
+            margin-top: 10px;
+        }
+        .success { color: #28a745; }
+        .failure { color: #dc3545; }
+        .neutral { color: #6c757d; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .insight-box {
+            padding: 15px;
+            border-left: 4px solid;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        .recommendation {
+            border-left-color: #007bff;
+            background: #e7f3ff;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background: #fff8e1;
+        }
+        .positive {
+            border-left-color: #28a745;
+            background: #e8f5e9;
+        }
+        .footer {
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Session Management Report</h1>
+        <p>Period: Weekly | Duration: 7 days</p>
+        <p>Generated: 2025-10-26 23:40:00</p>
+    </div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-value">18</div>
+            <div class="metric-label">Total Tasks</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value success">11</div>
+            <div class="metric-label">Successful</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value failure">7</div>
+            <div class="metric-label">Failed</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value neutral">61.1%</div>
+            <div class="metric-label">Success Rate</div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <h2>Most Frequent Tasks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Executions</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>TEST-2025-10-26-01</td>
+                    <td>7</td>
+                    <td>38.9%</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-77</td>
+                    <td>3</td>
+                    <td>16.7%</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-E2E</td>
+                    <td>3</td>
+                    <td>16.7%</td>
+                </tr>
+
+                <tr>
+                    <td>PERF-2025-10-26-40</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-21</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>FIX-2025-10-26-40</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>FIX-2025-10-26-12</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>FIX-2025-10-26-38</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>BUILD-2025-10-26-39</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-06</td>
+                    <td>2</td>
+                    <td>11.1%</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="metric-card">
+        <h2>Failed Tasks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Failures</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>STYLE-2025-10-26-88</td>
+                    <td class="failure">1</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-72</td>
+                    <td class="failure">1</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-59</td>
+                    <td class="failure">1</td>
+                </tr>
+
+                <tr>
+                    <td>TEST-2025-10-26-06</td>
+                    <td class="failure">1</td>
+                </tr>
+
+                <tr>
+                    <td>REFACTOR-2025-10-26-22</td>
+                    <td class="failure">1</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="metric-card">
+        <h2>Productivity Insights</h2>
+        <p><strong>Average Session Duration:</strong> 0 minutes</p>
+        <p><strong>Total Sessions:</strong> 21</p>
+
+
+        <p><strong>Most Productive Hours:</strong>
+
+            7:00 (9 sessions),
+
+            3:00 (8 sessions),
+
+            6:00 (3 sessions)
+
+        </p>
+
+    </div>
+
+
+    <div class="metric-card">
+        <h2>Recommendations & Insights</h2>
+
+
+        <div class="insight-box recommendation">
+            💡 평균 세션 시간이 30분 미만 - 더 긴 집중 시간 확보 권장
+        </div>
+
+        <div class="insight-box recommendation">
+            💡 가장 생산적인 시간대: 7시, 3시
+        </div>
+
+
+
+        <div class="insight-box warning">
+            ⚠️ 작업 성공률이 61.1%로 낮음 - 프로세스 개선 필요
+        </div>
+
+
+
+    </div>
+
+
+    <div class="footer">
+        <p>Generated by SessionManager Report System</p>
+        <p>© 2025 Dev Rules Starter Kit</p>
+    </div>
+</body>
+</html>

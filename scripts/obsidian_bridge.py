@@ -8,6 +8,7 @@ Features:
 - Auto-update evidence in Obsidian
 - Auto-update TASKS/ checklist
 - Auto-update MOC knowledge map
+- Auto-track document update history
 - 95% time savings (20min → 3sec)
 
 Usage:
@@ -24,6 +25,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
+# Import history tracker
+try:
+    from .obsidian_history_tracker import ObsidianHistoryTracker
+except ImportError:
+    from obsidian_history_tracker import ObsidianHistoryTracker
+
 
 class ObsidianBridge:
     """Obsidian integration bridge"""
@@ -33,10 +40,26 @@ class ObsidianBridge:
         Args:
             vault_path: Obsidian Vault path (default: from environment)
         """
+        # Load environment variables
+        if vault_path is None:
+            try:
+                from dotenv import load_dotenv
+
+                load_dotenv()
+            except ImportError:
+                pass
+
         self.vault_path = vault_path or Path(os.getenv("OBSIDIAN_VAULT_PATH", "."))
         self.devlog_dir = self.vault_path / "개발일지"
         self.tasks_dir = self.vault_path / "TASKS"
         self.moc_path = self.vault_path / "MOCs" / "PROJECT_NAME_개발_지식맵.md"
+
+        # Initialize history tracker
+        try:
+            self.history_tracker = ObsidianHistoryTracker(str(self.vault_path))
+        except Exception as e:
+            print(f"[WARNING] History tracker initialization failed: {e}")
+            self.history_tracker = None
 
     def create_devlog(self, task_contract: Dict, execution_result: Dict) -> Path:
         """
@@ -87,6 +110,15 @@ class ObsidianBridge:
         # Write file
         self.devlog_dir.mkdir(parents=True, exist_ok=True)
         filepath.write_text(self._format_markdown(frontmatter, content), encoding="utf-8")
+
+        # Track update history
+        if self.history_tracker:
+            relative_path = filepath.relative_to(self.vault_path).as_posix()
+            self.history_tracker.track_update(
+                relative_path,
+                action="create_devlog",
+                metadata={"task_id": task_id, "status": status, "execution_time": execution_result.get("duration", 0)},
+            )
 
         return filepath
 
@@ -162,7 +194,7 @@ class ObsidianBridge:
         title = contract["title"]
         status = result.get("status", "unknown")
 
-        status_icon = "✅" if status == "success" else "❌"
+        status_icon = "[OK]" if status == "success" else "[X]"
 
         content = f"""# {datetime.now(timezone.utc).strftime('%Y-%m-%d')} {title}
 
@@ -171,11 +203,11 @@ class ObsidianBridge:
 > [!{"success" if status == "success" else "failure"}] Execution Result
 > Task ID: `{task_id}` - {status_icon} {status.upper()}
 
-## 🎯 Task Objective
+## [TASK] Task Objective
 
 {contract.get('description', title)}
 
-## ✅ Acceptance Criteria
+## [OK] Acceptance Criteria
 
 """
         for criterion in contract.get("acceptance_criteria", []):
@@ -202,13 +234,13 @@ class ObsidianBridge:
         # Evidence files
         evidence_hashes = result.get("evidence_hashes", {})
         if evidence_hashes:
-            content += "\n## 📊 Evidence Files\n\n"
+            content += "\n## [STATUS] Evidence Files\n\n"
             for file_path, hash_value in evidence_hashes.items():
                 content += f"- `{file_path}`: `{hash_value[:16]}...`\n"
 
         # Git commits
         if result.get("git_commits"):
-            content += "\n## 📝 Git Commits\n\n"
+            content += "\n## [LOG] Git Commits\n\n"
             for commit in result["git_commits"]:
                 content += f"- `{commit}`\n"
 
@@ -242,6 +274,13 @@ class ObsidianBridge:
 
         filepath.write_text(self._format_markdown(frontmatter, content), encoding="utf-8")
 
+        # Track update history
+        if self.history_tracker:
+            relative_path = filepath.relative_to(self.vault_path).as_posix()
+            self.history_tracker.track_update(
+                relative_path, action="create_task", metadata={"task_id": task_id, "status": data.get("status", "pending")}
+            )
+
     def _update_task_file(self, filepath: Path, updates: Dict):
         """Update existing task file"""
         content = filepath.read_text(encoding="utf-8")
@@ -256,6 +295,11 @@ class ObsidianBridge:
                     content = content.replace(f"- [x] {pattern}", f"- [ ] {pattern}")
 
         filepath.write_text(content, encoding="utf-8")
+
+        # Track update history
+        if self.history_tracker:
+            relative_path = filepath.relative_to(self.vault_path).as_posix()
+            self.history_tracker.track_update(relative_path, action="update_checklist", metadata={"updates": updates})
 
 
 # Global instance

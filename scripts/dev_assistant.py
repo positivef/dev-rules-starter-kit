@@ -103,54 +103,92 @@ class AssistantConfig:
         """
         Validate configuration values.
 
+        Learning Point: Use helper functions to eliminate repetitive code.
+        Before: 50 lines of repetitive if-statements
+        After: Clean, declarative validation!
+
         Returns:
             List of validation error messages (empty if valid)
         """
         errors = []
 
-        if not isinstance(self.enabled, bool):
-            errors.append("enabled must be boolean")
+        # Boolean validations
+        self._validate_bool(errors, "enabled", self.enabled)
+        self._validate_bool(errors, "enable_ruff", self.enable_ruff)
+        self._validate_bool(errors, "enable_evidence", self.enable_evidence)
+        self._validate_bool(errors, "cache_enabled", self.cache_enabled)
 
-        if not isinstance(self.watch_paths, list) or not self.watch_paths:
-            errors.append("watch_paths must be non-empty list")
-        elif not all(isinstance(p, str) for p in self.watch_paths):
-            errors.append("watch_paths must contain only strings")
+        # List validations
+        self._validate_non_empty_list_of(errors, "watch_paths", self.watch_paths, str)
+        self._validate_optional_list_of(errors, "critical_patterns", self.critical_patterns, str)
 
-        if not isinstance(self.debounce_ms, int) or self.debounce_ms < 0:
-            errors.append("debounce_ms must be non-negative integer")
+        # Integer validations
+        self._validate_non_negative_int(errors, "debounce_ms", self.debounce_ms)
+        self._validate_non_negative_int(errors, "cache_ttl_seconds", self.cache_ttl_seconds)
+        self._validate_non_negative_int(errors, "log_retention_days", self.log_retention_days)
+        self._validate_positive_int(errors, "cache_max_entries", self.cache_max_entries)
 
-        if not isinstance(self.verification_timeout_sec, (int, float)) or self.verification_timeout_sec <= 0:
-            errors.append("verification_timeout_sec must be positive number")
-
-        if not isinstance(self.log_retention_days, int) or self.log_retention_days < 0:
-            errors.append("log_retention_days must be non-negative integer")
-
-        if not isinstance(self.enable_ruff, bool):
-            errors.append("enable_ruff must be boolean")
-
-        if not isinstance(self.enable_evidence, bool):
-            errors.append("enable_evidence must be boolean")
-
-        # Phase C validation
-        if not isinstance(self.cache_enabled, bool):
-            errors.append("cache_enabled must be boolean")
-
-        if not isinstance(self.cache_ttl_seconds, int) or self.cache_ttl_seconds < 0:
-            errors.append("cache_ttl_seconds must be non-negative integer")
-
-        if not isinstance(self.cache_max_entries, int) or self.cache_max_entries <= 0:
-            errors.append("cache_max_entries must be positive integer")
-
-        if not isinstance(self.criticality_threshold, (int, float)) or not (0.0 <= self.criticality_threshold <= 1.0):
-            errors.append("criticality_threshold must be between 0.0 and 1.0")
-
-        if self.critical_patterns is not None:
-            if not isinstance(self.critical_patterns, list):
-                errors.append("critical_patterns must be list")
-            elif not all(isinstance(p, str) for p in self.critical_patterns):
-                errors.append("critical_patterns must contain only strings")
+        # Number validations
+        self._validate_positive_number(errors, "verification_timeout_sec", self.verification_timeout_sec)
+        self._validate_range(errors, "criticality_threshold", self.criticality_threshold, 0.0, 1.0)
 
         return errors
+
+    def _validate_bool(self, errors: List[str], name: str, value):
+        """
+        Validate boolean field.
+
+        Learning Point: Tiny, focused function - does ONE thing well.
+        """
+        if not isinstance(value, bool):
+            errors.append(f"{name} must be boolean")
+
+    def _validate_non_negative_int(self, errors: List[str], name: str, value):
+        """Validate non-negative integer"""
+        if not isinstance(value, int) or value < 0:
+            errors.append(f"{name} must be non-negative integer")
+
+    def _validate_positive_int(self, errors: List[str], name: str, value):
+        """Validate positive integer"""
+        if not isinstance(value, int) or value <= 0:
+            errors.append(f"{name} must be positive integer")
+
+    def _validate_positive_number(self, errors: List[str], name: str, value):
+        """Validate positive number (int or float)"""
+        if not isinstance(value, (int, float)) or value <= 0:
+            errors.append(f"{name} must be positive number")
+
+    def _validate_range(self, errors: List[str], name: str, value, min_val: float, max_val: float):
+        """
+        Validate number is within range.
+
+        Learning Point: Reusable! Any range validation uses this.
+        """
+        if not isinstance(value, (int, float)) or not (min_val <= value <= max_val):
+            errors.append(f"{name} must be between {min_val} and {max_val}")
+
+    def _validate_non_empty_list_of(self, errors: List[str], name: str, value, item_type):
+        """
+        Validate non-empty list of specific type.
+
+        Learning Point: Composition! Combines "non-empty" + "type check".
+        """
+        if not isinstance(value, list) or not value:
+            errors.append(f"{name} must be non-empty list")
+        elif not all(isinstance(item, item_type) for item in value):
+            type_name = item_type.__name__
+            errors.append(f"{name} must contain only {type_name}s")
+
+    def _validate_optional_list_of(self, errors: List[str], name: str, value, item_type):
+        """Validate optional list (can be None) of specific type"""
+        if value is None:
+            return  # Optional - OK
+
+        if not isinstance(value, list):
+            errors.append(f"{name} must be list")
+        elif not all(isinstance(item, item_type) for item in value):
+            type_name = item_type.__name__
+            errors.append(f"{name} must contain only {type_name}s")
 
 
 class ConfigLoader:
@@ -384,6 +422,7 @@ class RuffVerifier:
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",  # Force UTF-8 encoding for Windows compatibility
                 timeout=self._timeout,
                 check=False,  # Don't raise on non-zero exit (Ruff returns 1 for violations)
             )
@@ -927,7 +966,7 @@ class FileChangeProcessor:
                     return
 
                 # Log classification info
-                mode_badge = "🔍 DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
+                mode_badge = "[INFO] DEEP" if classification.mode == AnalysisMode.DEEP_MODE else "⚡ FAST"
                 self._logger.debug(
                     f"[{mode_badge}] Criticality: {classification.criticality_score:.2f} - {classification.reason}"
                 )
@@ -990,7 +1029,7 @@ class FileChangeProcessor:
                 return
 
         # Cache miss: Run verification
-        mode_badge = "🔍 DEEP" if analysis_mode == "deep" else "⚡ FAST"
+        mode_badge = "[INFO] DEEP" if analysis_mode == "deep" else "⚡ FAST"
         self._logger.info(f"[VERIFY] Running analysis ({mode_badge})...")
 
         # Phase C Week 2: Use DeepAnalyzer for DEEP_MODE files

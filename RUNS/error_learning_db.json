@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-10-29",
+  "errors": [
+    {
+      "error_id": "E001",
+      "pattern": "UnicodeEncodeError: 'cp949' codec can't encode emoji",
+      "root_cause": "Windows console uses cp949 encoding, cannot handle emoji characters",
+      "occurrences": 8,
+      "first_seen": "2025-10-25",
+      "last_seen": "2025-10-28",
+      "risk_level": "HIGH",
+      "solution": "NEVER use print() with emoji. Use ASCII alternatives: [OK], [X], [!]",
+      "code_pattern": "print.*emoji|print\\(.*content\\)",
+      "tags": ["encoding", "windows", "emoji", "console"],
+      "verified": true,
+      "auto_fix_available": false
+    },
+    {
+      "error_id": "E002",
+      "pattern": "print(file_content) with emoji",
+      "root_cause": "Printing file/markdown content that contains emoji",
+      "occurrences": 5,
+      "first_seen": "2025-10-26",
+      "last_seen": "2025-10-28",
+      "risk_level": "HIGH",
+      "solution": "Use Read tool to display file content instead of print()",
+      "code_pattern": "print\\([a-zA-Z_]*(?:content|section|markdown|text|history)[a-zA-Z_]*\\)",
+      "tags": ["encoding", "file-io", "emoji"],
+      "verified": true,
+      "auto_fix_available": false
+    },
+    {
+      "error_id": "E003",
+      "pattern": "Emoji in Python string literals",
+      "root_cause": "Using emoji directly in Python code instead of ASCII alternatives",
+      "occurrences": 12,
+      "first_seen": "2025-10-25",
+      "last_seen": "2025-10-28",
+      "risk_level": "MEDIUM",
+      "solution": "Markdown files: OK, Python files: Use [OK], [X], [!] instead",
+      "code_pattern": "[\"'].*[\\U0001F300-\\U0001F9FF].*[\"']",
+      "tags": ["emoji", "python", "encoding"],
+      "verified": true,
+      "auto_fix_available": true
+    },
+    {
+      "error_id": "E004",
+      "pattern": "OBSIDIAN_VAULT_PATH not loaded from .env",
+      "root_cause": "dotenv.load_dotenv() not called before accessing environment variables",
+      "occurrences": 3,
+      "first_seen": "2025-10-28",
+      "last_seen": "2025-10-28",
+      "risk_level": "MEDIUM",
+      "solution": "Always call load_dotenv() before os.getenv()",
+      "code_pattern": "os\\.getenv.*without.*load_dotenv",
+      "tags": ["configuration", "environment"],
+      "verified": true,
+      "auto_fix_available": true
+    }
+  ],
+  "statistics": {
+    "total_errors": 4,
+    "high_risk": 2,
+    "medium_risk": 2,
+    "low_risk": 0,
+    "verified_errors": 4,
+    "auto_fixable": 2
+  },
+  "prevention_rules": [
+    {
+      "rule_id": "R001",
+      "title": "No Emoji in Python Print",
+      "description": "Never use print() with emoji characters on Windows",
+      "enforcement": "pre_execution_guard",
+      "severity": "HIGH",
+      "related_errors": ["E001", "E002"]
+    },
+    {
+      "rule_id": "R002",
+      "title": "ASCII Only in Python Code",
+      "description": "Use ASCII alternatives in Python: [OK], [X], [!]",
+      "enforcement": "linter",
+      "severity": "MEDIUM",
+      "related_errors": ["E003"]
+    },
+    {
+      "rule_id": "R003",
+      "title": "Environment Variables with dotenv",
+      "description": "Always load_dotenv() before accessing environment variables",
+      "enforcement": "code_review",
+      "severity": "MEDIUM",
+      "related_errors": ["E004"]
+    }
+  ]
+}

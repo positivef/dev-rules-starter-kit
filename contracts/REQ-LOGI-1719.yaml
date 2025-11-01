@@ -1,0 +1,60 @@
+# EARS Template: Bug Fix
+# EARS Grammar: WHEN <trigger> IF <condition> THEN System SHALL <response> WHERE <constraints>
+
+requirement:
+  id: "REQ-LOGI-1719"
+  title: "Fix login bug"
+  type: bugfix
+  priority: high
+  status: draft
+  created: "2025-10-24T14:10:21.508886"
+  severity: "medium"
+
+problem:
+  description: "Fix login bug"
+  reproduction_steps:
+    - "Reproduce the issue"
+    - "Identify root cause"
+    - "Verify fix"
+  expected_behavior: "System behaves correctly"
+  actual_behavior: "System has incorrect behavior"
+
+ears:
+  # Trigger condition
+  when: "User encounters fix login bug"
+
+  # Error condition
+  if: "System in error state"
+
+  # System correction (SHALL = mandatory fix)
+  then: "System SHALL handle fix login bug correctly"
+
+  # Constraints
+  where: "No data loss or corruption"
+
+root_cause:
+  analysis: "To be analyzed"
+  affected_components:
+    - "Core component"
+
+fix_validation:
+  - "Unit tests pass"
+  - "Integration tests pass"
+
+regression_prevention:
+  test_cases:
+    - "Regression test added"
+  monitoring:
+    - "Error rate tracking"
+
+traceability:
+  reported_by: "Development Team"
+  reported_date: "2025-10-24T14:10:21.508817"
+  affected_users: "TBD"
+  related_incidents: []
+
+tags:
+  - "REQ-LOGI-1719"
+  - bugfix
+  - "medium"
+  - "core"

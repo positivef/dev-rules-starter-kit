@@ -824,6 +824,293 @@ articles:
 
           → Constitution 비대화 + 품질 저하
 
+  # ============================================================================
+  # 제14조: 2차 효과 분석 (Second-Order Effects Analysis)
+  # ============================================================================
+
+  - id: "P14"
+    name: "2차 효과 분석"
+    category: "meta_governance"
+    priority: "high"
+
+    principle: |
+      모든 개선 사항은 그 개선 자체가 야기할 부작용(2차 효과)을
+      분석하고 완화 전략을 수립해야 한다.
+
+      "유연성을 높이는 개선이 일관성을 해칠 수 있다"
+
+    requirements:
+      - desc: "Innovation Safety 체크리스트 (INNOVATION_SAFETY_PRINCIPLES.md)"
+        checklist:
+          - "Why? (현재 시스템의 한계는 무엇인가)"
+          - "What if fails? (실패 시 비즈니스 영향은)"
+          - "How to rollback? (5분 내 복구 가능한가)"
+          - "Monitoring plan? (문제를 어떻게 조기 감지할 것인가)"
+          - "User impact? (사용자가 느낄 부정적 영향은)"
+        mandatory: true
+
+      - desc: "부작용 완화 매트릭스 작성"
+        format: |
+          개선안: [설명]
+
+          1차 효과 (직접적):
+            긍정: [측정 가능한 이점]
+            부정: [예상되는 문제]
+
+          2차 효과 (간접적):
+            긍정: [장기적 이점]
+            부정: [부작용]
+
+          완화 전략:
+            - [부작용 1] → [완화 방안 + 측정 지표]
+            - [부작용 2] → [완화 방안 + 측정 지표]
+
+          모니터링:
+            - [지표 1]: 목표 [값]
+            - [지표 2]: 목표 [값]
+        mandatory: true
+
+      - desc: "자동 에스컬레이션 설정"
+        triggers:
+          - "완화 지표가 목표치 이탈 시"
+          - "3개월 연속 부작용 발생 시"
+          - "사용자 불만 증가 추세 시"
+        action: "개선안 재검토 또는 롤백"
+        mandatory: true
+
+    rationale: |
+      실제 사례 (유연성 추가):
+        1차 효과: 채택률 30% → 90% (긍정)
+        2차 효과: Override 남용 → 일관성 저하 (부정)
+        완화: Minimum Viable Constitution + 모니터링
+
+      무한 개선 루프 방지:
+        - 개선 A → 부작용 B → 개선 C → 부작용 D → ...
+        - P14 적용 → 각 개선마다 부작용 예측 및 완화
+        - 순환 고리 끊기
+
+      지속 가능한 개선:
+        - 단기 이익 vs 장기 안정성
+        - 빠른 성장 vs 기술 부채
+        - 유연성 vs 일관성
+
+    enforcement:
+      tool: "Human review + PR template"
+      method: "P14 섹션 필수 작성"
+      automated: false  # 향후 자동화 검토
+      violation_severity: "high"
+
+    pr_template_addition: |
+      ## [P14] Second-Order Effects Analysis
+
+      ### 1st Order Effects
+      - Positive: [직접적 이점]
+      - Negative: [직접적 문제]
+
+      ### 2nd Order Effects
+      - Positive: [간접적 이점]
+      - Negative: [간접적 부작용]
+
+      ### Mitigation Strategy
+      1. [부작용] → [완화 방안] (측정: [지표])
+      2. [부작용] → [완화 방안] (측정: [지표])
+
+      ### Monitoring Plan
+      - [지표]: [목표치] (현재: [값])
+      - Alert: [조건]
+
+    examples:
+      good: |
+        # 유연성 개선 (Progressive Adoption) 제안
+
+        1차 효과:
+          긍정: 채택률 30% → 90%, 초기 저항 감소
+          부정: 개발 시간 +2주
+
+        2차 효과:
+          긍정: 장기 유지보수 비용 -60%
+          부정: Override 남용 가능성 (일관성 저하)
+
+        완화 전략:
+          - Override 남용 → Minimum Viable Constitution (4개 규칙 강제)
+            측정: Override 사용률 < 10%
+          - 일관성 저하 → 자동 에스컬레이션 (Level 0 > 2주)
+            측정: Level 진행률 분기별 +1
+
+        모니터링:
+          - Override 사용률: 목표 < 10% (현재: 5%)
+          - Level 0 체류 기간: 목표 < 2주 (현재: 1주)
+          - Alert: 사용률 > 20% 시 경고
+
+      bad: |
+        # ❌ 부작용 분석 없이 개선
+
+        제안: "모든 규칙을 선택적으로!"
+
+        효과: 채택률 100% 달성!
+
+        # 2차 효과 분석 없음
+        # 완화 전략 없음
+        # 모니터링 없음
+
+        → 결과: 3개월 후 일관성 0%, 시스템 붕괴
+
+  # ============================================================================
+  # 제15조: 수렴 원칙 (Convergence Principle)
+  # ============================================================================
+
+  - id: "P15"
+    name: "수렴 원칙"
+    category: "meta_governance"
+    priority: "critical"
+
+    principle: |
+      Constitution은 무한히 확장되지 않으며,
+      "충분히 좋은(Good Enough)" 상태에 수렴해야 한다.
+
+      목표: 80% 품질 달성 후 안정화 (100% 추구 금지)
+
+    requirements:
+      - desc: "중단 조건 (Stop Conditions)"
+        triggers:
+          - "ROI > 300% 달성"
+          - "팀 만족도 > 80%"
+          - "3개월간 안정적 운영"
+          - "새 제안 ROI < 150%"
+        action: "개선 중단, 안정화 단계 진입"
+        mandatory: true
+
+      - desc: "위험 신호 (Danger Signs)"
+        indicators:
+          - "매달 새 조항 추가"
+          - "Constitution > 20개 조항"
+          - "복잡도 예산 초과 (>1500 lines)"
+          - "팀원들이 헷갈려함"
+        action: "즉시 단순화 작업"
+        mandatory: true
+
+      - desc: "80/20 Rule 적용"
+        principle: "Core 10개 조항이 80% 가치 제공"
+        calculation: |
+          ROI = improvement_gain / improvement_effort
+
+          if ROI < 0.5:
+              return "Not worth it! 현재가 충분히 좋음"
+
+          if current_quality >= 80:
+              return "Good enough! 멈춰라"
+        mandatory: true
+
+      - desc: "복잡도 예산 (Complexity Budget)"
+        limits:
+          max_articles: 20
+          max_lines_per_article: 150
+          max_total_lines: 1500
+          max_tools: 15
+        enforcement: "예산 초과 시 통합/제거 필수"
+        mandatory: true
+
+    sunset_clauses:
+      one_year_rule: "1년간 미사용 조항 → 제거 검토"
+      roi_rule: "1년간 ROI < 100% → 폐지 검토"
+      replacement_rule: "더 나은 조항 등장 → 통합"
+      overlap_rule: "중복 기능 → 하나로 병합"
+
+    magic_number: |
+      The Magic Number: 15 articles
+
+      - Core (P1-P10): 80% 가치
+      - Governance (P11-P13): 15% 가치
+      - Meta (P14-P15): 5% 가치
+      - Total: 100% 가치
+
+      → 16개째부터 ROI 급감!
+
+    rationale: |
+      무한 개선 루프 방지:
+        - 개선 → 부작용 → 개선 → 부작용 → ...
+        - P15 적용 → 80% 도달 시 멈춤
+        - 안정화 우선
+
+      실용주의:
+        - 80점이면 충분하다
+        - 100점 추구는 비효율 (ROI < 0.5)
+        - 완벽주의 ≠ 생산성
+
+      지속 가능성:
+        - Constitution 비대화 방지
+        - 팀 인지 부하 관리
+        - 장기 유지보수 가능
+
+    enforcement:
+      tool: "ConstitutionalValidator + Human review"
+      method: "분기별 ROI 검토 + 복잡도 측정"
+      automated: true  # 복잡도 자동 측정
+      violation_severity: "high"
+
+    quarterly_review:
+      schedule: "3개월마다"
+      checklist:
+        - "ROI 검토 (각 조항)"
+        - "복잡도 측정 (총 라인 수)"
+        - "사용 빈도 분석"
+        - "통합 가능 조항 탐색"
+        - "제거 후보 선정"
+
+    decision_framework: |
+      새 조항 제안 시:
+
+      if ROI < 1.5x:
+          reject("ROI 부족")
+      elif complexity > 150 lines:
+          reject("단순화 필요")
+      elif total_articles >= 20:
+          require("기존 조항 제거 or 통합")
+      elif stable_for_6months:
+          reject("안정화 단계 - 개선 중단")
+      else:
+          accept("P14로 2차 효과 검증")
+
+    examples:
+      good: |
+        # 분기별 리뷰 (2025-Q4)
+
+        현재 상태:
+          - 조항 수: 15개
+          - 총 라인: 1,400줄
+          - ROI: 377%
+          - 팀 만족도: 85%
+          - 안정 운영: 3개월
+
+        중단 조건 체크:
+          ✅ ROI > 300%
+          ✅ 만족도 > 80%
+          ✅ 3개월 안정
+          ✅ 신규 제안 없음
+
+        결정: 개선 중단, 안정화 단계 진입
+
+        다음 리뷰: 2026-Q1 (유지보수만)
+
+      bad: |
+        # ❌ 무한 개선
+
+        매달 새 조항 추가:
+          2025-10: P14, P15 추가 (OK, 필요함)
+          2025-11: P16 "코드 리뷰 자동화"
+          2025-12: P17 "성능 모니터링"
+          2026-01: P18 "UI 테스트"
+          ...
+          2026-06: P30 "???"
+
+        문제:
+          - Constitution 1,800줄 (예산 초과)
+          - 팀원 혼란 ("어떤 규칙 따라야 해?")
+          - 복잡도 폭발 → 아무도 안 지킴
+          - ROI 마이너스
+
+        → P15 위반: 수렴하지 않고 발산
+
 
 # ==============================================================================
 # 도구 매핑 (Tools Mapping)

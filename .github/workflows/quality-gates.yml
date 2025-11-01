@@ -1,0 +1,162 @@
+name: Quality Gates (P6 Compliance)
+
+on:
+  push:
+    branches: [ main, develop, tier1/* ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  quality-check:
+    name: Constitution P6 Quality Gates
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          .venv
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Validate cache integrity (P2/P7)
+      run: |
+        python scripts/verification_cache.py --validate
+
+    - name: Run full project scan (P6)
+      id: quality_scan
+      run: |
+        python scripts/team_stats_aggregator.py --full-scan | tee quality_report.txt
+        PASS_RATE=$(grep "Pass Rate:" quality_report.txt | sed 's/.*Pass Rate: \(.*\)%.*/\1/')
+        echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
+
+    - name: Check pass rate threshold
+      run: |
+        PASS_RATE=${{ steps.quality_scan.outputs.pass_rate }}
+        PASS_RATE_INT=$(echo "$PASS_RATE" | cut -d. -f1)
+        echo "Current pass rate: ${PASS_RATE}%"
+        if [ "$PASS_RATE_INT" -lt 65 ]; then
+          echo "::error::Quality gate failed! Pass rate ${PASS_RATE}% is below minimum 65%"
+          exit 1
+        fi
+
+    - name: Run deep analysis on critical files
+      run: |
+        python scripts/deep_analyzer.py --report || true
+
+    - name: Run tests with coverage (P8)
+      run: |
+        pytest tests/ --cov=scripts --cov-report=xml --cov-report=term
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-${{ matrix.python-version }}
+
+    - name: Validate YAML tasks (P1)
+      run: |
+        for yaml_file in TASKS/*.yaml; do
+          if [ -f "$yaml_file" ]; then
+            echo "Validating $yaml_file..."
+            python scripts/constitutional_validator.py "$yaml_file" || true
+          fi
+        done
+
+    - name: Generate quality report
+      if: always()
+      run: |
+        mkdir -p artifacts
+        cp RUNS/stats/team_dashboard.md artifacts/
+        cp RUNS/stats/trends.json artifacts/
+        cp quality_report.txt artifacts/
+
+    - name: Upload quality artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: quality-reports-${{ matrix.python-version }}
+        path: artifacts/
+
+    - name: Comment PR with quality metrics
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('quality_report.txt', 'utf8');
+          const passRate = report.match(/Pass Rate: ([\d.]+)%/)[1];
+          const security = report.match(/Security Issues.*?(\d+)/)?.[1] || '0';
+          const solid = report.match(/SOLID Violations.*?(\d+)/)?.[1] || '0';
+
+          const comment = `## 📊 Quality Gates Report (P6 Compliance)
+
+          | Metric | Value | Status |
+          |--------|-------|--------|
+          | Pass Rate | ${passRate}% | ${passRate >= 65 ? '✅' : '❌'} |
+          | Security Issues | ${security} | ${security <= 50 ? '✅' : '⚠️'} |
+          | SOLID Violations | ${solid} | ${solid <= 300 ? '✅' : '⚠️'} |
+
+          **Constitution Compliance**: P6 Quality Gates ${passRate >= 65 ? 'PASSED' : 'FAILED'}
+
+          [View full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          })
+
+  security-check:
+    name: Security Scan (P5)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run Bandit security scan
+      run: |
+        pip install bandit
+        bandit -r scripts/ -f json -o bandit_report.json || true
+
+    - name: Upload security reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-reports
+        path: |
+          bandit_report.json
+          gitleaks_report.json

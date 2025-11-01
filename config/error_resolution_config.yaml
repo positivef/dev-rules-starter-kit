@@ -1,0 +1,191 @@
+# Error Resolution Configuration - Hybrid Strategy
+#
+# Confidence-based error resolution with safety controls
+#
+# Strategy:
+#   High confidence (>=90%): Auto-apply
+#   Medium confidence (50-90%): Ask user confirmation
+#   Low confidence (<50%): User intervention required
+#
+# Safety: Phase 1 Conservative Launch (Week 1)
+#   - Very high threshold (95%) for auto-apply
+#   - Only proven safe patterns auto-applied
+#   - Circuit breaker: 3 strikes disable auto-apply
+#   - Full rollback via mode: "simple"
+
+# Operation Mode
+mode: "hybrid"  # Options: "simple" (old way), "hybrid" (confidence-based)
+
+# Confidence Thresholds (Phase 1: Conservative)
+confidence_thresholds:
+  auto_apply: 0.95      # 95%+ required for auto-apply (very conservative)
+  ask_confirm: 0.70     # 70-95%: ask user confirmation
+  # Below 70%: always ask user (no suggestion)
+
+# Circuit Breaker Settings
+circuit_breaker:
+  enabled: true
+  max_failures: 3           # After 3 wrong auto-applies, disable auto-apply
+  failure_window: 10        # Within last 10 attempts
+  cooldown_period: 3600     # 1 hour cooldown before re-enabling
+
+  # Auto-disable if user rejects too many confirmations
+  max_rejections: 5         # 5 "no" responses in a row
+  rejection_window: 10      # Within last 10 confirmations
+
+# Always Auto-Apply (regardless of confidence)
+# ONLY for proven safe, common patterns
+auto_apply_patterns:
+  # Python package installation
+  - "pip install pandas"
+  - "pip install numpy"
+  - "pip install scipy"
+  - "pip install matplotlib"
+  - "pip install pytest"
+  - "pip install requests"
+
+  # JavaScript package installation
+  - "npm install react"
+  - "npm install vue"
+  - "npm install express"
+
+  # Safe file permissions
+  - "chmod +r"
+  - "chmod +x"
+
+# Never Auto-Apply (always require confirmation)
+# Dangerous operations that could cause damage
+always_confirm_patterns:
+  # System-wide changes
+  - "sudo"
+  - "su -"
+
+  # Destructive operations
+  - "rm -rf"
+  - "delete from"
+  - "DROP TABLE"
+  - "DROP DATABASE"
+
+  # Production environments
+  - "production"
+  - "prod"
+  - "master branch"
+
+  # Critical systems
+  - "database"
+  - "payment"
+  - "authentication"
+  - "auth"
+  - "billing"
+
+  # Registry/config changes
+  - "registry"
+  - "regedit"
+
+  # Network-wide changes
+  - "firewall"
+  - "iptables"
+
+# Confidence Score Modifiers
+confidence_modifiers:
+  # Add to base confidence
+  bonus:
+    official_source: 0.05       # PyPI, npm, official docs
+    whitelist_command: 0.10     # Commands in auto_apply_patterns
+    simple_solution: 0.05       # Single command, no complex steps
+    known_library: 0.05         # pandas, react, etc.
+    read_only: 0.10             # No side effects (chmod +r, cat, ls)
+
+  # Subtract from base confidence
+  penalty:
+    complex_config: -0.10       # Multi-file config changes
+    system_wide: -0.15          # Affects entire system
+    multiple_steps: -0.05       # Requires >1 command
+    requires_restart: -0.10     # Service/system restart needed
+    data_modification: -0.15    # Alters user data
+    irreversible: -0.20         # Cannot be undone
+
+# Pattern Matching for Confidence Calculation
+pattern_confidence:
+  # High confidence base patterns (90%)
+  high_confidence:
+    - pattern: "ModuleNotFoundError.*'(pandas|numpy|scipy|matplotlib|pytest|requests)'"
+      base_score: 0.90
+      reason: "Standard Python library installation"
+
+    - pattern: "ModuleNotFoundError.*No module named"
+      base_score: 0.85
+      reason: "Generic Python package installation"
+
+    - pattern: "npm.*'(react|vue|angular|express)' is not recognized"
+      base_score: 0.90
+      reason: "Standard JavaScript package installation"
+
+    - pattern: "Permission denied.*\\.sh$"
+      base_score: 0.85
+      reason: "Script permission fix"
+
+  # Medium confidence patterns (70%)
+  medium_confidence:
+    - pattern: "ImportError.*cannot import"
+      base_score: 0.70
+      reason: "May need specific package or version"
+
+    - pattern: "UnicodeDecodeError"
+      base_score: 0.70
+      reason: "Encoding fix usually standard but context-dependent"
+
+  # Low confidence patterns (50%)
+  low_confidence:
+    - pattern: ".*custom.*error"
+      base_score: 0.50
+      reason: "Application-specific error"
+
+    - pattern: ".*business logic.*"
+      base_score: 0.40
+      reason: "Domain-specific logic"
+
+# Adaptive Learning (future feature)
+adaptive_learning:
+  enabled: false  # Disabled for Phase 1
+  # Future: Track user confirmations to adjust confidence
+
+# Logging & Monitoring
+logging:
+  level: "normal"  # Options: "minimal", "normal", "verbose", "debug"
+
+  log_decisions: true       # Log all confidence decisions
+  log_auto_applies: true    # Log all auto-applications
+  log_confirmations: true   # Log user confirmation responses
+  log_failures: true        # Log circuit breaker activations
+
+  # Save to file
+  log_file: "RUNS/confidence_decisions.log"
+
+# Metrics Collection
+metrics:
+  enabled: true
+
+  track_accuracy: true          # Track auto-apply accuracy
+  track_confirmation_rate: true  # Track yes/no ratio
+  track_confidence_distribution: true  # Histogram
+
+  # Metrics file
+  metrics_file: "RUNS/confidence_metrics.json"
+
+# Progressive Enhancement Schedule
+# Week 1: auto_apply: 0.95, ask_confirm: 0.70 (current)
+# Week 2: auto_apply: 0.92, ask_confirm: 0.65 (if accuracy >90%)
+# Week 3: auto_apply: 0.90, ask_confirm: 0.60 (if accuracy >92%)
+# Week 4: auto_apply: 0.90, ask_confirm: 0.50 (final target)
+
+# Rollback Instructions
+#
+# Immediate disable auto-apply:
+#   mode: "simple"
+#
+# Or just disable auto-apply:
+#   confidence_thresholds.auto_apply: 1.0
+#
+# Or revert via git:
+#   git revert <commit-hash>

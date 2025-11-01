@@ -1,0 +1,132 @@
+================================================================================
+P6 QUALITY GATES ENFORCEMENT - THOROUGH ANALYSIS
+================================================================================
+
+Generated: 2025-10-29
+Focus: TeamStatsAggregator, VerificationCache, Full Project Scanning
+
+EXECUTIVE SUMMARY
+================================================================================
+
+Three critical issues prevent proper P6 enforcement:
+
+ISSUE #1: Limited File Discovery (SEVERITY: CRITICAL)
+- Current: 3 files checked (1.6% of project)
+- Should be: 185+ Python files across project
+- Root cause: TeamStatsAggregator only reads cache, doesn't discover files
+- Impact: P6 gates report on incomplete codebase
+
+ISSUE #2: Stale Cache Retention (SEVERITY: HIGH)
+- No orphaned entry cleanup
+- No periodic validation
+- Hash validation only for files that exist
+- Impact: Ghost metrics from deleted files possible
+
+ISSUE #3: No Full Project Scan (SEVERITY: HIGH)
+- TeamStatsAggregator is passive cache reader
+- Dev Assistant only watches scripts/tests/ directories
+- Impact: Constitutional P6 principle violated (should be "전체 프로젝트")
+
+================================================================================
+PART 1: WHY ONLY 3 FILES ARE CHECKED
+================================================================================
+
+ARCHITECTURE: Passive Cache Reader vs Active File Scanner
+
+Current System:
+  Dev Assistant (file watcher) → On save: verify 1 file (reactive)
+  → VerificationCache (stores result)
+  → TeamStatsAggregator.collect_file_stats()
+  → Reads cache JSON only
+  → Reports on whatever is cached (currently 3 files)
+
+EVIDENCE from team_stats_aggregator.py:
+- collect_file_stats() reads from cache ONLY
+- No Path.glob() or os.walk() calls
+- No project file discovery
+- No active verification
+
+DEV ASSISTANT LIMITATIONS:
+- watches: ["scripts", "tests"] only
+- Misses: backend/, mcp/, web/, docs/, src/
+- Reactive: processes on save, not scheduled
+- Coverage: 1.6% of project (3 of 185+ files)
+
+PROJECT STATISTICS:
+- scripts/: 102 Python files
+- tests/: 55+ Python files
+- backend/: 28+ Python files
+- Total: 185+ Python files
+- Verified: 3 files only
+
+CONSTITUTION VIOLATION:
+P6 requires "전체 프로젝트 통계" (whole project stats)
+Current: Reports on 1.6% only
+
+================================================================================
+PART 2: CACHE STALE DATA ISSUE
+================================================================================
+
+VERIFICATION CACHE PROTECTIONS:
+1. Hash-based change detection ✓ (works for existing files)
+2. TTL-based expiration ✓ (default 5 minutes)
+
+THE REAL PROBLEM: Orphaned Entries
+
+Example scenario:
+1. File created: scripts/temp_analysis.py
+2. Dev Assistant verifies and caches it
+3. Later deleted by developer
+4. Cache entry remains (orphaned)
+5. TeamStatsAggregator reads cache
+6. Reports on non-existent file (false metric)
+
+MISSING VALIDATIONS:
+- No orphaned entry detection
+- No unverified file discovery
+- No periodic integrity checks
+- No automatic cleanup
+
+CONSTITUTION VIOLATION:
+P2 (Evidence-Based): Claims on stale cache without validation
+
+================================================================================
+PART 3: SOLUTIONS
+================================================================================
+
+SOLUTION 1: Add Project Discovery (30 lines)
+Location: scripts/team_stats_aggregator.py
+Benefit: P6 gates become accurate
+Risk: LOW (backward compatible)
+Timeline: This week
+
+SOLUTION 2: Add Cache Integrity Check (50 lines)
+Location: scripts/verification_cache.py
+Benefit: Detect + cleanup orphaned entries
+Risk: LOW
+Timeline: Next week
+
+SOLUTION 3: Implement Full Project Scan (100 lines)
+Location: scripts/quality_scanner.py + YAML task
+Benefit: Complete P6 enforcement
+Risk: MEDIUM
+Timeline: Month 1
+
+================================================================================
+PART 4: CONSTITUTION ALIGNMENT
+================================================================================
+
+VIOLATIONS:
+- P6: Incomplete scope (1.6% vs 100%)
+- P2: No evidence for unscanned files
+- P7: Implicit false claim of coverage
+
+PROPOSED SOLUTIONS COMPLY WITH:
+- P1: YAML-based tasks (Solution 3)
+- P2: Evidence auto-collection
+- P6: Complete project coverage
+- P7: Explicit file verification
+
+================================================================================
+END SUMMARY
+================================================================================

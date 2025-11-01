@@ -1,0 +1,4002 @@
+[
+  {
+    "timestamp": "2025-10-31T22:46:05.662239",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:45.767179",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:45.781399",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:45.796180",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:46.985585",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:46.999131",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:47.015721",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:51.448535",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:51.462678",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:46:51.478554",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:30.970226",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:30.983521",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:30.997063",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:32.128427",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:32.143415",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:32.159933",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:35.811631",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:35.829207",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:47:35.844235",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:19.405835",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:19.423804",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:19.439207",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:21.094155",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:21.113936",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:21.130956",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:25.635717",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:25.651276",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:48:25.667946",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:07.892309",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:07.908802",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:07.922789",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:09.278998",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:09.296720",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:09.312674",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:13.116093",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:13.133108",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:13.147522",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:54.298044",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:54.316462",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:54.332772",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:55.633345",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:55.649336",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:55.664587",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:59.572421",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:59.587638",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:49:59.606342",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:43.944936",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:43.958631",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:43.973234",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:45.514039",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:45.533899",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:45.550576",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:49.430824",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:49.446136",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:50:49.465198",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:31.148642",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:31.164592",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:31.180218",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:32.726927",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:32.741220",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:32.755400",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:36.715872",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:36.731864",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:51:36.747639",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:19.317142",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:19.336672",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:19.353877",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:20.977704",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:20.993089",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:21.011450",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:25.277531",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:25.293313",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:52:25.310131",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:07.217549",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:07.239618",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:07.268973",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:08.710157",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:08.728396",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:08.743525",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:12.694481",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:12.709216",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:12.723333",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:55.854918",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:55.873827",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:55.892135",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:57.526786",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:57.555216",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:53:57.570939",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:02.444631",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:02.453401",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:02.469980",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:47.265626",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:47.298255",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:47.319506",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:49.080101",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:49.095140",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:49.110716",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:52.941474",
+    "conflicts": [
+      {
+        "type": "focus_shift",
+        "past_decision": "This project is Constitution-centered development system, not dashboard-focused",
+        "past_date": "2025-10-20",
+        "new_proposal": "Let's make the Streamlit dashboard the main interface",
+        "conflict_point": "Dashboard being treated as main product instead of Constitution enforcement",
+        "severity": "high",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Add dashboard as Layer 7 visualization with clear boundaries",
+            "pros": [
+              "Visual feedback",
+              "Better UX"
+            ],
+            "cons": [
+              "Risk of focus shift",
+              "Added complexity"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Keep dashboard minimal or external",
+            "pros": [
+              "Maintains Constitution focus",
+              "Simpler"
+            ],
+            "cons": [
+              "Less visual feedback",
+              "Harder monitoring"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:52.948530",
+    "conflicts": [
+      {
+        "type": "architecture_expansion",
+        "past_decision": "7-layer architecture is the defined structure",
+        "past_date": "2025-10-23",
+        "new_proposal": "Add Layer 8 for advanced monitoring",
+        "conflict_point": "Adding layers beyond the 7-layer architecture",
+        "severity": "medium",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Expand to 8+ layers with Constitution amendment",
+            "pros": [
+              "More flexibility",
+              "Room for growth"
+            ],
+            "cons": [
+              "Complexity increase",
+              "Constitution change needed"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Fit within existing 7 layers",
+            "pros": [
+              "Maintains simplicity",
+              "No Constitution change"
+            ],
+            "cons": [
+              "May feel constrained",
+              "Less granular"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-10-31T22:54:52.963474",
+    "conflicts": [
+      {
+        "type": "architectural_violation",
+        "past_decision": "All operations must go through proper layers and gates",
+        "past_date": "2025-10-23",
+        "new_proposal": "Change the architecture to bypass TaskExecutor",
+        "conflict_point": "Attempting to bypass constitutional gates",
+        "severity": "critical",
+        "git_reference": null,
+        "resolution_options": [
+          {
+            "option": "A",
+            "description": "Follow proper layer architecture",
+            "pros": [
+              "Maintains integrity",
+              "Consistent"
+            ],
+            "cons": [
+              "May be slower",
+              "More complex"
+            ]
+          },
+          {
+            "option": "B",
+            "description": "Create exception with documentation",
+            "pros": [
+              "Faster for specific case",
+              "Pragmatic"
+            ],
+            "cons": [
+              "Sets precedent",
+              "Technical debt"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

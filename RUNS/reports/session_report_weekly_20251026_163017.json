@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "period": "weekly",
+    "days": 7,
+    "generated_at": "2025-10-26T07:30:17.599306+00:00",
+    "timestamp": "20251026_163017"
+  },
+  "analysis": {
+    "task_patterns": {
+      "most_frequent_tasks": [
+        [
+          "TEST-2025-10-26-01",
+          7
+        ],
+        [
+          "TEST-2025-10-26-77",
+          3
+        ],
+        [
+          "TEST-2025-10-26-E2E",
+          3
+        ],
+        [
+          "TEST-2025-10-26-50",
+          2
+        ],
+        [
+          "FEAT-2025-10-26-68",
+          2
+        ],
+        [
+          "FEAT-2025-10-26-AUTH",
+          2
+        ],
+        [
+          "REFACTOR-2025-10-26-22",
+          1
+        ],
+        [
+          "FIX-2025-10-26-33",
+          1
+        ],
+        [
+          "FIX-2025-10-26-DB",
+          1
+        ]
+      ],
+      "failed_tasks": [
+        [
+          "REFACTOR-2025-10-26-22",
+          1
+        ],
+        [
+          "FIX-2025-10-26-33",
+          1
+        ],
+        [
+          "FIX-2025-10-26-DB",
+          1
+        ]
+      ],
+      "task_execution_times": {
+        "TEST-2025-10-26-77": {
+          "avg": 49.64642292418463,
+          "min": 49.64642292418463,
+          "max": 49.64642292418463,
+          "count": 1
+        },
+        "TEST-2025-10-26-E2E": {
+          "avg": 180.7,
+          "min": 180.7,
+          "max": 180.7,
+          "count": 1
+        }
+      },
+      "command_patterns": [
+        [
+          "npm",
+          5
+        ],
+        [
+          "python",
+          4
+        ],
+        [
+          "make",
+          4
+        ],
+        [
+          "docker",
+          3
+        ],
+        [
+          "ruff",
+          3
+        ],
+        [
+          "pytest",
+          2
+        ],
+        [
+          "mypy",
+          1
+        ]
+      ],
+      "total_unique_tasks": 9,
+      "total_failed_tasks": 3
+    },
+    "productivity": {
+      "peak_hours": [
+        [
+          7,
+          9
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          6,
+          3
+        ]
+      ],
+      "peak_days": [
+        [
+          "Sunday",
+          20
+        ]
+      ],
+      "avg_session_duration_minutes": 0.1001322525,
+      "total_sessions": 20,
+      "hourly_distribution": {
+        "7": 9,
+        "6": 3,
+        "3": 8
+      },
+      "daily_distribution": {
+        "Sunday": 20
+      }
+    },
+    "error_patterns": {
+      "common_errors": [
+        [
+          "Memory error: Out of memory",
+          1
+        ],
+        [
+          "Build error: Dependency not satisfied",
+          1
+        ],
+        [
+          "Connection timeout: Database server not responding",
+          1
+        ]
+      ],
+      "error_tasks": {
+        "Memory error: Out of memory": [
+          "REFACTOR-2025-10-26-22"
+        ],
+        "Build error: Dependency not satisfied": [
+          "FIX-2025-10-26-33"
+        ],
+        "Connection timeout: Database server not responding": [
+          "FIX-2025-10-26-DB"
+        ]
+      },
+      "error_timeline": [
+        {
+          "timestamp": "2025-10-26T07:05:48.516373+00:00",
+          "task_id": "FIX-2025-10-26-DB",
+          "error": "Connection timeout: Database server not responding"
+        },
+        {
+          "timestamp": "2025-10-26T07:14:40.599896+00:00",
+          "task_id": "REFACTOR-2025-10-26-22",
+          "error": "Memory error: Out of memory"
+        },
+        {
+          "timestamp": "2025-10-26T07:14:43.618603+00:00",
+          "task_id": "FIX-2025-10-26-33",
+          "error": "Build error: Dependency not satisfied"
+        }
+      ],
+      "total_unique_errors": 3,
+      "total_errors": 3
+    },
+    "execution_stats": {
+      "total_tasks": 8,
+      "successful_tasks": 5,
+      "failed_tasks": 3,
+      "success_rate": 62.5,
+      "total_execution_hours": 0.1701061047036102,
+      "avg_execution_time": 76.54774711662459
+    },
+    "insights": {
+      "recommendations": [
+        "평균 세션 시간이 30분 미만 - 더 긴 집중 시간 확보 권장",
+        "가장 생산적인 시간대: 7시, 3시"
+      ],
+      "warnings": [
+        "작업 성공률이 62.5%로 낮음 - 프로세스 개선 필요"
+      ],
+      "positive_patterns": []
+    }
+  }
+}
