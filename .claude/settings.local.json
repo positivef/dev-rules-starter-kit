@@ -10,7 +10,8 @@
       "mcp__obsidian__obsidian_get_file_contents",
       "Bash(export:*)",
       "Bash(gh run list:*)",
-      "mcp__obsidian__obsidian_append_content"
+      "mcp__obsidian__obsidian_append_content",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
