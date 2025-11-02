@@ -8,6 +8,7 @@ Provides single entry point for all Tier 1 tools:
 - dataview: Generate Dataview queries from templates (NEW)
 - mermaid: Auto-generate Mermaid diagrams (NEW)
 - tdd-dashboard: Interactive TDD metrics dashboard (NEW)
+- generate-tests: Automated test skeleton generation (NEW)
 - status: Feature flag status display
 - disable/enable: Emergency controls
 
@@ -16,6 +17,9 @@ Week 4 Expansions (2025-11-02):
 - dataview: Template-based Dataview query generation
 - mermaid: Architecture, dependency, and task workflow diagrams
 - tdd-dashboard: Streamlit dashboard for TDD metrics visualization
+
+Week 6 Expansions (TDD Enforcer):
+- generate-tests: AST-based test skeleton generation with type hints
 
 Compliance:
 - P1: YAML-First (delegates to YAML-based tools)
@@ -1016,6 +1020,50 @@ Quality Gates:
         click.echo("[ERROR] Streamlit not installed")
         click.echo("[INFO] Install with: pip install streamlit")
         sys.exit(1)
+
+
+@cli.command()
+@click.argument("source_file", type=click.Path(exists=True))
+@click.option("--analyze", is_flag=True, help="Analyze only, don't generate")
+@click.option("--output", type=click.Path(), help="Output test file path")
+def generate_tests(source_file: str, analyze: bool, output: Optional[str]) -> None:
+    """Generate test skeletons for Python source file.
+
+    Uses AST analysis to detect functions and generate pytest test templates
+    with type-hint based test case suggestions.
+
+    Args:
+        source_file: Python source file to analyze.
+        analyze: Analyze only mode (show functions, don't generate).
+        output: Optional output path for test file.
+
+    Example:
+        $ python scripts/tier1_cli.py generate-tests scripts/my_module.py
+        $ python scripts/tier1_cli.py generate-tests scripts/my_module.py --analyze
+        $ python scripts/tier1_cli.py generate-tests scripts/my_module.py --output tests/custom.py
+    """
+    from test_generator_enhanced import EnhancedTestGenerator
+
+    source_path = Path(source_file)
+    generator = EnhancedTestGenerator(source_path)
+
+    if analyze:
+        # Analyze mode
+        functions = generator.analyze_source()
+        click.echo(f"\n[ANALYSIS] Found {len(functions)} testable functions:")
+        for func in functions:
+            return_type = func.return_type or "None"
+            click.echo(f"  - {func.name}({', '.join(func.args)}) -> {return_type}")
+            suggestions = generator.suggest_test_cases(func)
+            click.echo(f"    Suggested tests: {len(suggestions)}")
+    else:
+        # Generate mode
+        output_path = Path(output) if output else None
+        generated_file = generator.generate(output_path)
+        if generated_file:
+            click.echo(f"[SUCCESS] Test file generated: {generated_file}")
+        else:
+            click.echo("[WARNING] No testable functions found")
 
 
 @cli.command()
