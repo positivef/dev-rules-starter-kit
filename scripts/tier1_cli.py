@@ -396,7 +396,18 @@ def disable(tool: str) -> None:
     default="bidirectional",
     help="Sync direction (default: bidirectional)",
 )
-def tag_sync(test: bool, direction: str) -> None:
+@click.option(
+    "--resolve-conflicts",
+    is_flag=True,
+    help="Enable conflict detection and resolution (Phase 2.2)",
+)
+@click.option(
+    "--strategy",
+    type=click.Choice(["keep-both", "prefer-local", "prefer-remote", "interactive"], case_sensitive=False),
+    default="interactive",
+    help="Conflict resolution strategy (default: interactive)",
+)
+def tag_sync(test: bool, direction: str, resolve_conflicts: bool, strategy: str) -> None:
     """Synchronize tags between dev-rules and Obsidian.
 
     Supports bi-directional tag sync with category awareness:
@@ -404,13 +415,23 @@ def tag_sync(test: bool, direction: str) -> None:
     - status/ tags (status/completed, status/in-progress)
     - project/ tags (project/strategy-a, project/strategy-b)
 
+    Phase 2.2: Conflict Resolution (NEW):
+    - Detect conflicts between YAML and Obsidian tags
+    - Three merge strategies: keep-both, prefer-local, prefer-remote
+    - Interactive resolution with user prompts
+    - Conflict logging to RUNS/tag-conflicts/
+
     Args:
         test: Run in test mode without actual sync.
         direction: Sync direction (to-obsidian/from-obsidian/bidirectional).
+        resolve_conflicts: Enable conflict detection and resolution.
+        strategy: Resolution strategy (keep-both/prefer-local/prefer-remote/interactive).
 
     Example:
         $ python scripts/tier1_cli.py tag-sync
         $ python scripts/tier1_cli.py tag-sync --direction to-obsidian
+        $ python scripts/tier1_cli.py tag-sync --resolve-conflicts
+        $ python scripts/tier1_cli.py tag-sync --resolve-conflicts --strategy keep-both
         $ python scripts/tier1_cli.py tag-sync --test
     """
     import os
@@ -500,6 +521,58 @@ def tag_sync(test: bool, direction: str) -> None:
                 click.echo(f"  - {tag}")
             if len(uncategorized) > 5:
                 click.echo(f"  ... and {len(uncategorized) - 5} more")
+
+    # Phase 2.2: Conflict Resolution
+    if resolve_conflicts:
+        from tag_conflict_resolver import TagConflictResolver
+
+        click.echo("\n[CONFLICT-DETECTION] Checking for tag conflicts...")
+
+        # Get dev-rules tags from TASKS/*.yaml
+        tasks_path = Path("TASKS")
+        dev_tags = set()
+
+        if tasks_path.exists():
+            for yaml_file in tasks_path.glob("*.yaml"):
+                try:
+                    with open(yaml_file, encoding="utf-8") as f:
+                        yaml_data = yaml.safe_load(f)
+                        if yaml_data and "tags" in yaml_data:
+                            tags = yaml_data["tags"]
+                            if isinstance(tags, list):
+                                dev_tags.update(tags)
+                except Exception as e:
+                    click.echo(f"[WARNING] Failed to read {yaml_file.name}: {e}")
+
+        click.echo(f"[INFO] Found {len(dev_tags)} unique tags in dev-rules")
+        click.echo(f"[INFO] Found {len(obsidian_tags)} unique tags in Obsidian")
+
+        # Detect conflicts
+        resolver = TagConflictResolver()
+        conflicts = resolver.detect_conflicts(dev_tags, obsidian_tags, "TASKS/*.yaml vs Obsidian")
+
+        if conflicts:
+            click.echo(f"\n[CONFLICT] Detected {len(conflicts)} conflict(s)")
+
+            # Resolve conflicts
+            if strategy == "interactive" and not test:
+                # Interactive resolution
+                resolutions = resolver.batch_resolve(conflicts, interactive=True)
+            else:
+                # Auto-resolution
+                actual_strategy = "keep-both" if strategy == "interactive" else strategy
+                click.echo(f"[INFO] Using strategy: {actual_strategy}")
+                resolutions = resolver.batch_resolve(conflicts, strategy=actual_strategy, interactive=False)
+
+            # Show results
+            for resolution in resolutions:
+                click.echo(f"\n[RESOLUTION] {resolution.changes_made}")
+                click.echo(f"[RESULT] Final tags ({len(resolution.merged_tags)}): {sorted(resolution.merged_tags)[:5]}...")
+
+            click.echo(f"\n[SUCCESS] Resolved {len(resolutions)} conflict(s)")
+            click.echo("[INFO] Conflict logs saved to: RUNS/tag-conflicts/")
+        else:
+            click.echo("\n[SUCCESS] No conflicts detected - tags are in sync")
 
     if not test:
         click.echo("\n[SYNC] Tag synchronization would happen here")
