@@ -5,6 +5,10 @@ Real-time TDD metrics visualization with:
 - Test count evolution
 - Quality gate status
 - Phase-by-phase metrics
+- TDD workflow compliance (Week 6 Phase 2)
+- Developer TDD scores (Week 6 Phase 2)
+- Coverage gap analysis (Week 6 Phase 1)
+- Real-time enforcement status (Week 6 Phase 1)
 
 Compliance:
 - P6: Quality Gates (metrics tracking)
@@ -19,16 +23,27 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 try:
     import streamlit as st
     import pandas as pd
     import plotly.express as px
+    import plotly.graph_objects as go
 except ImportError as e:
     print(f"[ERROR] Missing dependencies: {e}")
     print("[INFO] Install with: pip install streamlit pandas plotly")
     sys.exit(1)
+
+# Import TDD enforcement tools
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from tdd_workflow_tracker import TDDWorkflowTracker
+    from tdd_enforcer_enhanced import EnhancedTDDEnforcer
+
+    TDD_TOOLS_AVAILABLE = True
+except ImportError:
+    TDD_TOOLS_AVAILABLE = False
 
 
 def load_coverage_data() -> pd.DataFrame:
@@ -149,9 +164,65 @@ def calculate_quality_gates(df: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
+def load_tdd_workflow_data(days: int = 30) -> Dict[str, Any]:
+    """Load TDD workflow compliance data.
+
+    Args:
+        days: Number of days to analyze
+
+    Returns:
+        Dictionary with team report and developer scores
+    """
+    if not TDD_TOOLS_AVAILABLE:
+        return {}
+
+    try:
+        tracker = TDDWorkflowTracker()
+        team_report = tracker.generate_team_report(days=days)
+        return team_report
+    except Exception:
+        return {}
+
+
+def load_coverage_gaps() -> List[Dict[str, Any]]:
+    """Load coverage gap data from enforcement.
+
+    Returns:
+        List of coverage gap dictionaries
+    """
+    if not TDD_TOOLS_AVAILABLE:
+        return []
+
+    try:
+        enforcer = EnhancedTDDEnforcer()
+        # Get all Python files in scripts/
+        scripts_path = Path("scripts")
+        python_files = list(scripts_path.glob("*.py"))
+
+        # Check coverage
+        violations, coverage_gaps = enforcer.check_files(python_files)
+
+        # Convert to list of dicts
+        gaps = []
+        for gap in coverage_gaps:
+            gaps.append(
+                {
+                    "file": Path(gap.file_path).name,
+                    "current": gap.current_coverage,
+                    "required": gap.required_coverage,
+                    "gap": gap.gap,
+                    "missing_lines": len(gap.missing_lines),
+                }
+            )
+
+        return gaps
+    except Exception:
+        return []
+
+
 def main():
     """Main dashboard entry point."""
-    st.set_page_config(page_title="TDD Metrics Dashboard", page_icon="📊", layout="wide")
+    st.set_page_config(page_title="TDD Metrics Dashboard", page_icon="[CHART]", layout="wide")
 
     st.title("TDD Metrics Dashboard")
     st.markdown("**Real-time TDD metrics for Constitution-Based Development**")
@@ -258,6 +329,173 @@ def main():
     recent_df = df.tail(10)[["date", "task_id", "coverage", "test_count", "phase"]]
     recent_df["date"] = recent_df["date"].dt.strftime("%Y-%m-%d %H:%M")
     st.dataframe(recent_df, use_container_width=True, hide_index=True)
+
+    # === Week 6 Phase 4: TDD Enforcement Enhancements ===
+    st.markdown("---")
+    st.header("TDD Enforcement (Week 6)")
+
+    if TDD_TOOLS_AVAILABLE:
+        # TDD Workflow Compliance
+        st.subheader("TDD Workflow Compliance")
+
+        days_option = st.selectbox("Time Period", [7, 14, 30, 60], index=2)
+        workflow_data = load_tdd_workflow_data(days=days_option)
+
+        if workflow_data and workflow_data.get("total_commits", 0) > 0:
+            # Team compliance metrics
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                compliance = workflow_data["team_compliance_rate"]
+                delta_color = "normal" if compliance >= 80 else "inverse"
+                st.metric("Team Compliance Rate", f"{compliance:.1f}%", "Target: 80%", delta_color=delta_color)
+
+            with col2:
+                st.metric("Total Commits", workflow_data["total_commits"], f"Last {days_option} days")
+
+            with col3:
+                status = (
+                    "[EXCELLENT]"
+                    if compliance >= 95
+                    else "[GOOD]"
+                    if compliance >= 80
+                    else "[WARNING]"
+                    if compliance >= 60
+                    else "[CRITICAL]"
+                )
+                status_color = "🟢" if compliance >= 80 else "🟡" if compliance >= 60 else "🔴"
+                st.metric("Status", f"{status_color} {status}", "")
+
+            # Developer breakdown
+            st.subheader("Per-Developer TDD Scores")
+            if workflow_data.get("developers"):
+                dev_data = []
+                for dev_name, stats in workflow_data["developers"].items():
+                    dev_data.append(
+                        {
+                            "Developer": dev_name,
+                            "Commits": stats["commits"],
+                            "Compliant": stats["compliant"],
+                            "Compliance Rate": f"{stats['compliance_rate']:.1f}%",
+                            "Status": "[PASS]" if stats["compliance_rate"] >= 80 else "[WARN]",
+                        }
+                    )
+
+                dev_df = pd.DataFrame(dev_data)
+
+                # Compliance bar chart
+                fig_dev = px.bar(
+                    dev_df,
+                    x="Developer",
+                    y="Compliance Rate",
+                    title="Developer TDD Compliance Rates",
+                    color="Compliance Rate",
+                    color_continuous_scale=["red", "yellow", "green"],
+                    range_color=[0, 100],
+                )
+                fig_dev.add_hline(y=80, line_dash="dash", line_color="blue", annotation_text="Target: 80%")
+                st.plotly_chart(fig_dev, use_container_width=True)
+
+                # Developer details table
+                st.dataframe(dev_df, use_container_width=True, hide_index=True)
+        else:
+            st.info(f"No commit data found for the last {days_option} days")
+
+        # Coverage Gaps
+        st.subheader("Coverage Gap Analysis")
+
+        coverage_gaps = load_coverage_gaps()
+
+        if coverage_gaps:
+            gap_df = pd.DataFrame(coverage_gaps)
+
+            # Sort by gap size
+            gap_df = gap_df.sort_values("gap", ascending=False)
+
+            # Gap visualization
+            fig_gaps = go.Figure()
+
+            fig_gaps.add_trace(
+                go.Bar(name="Current Coverage", x=gap_df["file"], y=gap_df["current"], marker_color="lightblue")
+            )
+
+            fig_gaps.add_trace(
+                go.Bar(name="Required Coverage", x=gap_df["file"], y=gap_df["required"], marker_color="lightcoral")
+            )
+
+            fig_gaps.update_layout(
+                title="Coverage Gaps by File", xaxis_title="File", yaxis_title="Coverage (%)", barmode="group", height=400
+            )
+
+            st.plotly_chart(fig_gaps, use_container_width=True)
+
+            # Gap details table
+            st.dataframe(
+                gap_df[["file", "current", "required", "gap", "missing_lines"]].style.format(
+                    {"current": "{:.1f}%", "required": "{:.1f}%", "gap": "{:.1f}%"}
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+            # Top priority files
+            st.caption(f"[INFO] {len(coverage_gaps)} files below coverage threshold")
+        else:
+            st.success("[SUCCESS] All files meet coverage requirements!")
+
+        # Real-time Enforcement Status
+        st.subheader("Real-time Enforcement Status")
+
+        # Check for recent violations
+        violations_path = Path("RUNS/tdd-violations")
+        if violations_path.exists():
+            recent_violations = list(violations_path.glob("tdd_violation_*.json"))
+            recent_violations.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+
+            if recent_violations:
+                latest_violation = recent_violations[0]
+                violation_age = datetime.now() - datetime.fromtimestamp(latest_violation.stat().st_mtime)
+
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.metric("Latest Violation", latest_violation.name, f"{violation_age.seconds // 60} min ago")
+
+                with col2:
+                    st.metric(
+                        "Total Violations (Today)",
+                        len(
+                            [
+                                v
+                                for v in recent_violations
+                                if (datetime.now() - datetime.fromtimestamp(v.stat().st_mtime)).days == 0
+                            ]
+                        ),
+                        "files",
+                    )
+
+                with col3:
+                    enforcement_status = "🟢 [ACTIVE]" if violation_age.seconds < 300 else "🟡 [IDLE]"
+                    st.metric("Enforcement", enforcement_status, "")
+
+                # Show latest violation details
+                try:
+                    with open(latest_violation, encoding="utf-8") as f:
+                        violation_data = json.load(f)
+
+                    summary = violation_data.get("summary", {})
+                    st.caption(
+                        f"Latest: {summary.get('total_violations', 0)} missing tests, {summary.get('total_coverage_gaps', 0)} coverage gaps"
+                    )
+                except Exception:
+                    pass
+            else:
+                st.success("[SUCCESS] No violations detected!")
+        else:
+            st.info("[INFO] No enforcement data available. Run TDD enforcer to generate logs.")
+
+    else:
+        st.warning("[WARNING] TDD enforcement tools not available. Install dependencies.")
 
     # Export section
     st.subheader("Export Dashboard")
