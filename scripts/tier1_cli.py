@@ -812,21 +812,37 @@ def mermaid(diagram_type: str, output: Optional[str], theme: str, layout: str, m
     default=8501,
     help="Port for Streamlit dashboard (default: 8501)",
 )
-def tdd_dashboard(port: int) -> None:
-    """Launch interactive TDD metrics dashboard.
+@click.option(
+    "--export",
+    type=click.Choice(["png", "pdf"], case_sensitive=False),
+    help="Export dashboard to file instead of launching UI",
+)
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(),
+    help="Output file path for export (default: RUNS/exports/dashboard_<timestamp>.<format>)",
+)
+def tdd_dashboard(port: int, export: Optional[str], output: Optional[str]) -> None:
+    """Launch interactive TDD metrics dashboard or export to file.
 
     Features:
     - Real-time coverage trends
     - Test count evolution
     - Quality gate status
     - Phase-by-phase metrics
+    - Export to PNG/PDF (Phase 2)
 
     Args:
         port: Port for Streamlit dashboard (default: 8501).
+        export: Export format (png or pdf) instead of launching UI.
+        output: Custom output file path.
 
     Example:
         $ python scripts/tier1_cli.py tdd-dashboard
         $ python scripts/tier1_cli.py tdd-dashboard --port 8502
+        $ python scripts/tier1_cli.py tdd-dashboard --export pdf
+        $ python scripts/tier1_cli.py tdd-dashboard --export png -o report.png
     """
     from pathlib import Path
     import subprocess
@@ -838,6 +854,83 @@ def tdd_dashboard(port: int) -> None:
         click.echo("[INFO] Dashboard script needs to be created")
         sys.exit(1)
 
+    # Export mode (Phase 2.4)
+    if export:
+        from datetime import datetime
+        from tdd_metrics_dashboard import load_coverage_data, calculate_quality_gates
+
+        click.echo(f"[EXPORT] Generating {export.upper()} report...")
+
+        # Load data
+        df = load_coverage_data()
+        if df.empty:
+            click.echo("[WARNING] No coverage data found, generating sample data")
+
+        gates = calculate_quality_gates(df)
+
+        # Determine output path
+        if output:
+            export_path = Path(output)
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            export_path = Path(f"RUNS/exports/dashboard_{timestamp}.{export}")
+
+        export_path.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            if export == "png":
+                import plotly.express as px
+                import plotly.io as pio
+
+                # Create coverage trend chart
+                fig = px.line(df, x="date", y="coverage", color="phase", title="Coverage Evolution Over Time", markers=True)
+                fig.add_hline(y=4.0, line_dash="dash", line_color="red", annotation_text="Phase 4 Threshold (4.0%)")
+
+                pio.write_image(fig, str(export_path), format="png", width=1200, height=600)
+                click.echo(f"[SUCCESS] Exported PNG to: {export_path}")
+
+            elif export == "pdf":
+                from matplotlib.backends.backend_pdf import PdfPages
+                import matplotlib.pyplot as plt
+
+                with PdfPages(str(export_path)) as pdf:
+                    # Summary page
+                    fig, ax = plt.subplots(figsize=(11, 8.5))
+                    ax.axis("off")
+                    summary = f"""
+TDD Metrics Dashboard Report
+Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+Current Metrics:
+- Coverage: {gates['coverage']:.2f}%
+- Test Count: {gates['test_count']}
+- Quality Status: {gates['overall_status']}
+
+Quality Gates:
+- Coverage Gate (>=4.0%): {'PASS' if gates['coverage_gate'] else 'FAIL'}
+- Test Count Gate (>=80): {'PASS' if gates['test_count_gate'] else 'FAIL'}
+- Trend Gate (>=0): {'PASS' if gates['trend_gate'] else 'FAIL'}
+"""
+                    ax.text(0.1, 0.5, summary, fontsize=12, family="monospace", verticalalignment="center")
+                    pdf.savefig(fig, bbox_inches="tight")
+                    plt.close()
+
+                click.echo(f"[SUCCESS] Exported PDF to: {export_path}")
+
+        except ImportError as e:
+            click.echo(f"[ERROR] Missing dependency: {e}")
+            if export == "png":
+                click.echo("[INFO] Install with: pip install kaleido")
+            else:
+                click.echo("[INFO] Install with: pip install matplotlib")
+            sys.exit(1)
+        except Exception as e:
+            click.echo(f"[ERROR] Export failed: {e}")
+            sys.exit(1)
+
+        return
+
+    # Interactive dashboard mode
     click.echo(f"[DASHBOARD] Launching TDD metrics dashboard on port {port}...")
     click.echo(f"[INFO] Dashboard will open at http://localhost:{port}")
 

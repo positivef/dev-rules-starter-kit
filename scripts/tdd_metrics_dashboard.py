@@ -259,6 +259,65 @@ def main():
     recent_df["date"] = recent_df["date"].dt.strftime("%Y-%m-%d %H:%M")
     st.dataframe(recent_df, use_container_width=True, hide_index=True)
 
+    # Export section
+    st.subheader("Export Dashboard")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("Export as PNG"):
+            try:
+                import plotly.io as pio
+
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                export_path = Path(f"RUNS/exports/dashboard_{timestamp}.png")
+                export_path.parent.mkdir(parents=True, exist_ok=True)
+
+                # Export coverage trend chart
+                pio.write_image(fig_coverage, str(export_path), format="png", width=1200, height=600)
+                st.success(f"Exported to: {export_path}")
+            except ImportError:
+                st.error("Please install kaleido: pip install kaleido")
+            except Exception as e:
+                st.error(f"Export failed: {e}")
+
+    with col2:
+        if st.button("Export as PDF"):
+            try:
+                from matplotlib.backends.backend_pdf import PdfPages
+                import matplotlib.pyplot as plt
+
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                export_path = Path(f"RUNS/exports/dashboard_{timestamp}.pdf")
+                export_path.parent.mkdir(parents=True, exist_ok=True)
+
+                with PdfPages(str(export_path)) as pdf:
+                    # Page 1: Summary
+                    fig, ax = plt.subplots(figsize=(11, 8.5))
+                    ax.axis("off")
+                    summary_text = f"""
+TDD Metrics Dashboard Report
+Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+Current Metrics:
+- Coverage: {gates['coverage']:.2f}%
+- Test Count: {gates['test_count']}
+- Quality Status: {gates['overall_status']}
+
+Quality Gates:
+- Coverage Gate (>=4.0%): {'PASS' if gates['coverage_gate'] else 'FAIL'}
+- Test Count Gate (>=80): {'PASS' if gates['test_count_gate'] else 'FAIL'}
+- Trend Gate (>=0): {'PASS' if gates['trend_gate'] else 'FAIL'}
+"""
+                    ax.text(0.1, 0.5, summary_text, fontsize=12, family="monospace", verticalalignment="center")
+                    pdf.savefig(fig, bbox_inches="tight")
+                    plt.close()
+
+                st.success(f"Exported to: {export_path}")
+            except ImportError as e:
+                st.error(f"Please install matplotlib: pip install matplotlib ({e})")
+            except Exception as e:
+                st.error(f"Export failed: {e}")
+
     # Refresh button
     if st.button("Refresh Data"):
         st.rerun()
