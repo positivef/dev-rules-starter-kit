@@ -21,6 +21,7 @@
 4. **문서 생명주기 관리** (claudedocs/ 구조)
 5. **CI/CD 파이프라인** (GitHub Actions)
 6. **🆕 Hybrid Error Resolution** (신뢰도 기반 3-Tier 자동 에러 해결)
+7. **🆕 ADRBuilder** (Architecture Decision Records 자동화, Constitution 매핑)
 
 ### 검증된 효과
 
@@ -260,7 +261,10 @@ dev-rules-starter-kit/
 │
 ├── scripts/                         # 자동화 스크립트
 │   ├── task_executor.py            # YAML 계약 실행기 (100% 재활용)
-│   └── obsidian_bridge.py          # 옵시디언 동기화 (100% 재활용)
+│   ├── obsidian_bridge.py          # 옵시디언 동기화 (100% 재활용)
+│   ├── adr_builder.py              # Architecture Decision Records (ADR) 자동화
+│   ├── code_review_assistant.py    # 코드 리뷰 자동화 (Constitution 검증)
+│   └── deployment_planner.py       # 배포 계획 자동화 (리스크 평가)
 │
 ├── TASKS/                           # 작업 계약서
 │   └── TEMPLATE.yaml
