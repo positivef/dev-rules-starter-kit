@@ -670,25 +670,58 @@ SORT count(rows) DESC
     type=click.Path(),
     help="Output file path (default: stdout)",
 )
-def mermaid(diagram_type: str, output: Optional[str]) -> None:
-    """Generate Mermaid diagrams automatically.
+@click.option(
+    "--theme",
+    type=click.Choice(["default", "dark", "forest", "neutral"], case_sensitive=False),
+    default="default",
+    help="Mermaid theme (default, dark, forest, neutral)",
+)
+@click.option(
+    "--layout",
+    type=click.Choice(["TB", "LR", "RL", "BT"], case_sensitive=False),
+    default="TB",
+    help="Graph layout direction (TB=top-bottom, LR=left-right, RL=right-left, BT=bottom-top)",
+)
+@click.option(
+    "--max-nodes",
+    type=int,
+    default=10,
+    help="Maximum nodes per subgraph (default: 10)",
+)
+def mermaid(diagram_type: str, output: Optional[str], theme: str, layout: str, max_nodes: int) -> None:
+    """Generate Mermaid diagrams automatically with customization.
 
     Supports diagram types:
     - architecture: System architecture from scripts/ directory
     - dependencies: Task dependency graph from YAML contracts
     - tasks: Task workflow from TASKS/ directory
 
+    Customization Options (Phase 2):
+    - --theme: Visual theme (default, dark, forest, neutral)
+    - --layout: Graph direction (TB, LR, RL, BT)
+    - --max-nodes: Limit nodes per subgraph to reduce complexity
+
     Args:
         diagram_type: Type of diagram (architecture/dependencies/tasks).
         output: Output file path (optional).
+        theme: Mermaid theme name.
+        layout: Graph layout direction.
+        max_nodes: Maximum nodes to show per subgraph.
 
     Example:
         $ python scripts/tier1_cli.py mermaid architecture
-        $ python scripts/tier1_cli.py mermaid dependencies -o docs/deps.md
+        $ python scripts/tier1_cli.py mermaid dependencies --theme dark --layout LR
+        $ python scripts/tier1_cli.py mermaid tasks --max-nodes 5 -o workflow.md
     """
     from pathlib import Path
 
     click.echo(f"[MERMAID] Generating {diagram_type} diagram...")
+    click.echo(f"[INFO] Theme: {theme}, Layout: {layout}, Max nodes: {max_nodes}")
+
+    # Theme initialization directive
+    theme_directive = ""
+    if theme != "default":
+        theme_directive = f"%%{{init: {{'theme':'{theme}'}}}}%%\n"
 
     if diagram_type == "architecture":
         # Scan scripts/ directory
@@ -711,41 +744,27 @@ def mermaid(diagram_type: str, output: Optional[str]) -> None:
             elif "bridge" in name or "sync" in name or "cli" in name:
                 categories["integration"].append(name)
 
-        diagram = """```mermaid
-graph TD
-    subgraph Execution
-"""
-        for script in categories["execution"][:5]:
+        diagram = f"```mermaid\n{theme_directive}graph {layout}\n    subgraph Execution\n"
+        for script in categories["execution"][:max_nodes]:
             diagram += f"        {script}[{script}]\n"
 
-        diagram += """    end
-
-    subgraph Analysis
-"""
-        for script in categories["analysis"][:5]:
+        diagram += "    end\n\n    subgraph Analysis\n"
+        for script in categories["analysis"][:max_nodes]:
             diagram += f"        {script}[{script}]\n"
 
-        diagram += """    end
-
-    subgraph Validation
-"""
-        for script in categories["validation"][:5]:
+        diagram += "    end\n\n    subgraph Validation\n"
+        for script in categories["validation"][:max_nodes]:
             diagram += f"        {script}[{script}]\n"
 
-        diagram += """    end
-
-    subgraph Integration
-"""
-        for script in categories["integration"][:5]:
+        diagram += "    end\n\n    subgraph Integration\n"
+        for script in categories["integration"][:max_nodes]:
             diagram += f"        {script}[{script}]\n"
 
-        diagram += """    end
-```"""
+        diagram += "    end\n```"
 
     elif diagram_type == "dependencies":
-        diagram = """```mermaid
-graph LR
-    P1[P1: YAML First] --> TaskExecutor
+        diagram = f"```mermaid\n{theme_directive}graph {layout}\n"
+        diagram += """    P1[P1: YAML First] --> TaskExecutor
     P2[P2: Evidence] --> TaskExecutor
     P4[P4: SOLID] --> DeepAnalyzer
     P5[P5: Security] --> DeepAnalyzer
@@ -767,11 +786,9 @@ graph LR
 
         yaml_files = list(tasks_path.glob("*.yaml"))
 
-        diagram = """```mermaid
-graph TD
-    Start[Project Start] --> Planning
-"""
-        for i, yaml_file in enumerate(yaml_files[:10]):
+        diagram = f"```mermaid\n{theme_directive}graph {layout}\n"
+        diagram += "    Start[Project Start] --> Planning\n"
+        for i, yaml_file in enumerate(yaml_files[:max_nodes]):
             task_name = yaml_file.stem.replace("-", "_")
             diagram += f"    Planning --> {task_name}[{yaml_file.stem}]\n"
 

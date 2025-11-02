@@ -137,6 +137,52 @@ class TestMermaidCommand:
             content = Path("deps.md").read_text(encoding="utf-8")
             assert "```mermaid" in content
 
+    def test_mermaid_theme_customization(self):
+        """Test mermaid theme customization."""
+        from click.testing import CliRunner
+        from tier1_cli import cli
+
+        runner = CliRunner()
+
+        # Test dark theme
+        result = runner.invoke(cli, ["mermaid", "architecture", "--theme", "dark"])
+        assert result.exit_code == 0
+        assert "theme':'dark" in result.output
+
+        # Test forest theme
+        result = runner.invoke(cli, ["mermaid", "dependencies", "--theme", "forest"])
+        assert result.exit_code == 0
+        assert "theme':'forest" in result.output
+
+    def test_mermaid_layout_customization(self):
+        """Test mermaid layout customization."""
+        from click.testing import CliRunner
+        from tier1_cli import cli
+
+        runner = CliRunner()
+
+        # Test LR layout
+        result = runner.invoke(cli, ["mermaid", "architecture", "--layout", "LR"])
+        assert result.exit_code == 0
+        assert "graph LR" in result.output
+
+        # Test TB layout
+        result = runner.invoke(cli, ["mermaid", "dependencies", "--layout", "TB"])
+        assert result.exit_code == 0
+        assert "graph TB" in result.output
+
+    def test_mermaid_max_nodes_customization(self):
+        """Test mermaid max-nodes customization."""
+        from click.testing import CliRunner
+        from tier1_cli import cli
+
+        runner = CliRunner()
+
+        # Test with max-nodes=3
+        result = runner.invoke(cli, ["mermaid", "architecture", "--max-nodes", "3"])
+        assert result.exit_code == 0
+        assert "[SUCCESS]" in result.output
+
 
 class TestTagSyncCommand:
     """Tests for tag-sync command."""
