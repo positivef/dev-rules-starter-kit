@@ -23,6 +23,7 @@
 6. **🆕 Hybrid Error Resolution** (신뢰도 기반 3-Tier 자동 에러 해결)
 7. **🆕 ADRBuilder** (Architecture Decision Records 자동화, Constitution 매핑)
 8. **🆕 ProductionMonitor** (Production 예외 추적 및 SLA 모니터링, 장애 대응 75% 단축)
+9. **🆕 PerformanceDashboard** (실시간 성능 모니터링 및 트렌드 분석, 병목 발견 86% 단축)
 
 ### 검증된 효과
 
