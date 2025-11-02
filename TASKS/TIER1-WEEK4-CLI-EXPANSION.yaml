@@ -1,0 +1,112 @@
+task_id: "TIER1-WEEK4-2025-11-02"
+title: "Tier 1 CLI Expansion - Week 4"
+description: |
+  Expand Tier 1 CLI with 4 major features:
+  1. Tag Sync Enhancement - Bi-directional Obsidian tag synchronization
+  2. Dataview Query Generator - Template-based query creation
+  3. Mermaid Diagram Automation - Architecture and dependency diagrams
+  4. TDD Metrics Dashboard - Interactive Streamlit dashboard
+
+constitutional_basis:
+  - article: "P1"
+    rationale: "YAML contract defines all implementation steps"
+  - article: "P2"
+    rationale: "Evidence collection via RUNS/evidence/"
+  - article: "P6"
+    rationale: "Quality gates with metrics tracking"
+  - article: "P8"
+    rationale: "Unit tests for each CLI feature"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P6", "P8"]
+  - type: "quality"
+    metrics:
+      unit_test_coverage: ">= 80%"
+      integration_tests: ">= 4"
+      ruff_clean: true
+
+phases:
+  - phase: "1_tag_sync"
+    title: "Tag Sync Enhancement"
+    duration: "30 minutes"
+    tasks:
+      - "Analyze current tag sync implementation in tier1_cli.py:185"
+      - "Add bi-directional sync (dev-rules → Obsidian, Obsidian → dev-rules)"
+      - "Support tag categories (domain/, status/, project/)"
+      - "Write unit tests for tag sync"
+
+  - phase: "2_dataview_generator"
+    title: "Dataview Query Generator"
+    duration: "45 minutes"
+    tasks:
+      - "Create template system for common Dataview queries"
+      - "Support queries: tasks by status, sessions by phase, coverage trends"
+      - "CLI command: python scripts/tier1_cli.py dataview [template]"
+      - "Write unit tests for query generation"
+
+  - phase: "3_mermaid_automation"
+    title: "Mermaid Diagram Automation"
+    duration: "45 minutes"
+    tasks:
+      - "Generate architecture diagrams from scripts/ directory structure"
+      - "Generate task dependency graphs from YAML contracts"
+      - "CLI command: python scripts/tier1_cli.py mermaid [type]"
+      - "Write unit tests for diagram generation"
+
+  - phase: "4_tdd_dashboard"
+    title: "TDD Metrics Dashboard"
+    duration: "60 minutes"
+    tasks:
+      - "Create Streamlit dashboard for TDD metrics"
+      - "Visualize: coverage trends, test counts, quality gates"
+      - "CLI command: python scripts/tier1_cli.py tdd-dashboard"
+      - "Write integration tests for dashboard"
+
+commands:
+  - phase: "setup"
+    exec: ["python", "-m", "pytest", "tests/", "-v", "--tb=short"]
+
+  - phase: "1_tag_sync"
+    exec: ["python", "scripts/tier1_cli.py", "tag-sync", "--test"]
+
+  - phase: "2_dataview_generator"
+    exec: ["python", "scripts/tier1_cli.py", "dataview", "tasks-by-status"]
+
+  - phase: "3_mermaid_automation"
+    exec: ["python", "scripts/tier1_cli.py", "mermaid", "architecture"]
+
+  - phase: "4_tdd_dashboard"
+    exec: ["streamlit", "run", "scripts/tdd_metrics_dashboard.py"]
+
+  - phase: "testing"
+    exec: ["python", "-m", "pytest", "tests/unit/", "-v", "--cov=scripts.tier1_cli"]
+
+success_criteria:
+  - "All 4 CLI features functional"
+  - "Unit test coverage >= 80% for new code"
+  - "Integration tests pass"
+  - "Ruff validation clean"
+  - "Constitutional compliance verified"
+  - "Documentation complete"
+
+deliverables:
+  - "scripts/tier1_cli.py (enhanced with 4 features)"
+  - "scripts/tdd_metrics_dashboard.py (new)"
+  - "tests/unit/test_tier1_cli_expansion.py (new)"
+  - "claudedocs/TIER1_WEEK4_CLI_EXPANSION.md (documentation)"
+  - "RUNS/evidence/TIER1-WEEK4-2025-11-02/ (evidence)"
+
+time_estimate:
+  total: "2-3 hours"
+  breakdown:
+    tag_sync: "30 min"
+    dataview: "45 min"
+    mermaid: "45 min"
+    tdd_dashboard: "60 min"
+
+roi_projection:
+  time_investment: "3 hours"
+  time_saved_per_week: "2 hours (automation)"
+  payback_period: "1.5 weeks"
+  annual_roi: "3400%"
