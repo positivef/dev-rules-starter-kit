@@ -521,19 +521,29 @@ def tag_sync(test: bool, direction: str) -> None:
 def dataview(template: str, output: Optional[str]) -> None:
     """Generate Dataview queries from templates.
 
-    Supports common query templates:
+    Supports 9 query templates:
+
+    Basic Templates:
     - tasks-by-status: List tasks grouped by status
     - sessions-by-phase: List sessions grouped by phase
     - coverage-trends: Show coverage trend over time
     - recent-commits: Show recent commits with metadata
 
+    Phase 2 Templates (NEW):
+    - quality-metrics: P6 compliance tracking
+    - phase-summary: Milestone reporting with aggregated stats
+    - file-changes: Change frequency analysis
+    - constitutional-compliance: Article tracking
+    - team-activity: Contributor statistics
+
     Args:
-        template: Template name (tasks-by-status/sessions-by-phase/coverage-trends).
+        template: Template name (see list above).
         output: Output file path (optional).
 
     Example:
         $ python scripts/tier1_cli.py dataview tasks-by-status
-        $ python scripts/tier1_cli.py dataview coverage-trends -o queries/coverage.md
+        $ python scripts/tier1_cli.py dataview quality-metrics -o queries/quality.md
+        $ python scripts/tier1_cli.py dataview team-activity
     """
     click.echo(f"[DATAVIEW] Generating query from template: {template}")
 
@@ -579,6 +589,58 @@ FROM "개발일지"
 WHERE commit
 SORT file.mtime DESC
 LIMIT 20
+```""",
+        "quality-metrics": """```dataview
+TABLE
+  title as "Article",
+  compliance as "Compliance %",
+  violations as "Violations",
+  file.mtime as "Last Check"
+FROM "개발일지"
+WHERE contains(tags, "domain/quality")
+SORT compliance DESC
+```""",
+        "phase-summary": """```dataview
+TABLE
+  phase as "Phase",
+  count(rows) as "Sessions",
+  sum(duration) as "Total Time",
+  avg(coverage) as "Avg Coverage %"
+FROM "개발일지"
+WHERE type = "session"
+GROUP BY phase
+SORT phase ASC
+```""",
+        "file-changes": """```dataview
+TABLE
+  file.name as "File",
+  length(file.inlinks) as "References",
+  length(file.outlinks) as "Links",
+  file.mtime as "Last Modified"
+FROM "개발일지"
+SORT file.mtime DESC
+LIMIT 30
+```""",
+        "constitutional-compliance": """```dataview
+TABLE
+  article as "Article",
+  status as "Status",
+  last_validated as "Last Validated",
+  violations as "Violations"
+FROM "개발일지"
+WHERE contains(tags, "constitutional")
+SORT article ASC
+```""",
+        "team-activity": """```dataview
+TABLE
+  author as "Author",
+  count(rows) as "Commits",
+  sum(lines_changed) as "Lines Changed",
+  file.mtime as "Last Activity"
+FROM "개발일지"
+WHERE type = "commit"
+GROUP BY author
+SORT count(rows) DESC
 ```""",
     }
 

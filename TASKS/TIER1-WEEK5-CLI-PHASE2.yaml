@@ -1,0 +1,137 @@
+task_id: "TIER1-WEEK5-2025-11-02"
+title: "Tier 1 CLI Enhancement - Phase 2"
+description: |
+  Enhance Week 4 CLI features based on user feedback and usage patterns:
+  1. Expand Dataview templates (5 new templates)
+  2. Tag sync conflict resolution
+  3. Mermaid diagram customization options
+  4. Dashboard export to PDF/PNG
+
+constitutional_basis:
+  - article: "P1"
+    rationale: "YAML contract defines all enhancement steps"
+  - article: "P2"
+    rationale: "Evidence collection via RUNS/evidence/"
+  - article: "P4"
+    rationale: "SOLID principles maintained"
+  - article: "P6"
+    rationale: "Quality gates with enhanced metrics"
+  - article: "P8"
+    rationale: "Unit tests for all new features"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P4", "P6", "P8"]
+  - type: "quality"
+    metrics:
+      unit_test_coverage: ">= 80%"
+      integration_tests: ">= 4"
+      ruff_clean: true
+
+phases:
+  - phase: "1_dataview_expansion"
+    title: "Expand Dataview Templates"
+    duration: "60 minutes"
+    tasks:
+      - "Add quality-metrics template (P6 compliance tracking)"
+      - "Add phase-summary template (milestone reporting)"
+      - "Add file-changes template (change frequency analysis)"
+      - "Add constitutional-compliance template (article tracking)"
+      - "Add team-activity template (contributor statistics)"
+      - "Update CLI help text with new templates"
+
+  - phase: "2_tag_conflict_resolution"
+    title: "Tag Sync Conflict Resolution"
+    duration: "45 minutes"
+    tasks:
+      - "Detect tag conflicts (dev-rules vs Obsidian)"
+      - "Interactive conflict resolution UI"
+      - "Merge strategies (keep-both, prefer-local, prefer-remote)"
+      - "Conflict logging to RUNS/tag-conflicts/"
+      - "Write unit tests for conflict scenarios"
+
+  - phase: "3_mermaid_customization"
+    title: "Mermaid Diagram Customization"
+    duration: "45 minutes"
+    tasks:
+      - "Add --theme option (default, dark, forest, neutral)"
+      - "Add --layout option (TB, LR, RL, BT)"
+      - "Add --max-nodes option (limit diagram complexity)"
+      - "Add custom color schemes for node types"
+      - "Write unit tests for customization options"
+
+  - phase: "4_dashboard_export"
+    title: "Dashboard Export Feature"
+    duration: "60 minutes"
+    tasks:
+      - "Add export button to Streamlit dashboard"
+      - "Implement PDF export (using matplotlib)"
+      - "Implement PNG export (chart snapshots)"
+      - "Add timestamp and metadata to exports"
+      - "Write integration tests for export"
+
+commands:
+  - phase: "setup"
+    exec: ["python", "-m", "pytest", "tests/unit/", "-v"]
+
+  - phase: "1_dataview_expansion"
+    exec: ["python", "scripts/tier1_cli.py", "dataview", "quality-metrics"]
+
+  - phase: "2_tag_conflict_resolution"
+    exec: ["python", "scripts/tier1_cli.py", "tag-sync", "--resolve-conflicts"]
+
+  - phase: "3_mermaid_customization"
+    exec: ["python", "scripts/tier1_cli.py", "mermaid", "architecture", "--theme", "dark"]
+
+  - phase: "4_dashboard_export"
+    exec: ["python", "scripts/tier1_cli.py", "tdd-dashboard", "--export", "report.pdf"]
+
+  - phase: "testing"
+    exec: ["python", "-m", "pytest", "tests/unit/test_tier1_cli_phase2.py", "-v"]
+
+success_criteria:
+  - "5 new Dataview templates functional"
+  - "Tag conflict resolution working"
+  - "Mermaid customization options implemented"
+  - "Dashboard export to PDF/PNG successful"
+  - "Unit test coverage >= 80%"
+  - "Integration tests pass"
+  - "Ruff validation clean"
+  - "Constitutional compliance verified"
+
+deliverables:
+  - "scripts/tier1_cli.py (enhanced)"
+  - "scripts/tdd_metrics_dashboard.py (export feature)"
+  - "scripts/tag_conflict_resolver.py (new)"
+  - "tests/unit/test_tier1_cli_phase2.py (new)"
+  - "claudedocs/TIER1_WEEK5_CLI_PHASE2.md (documentation)"
+  - "RUNS/evidence/TIER1-WEEK5-2025-11-02/ (evidence)"
+
+time_estimate:
+  total: "3 hours"
+  breakdown:
+    dataview_templates: "60 min"
+    tag_conflicts: "45 min"
+    mermaid_custom: "45 min"
+    dashboard_export: "60 min"
+    testing: "30 min (included)"
+
+roi_projection:
+  time_investment: "3 hours"
+  time_saved_per_week: "1.5 hours (additional automation)"
+  payback_period: "2 weeks"
+  annual_roi: "2500%"
+  cumulative_with_week4: "5573%"
+
+dependencies:
+  - "Week 4 CLI expansion complete"
+  - "tier1_cli.py functional"
+  - "tdd_metrics_dashboard.py functional"
+
+risks:
+  - risk: "PDF export dependency (matplotlib/reportlab)"
+    mitigation: "Optional feature with graceful degradation"
+  - risk: "Tag conflict complexity"
+    mitigation: "Start with simple merge strategies"
+  - risk: "Mermaid theme compatibility"
+    mitigation: "Test with mermaid.live validation"
