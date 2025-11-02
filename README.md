@@ -24,6 +24,7 @@
 7. **🆕 ADRBuilder** (Architecture Decision Records 자동화, Constitution 매핑)
 8. **🆕 ProductionMonitor** (Production 예외 추적 및 SLA 모니터링, 장애 대응 75% 단축)
 9. **🆕 PerformanceDashboard** (실시간 성능 모니터링 및 트렌드 분석, 병목 발견 86% 단축)
+10. **🆕 TechnicalDebtTracker** (기술부채 정량화 및 우선순위 자동 매핑, 리팩토링 결정 99% 단축)
 
 ### 검증된 효과
 

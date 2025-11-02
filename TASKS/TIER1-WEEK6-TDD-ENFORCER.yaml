@@ -1,0 +1,202 @@
+task_id: "TIER1-WEEK6-2025-11-02"
+title: "Tier 1 Week 6 - TDD Enforcer Enhancement"
+description: |
+  Enhance TDD enforcement with automated coverage tracking, quality gates,
+  and pre-commit validation to ensure 100% test-first development.
+
+  Building on Phase 2's dashboard and metrics, this adds enforcement layer
+  to prevent commits without tests and track TDD compliance over time.
+
+constitutional_basis:
+  - article: "P1"
+    rationale: "YAML contract defines enforcement strategy"
+  - article: "P2"
+    rationale: "Evidence collection for all TDD violations"
+  - article: "P8"
+    rationale: "Core focus - Test-First Development enforcement"
+  - article: "P6"
+    rationale: "Quality gates for test coverage and TDD compliance"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P6", "P8"]
+  - type: "quality"
+    metrics:
+      unit_test_coverage: ">= 90%"
+      tdd_compliance_rate: ">= 95%"
+      ruff_clean: true
+
+phases:
+  - phase: "1_coverage_enforcement"
+    title: "Coverage Gate Enhancement"
+    duration: "45 minutes"
+    tasks:
+      - "Enhance tdd_enforcer.py with stricter validation"
+      - "Add per-file coverage requirements (min 80%)"
+      - "Detect test files for all production files"
+      - "Block commits with uncovered code"
+      - "Generate coverage gap reports"
+
+  - phase: "2_tdd_workflow_tracking"
+    title: "TDD Workflow Tracking"
+    duration: "60 minutes"
+    tasks:
+      - "Track test-first vs test-after commits"
+      - "Analyze git commit timestamps (test before code)"
+      - "Generate TDD compliance score per developer"
+      - "Weekly TDD compliance reports"
+      - "Integration with tier1_cli.py tdd command"
+
+  - phase: "3_automated_test_generation"
+    title: "Smart Test Generation Suggestions"
+    duration: "45 minutes"
+    tasks:
+      - "Detect functions without tests"
+      - "Generate test template skeletons"
+      - "Suggest test cases based on function signature"
+      - "Integration with test_generator.py"
+      - "CLI command: tier1 generate-tests <file>"
+
+  - phase: "4_quality_dashboard_integration"
+    title: "Dashboard Integration"
+    duration: "30 minutes"
+    tasks:
+      - "Add TDD compliance trends to dashboard"
+      - "Show per-developer TDD scores"
+      - "Coverage gap visualization"
+      - "Test generation suggestions in UI"
+      - "Real-time enforcement status"
+
+commands:
+  - phase: "setup"
+    exec: ["python", "-m", "pytest", "tests/unit/", "-v"]
+
+  - phase: "1_coverage_enforcement"
+    exec: ["python", "scripts/tdd_enforcer.py", "--strict"]
+
+  - phase: "2_tdd_workflow_tracking"
+    exec: ["python", "scripts/tier1_cli.py", "tdd", "report"]
+
+  - phase: "3_automated_test_generation"
+    exec: ["python", "scripts/tier1_cli.py", "generate-tests", "scripts/example.py"]
+
+  - phase: "4_quality_dashboard_integration"
+    exec: ["streamlit", "run", "scripts/tdd_metrics_dashboard.py"]
+
+  - phase: "testing"
+    exec: ["python", "-m", "pytest", "tests/unit/test_tdd_enforcer_enhanced.py", "-v"]
+
+success_criteria:
+  - "Coverage enforcement blocks uncovered commits"
+  - "TDD compliance tracking functional"
+  - "Test generation suggestions working"
+  - "Dashboard shows TDD metrics"
+  - "Pre-commit hook integration successful"
+  - "Unit test coverage >= 90%"
+  - "Ruff validation clean"
+  - "Constitutional compliance verified"
+
+deliverables:
+  - "scripts/tdd_enforcer_enhanced.py (new)"
+  - "scripts/tdd_workflow_tracker.py (new)"
+  - "scripts/test_generator.py (enhanced)"
+  - "scripts/tier1_cli.py (tdd commands enhanced)"
+  - "scripts/tdd_metrics_dashboard.py (enhanced)"
+  - "tests/unit/test_tdd_enforcer_enhanced.py (new)"
+  - "claudedocs/TIER1_WEEK6_TDD_ENFORCER.md (documentation)"
+  - "RUNS/evidence/TIER1-WEEK6-2025-11-02/ (evidence)"
+
+time_estimate:
+  total: "3 hours"
+  breakdown:
+    coverage_enforcement: "45 min"
+    workflow_tracking: "60 min"
+    test_generation: "45 min"
+    dashboard_integration: "30 min"
+    testing: "included"
+
+roi_projection:
+  time_investment: "3 hours"
+  time_saved_per_week: "5 hours (prevented debugging, enforced quality)"
+  payback_period: "0.6 weeks"
+  annual_roi: "8,667%"
+  cumulative_with_phase2: "17,602%"
+
+dependencies:
+  - "Phase 2 complete (tdd_metrics_dashboard.py exists)"
+  - "tdd_enforcer.py functional"
+  - "tier1_cli.py functional"
+  - "Pre-commit hooks installed"
+
+risks:
+  - risk: "Too strict enforcement frustrates developers"
+    mitigation: "Gradual rollout with warnings before blocking"
+  - risk: "False positives in test detection"
+    mitigation: "Configurable patterns and exemption list"
+  - risk: "Performance impact on large repos"
+    mitigation: "Cache coverage data, incremental checks only"
+
+features:
+  coverage_enforcement:
+    - "Per-file minimum coverage (default: 80%)"
+    - "Configurable exemptions (.tdd-ignore)"
+    - "Coverage gap reports with suggested tests"
+    - "Pre-commit hook integration"
+    - "Warning mode vs blocking mode"
+
+  workflow_tracking:
+    - "Git timestamp analysis (test commits before code)"
+    - "TDD compliance score per developer"
+    - "Weekly/monthly compliance trends"
+    - "Violation logging to RUNS/tdd-violations/"
+    - "Automatic report generation"
+
+  test_generation:
+    - "Detect untested functions via AST analysis"
+    - "Generate pytest template skeletons"
+    - "Suggest test cases from type hints"
+    - "Integration with existing test_generator.py"
+    - "CLI: tier1 generate-tests --file <path>"
+
+  dashboard_integration:
+    - "TDD compliance trend charts"
+    - "Per-developer TDD scores"
+    - "Coverage gap heatmap"
+    - "Top untested files list"
+    - "Test generation queue"
+
+configuration:
+  .tdd-enforcer.yaml:
+    enforcement:
+      mode: "warning"  # warning | blocking
+      min_coverage: 80
+      min_tdd_compliance: 95
+
+    exemptions:
+      - "scripts/legacy/*"
+      - "scripts/experimental/*"
+      - "tests/*"
+
+    tracking:
+      window_days: 30
+      report_frequency: "weekly"
+
+    generation:
+      template: "pytest"
+      max_suggestions: 10
+
+metrics:
+  before:
+    tdd_compliance: "~60%"
+    coverage_enforcement: "manual"
+    test_gap_visibility: "low"
+
+  after:
+    tdd_compliance: ">95%"
+    coverage_enforcement: "automated"
+    test_gap_visibility: "high"
+
+  improvement:
+    tdd_compliance: "+35 percentage points"
+    bugs_prevented: "~40% reduction"
+    review_time: "-30% (less coverage debates)"
