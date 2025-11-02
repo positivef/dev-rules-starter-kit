@@ -347,8 +347,8 @@ class TestTDDMetricsDashboard:
 
         gates = calculate_quality_gates(df)
 
-        assert gates["coverage_gate"] is True  # Use == instead of is for boolean comparison
-        assert gates["test_count_gate"] is True
+        assert gates["coverage_gate"]  # NumPy boolean truthiness check
+        assert gates["test_count_gate"]
         assert gates["overall_status"] == "PASS"
 
 
