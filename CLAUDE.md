@@ -13,25 +13,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```yaml
 사용자가 말하면 → 해당 문서 읽기:
-  "마이그레이션|기존 프로젝트|도입":
+  "마이그레이션|기존 프로젝트|도입|migration|migrate|existing project|legacy":
     → Read docs/MIGRATION_GUIDE.md
 
-  "멀티 세션|동시 작업|충돌|세션 간":
+  "멀티 세션|동시 작업|충돌|세션 간|multi session|concurrent|parallel|collaboration|lock":
     → Read docs/MULTI_SESSION_GUIDE.md
 
-  "Level 0|Level 1|Level 2|Level 3|단계별|채택":
+  "Level 0|Level 1|Level 2|Level 3|단계별|채택|adoption|progressive|gradual|onboarding":
     → Read docs/ADOPTION_GUIDE.md
 
-  "부작용|위험|트레이드오프|완화":
+  "부작용|위험|트레이드오프|완화|side effect|risk|mitigation|trade-off|tradeoff":
     → Read docs/TRADEOFF_ANALYSIS.md
 
-  "처음|시작|빠르게|5분":
+  "처음|시작|빠르게|5분|quick start|getting started|beginner|first time":
     → Read docs/QUICK_START.md
 
-  "방향성|정체성|무엇을":
+  "방향성|정체성|무엇을|vision|philosophy|north star|identity|what is":
     → Read NORTH_STAR.md
 
-  "Constitution 전문|조항 상세|P1-P15 상세":
+  "Constitution 전문|조항 상세|P1-P15 상세|full constitution|article details|all principles":
     → Read config/constitution.yaml
 ```
 
