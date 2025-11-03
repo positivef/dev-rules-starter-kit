@@ -1,3 +1,29 @@
+---
+title: "Migration Guide - 기존 프로젝트 적용하기"
+description: "Constitution 시스템을 기존 프로젝트에 도입하는 단계별 전략 및 위험 완화 방법"
+audience:
+  - "팀 리더"
+  - "기존 프로젝트 관리자"
+  - "DevOps 엔지니어"
+estimated_time: "1일(평가) + 1주(통합) + 2-4주(점진적 강제)"
+difficulty: "Medium"
+prerequisites:
+  - "ADOPTION_GUIDE.md"
+  - "QUICK_START.md"
+  - "기존 Git 워크플로우 이해"
+related_docs:
+  - "ADOPTION_GUIDE.md"
+  - "TRADEOFF_ANALYSIS.md"
+  - "MULTI_SESSION_GUIDE.md"
+tags:
+  - "migration"
+  - "legacy"
+  - "integration"
+  - "risk-management"
+last_updated: "2025-11-04"
+version: "1.0.0"
+---
+
 # Migration Guide - 기존 프로젝트 적용하기
 
 **대상**: Constitution 시스템을 기존 프로젝트에 도입하고 싶은 팀

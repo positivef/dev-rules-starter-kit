@@ -1,3 +1,36 @@
+---
+title: "Tradeoff Analysis - 부작용 분석 및 완화"
+description: "Constitution 도입 시 발생 가능한 7가지 부작용과 완화 전략 (P14 Second-Order Effects 적용)"
+audience:
+  - "의사결정자"
+  - "팀 리더"
+  - "리스크 관리자"
+  - "CTO/VP Engineering"
+estimated_time: "10분 (읽기) + 채택 전 필독"
+difficulty: "Intermediate"
+prerequisites:
+  - "ADOPTION_GUIDE.md"
+  - "P14 이해 (2차 효과 분석)"
+related_docs:
+  - "ADOPTION_GUIDE.md"
+  - "MIGRATION_GUIDE.md"
+  - "QUICK_START.md"
+  - "MULTI_SESSION_GUIDE.md"
+tags:
+  - "tradeoff"
+  - "risk"
+  - "mitigation"
+  - "side-effects"
+  - "P14"
+  - "second-order"
+last_updated: "2025-11-04"
+version: "1.0.0"
+principles_applied:
+  - "P14: Second-Order Effects (이 문서 자체가 실천)"
+  - "P15: Convergence Principle (80% 도달 시 중단)"
+side_effects_covered: 7
+---
+
 # Tradeoff Analysis - 부작용 분석 및 완화
 
 **목적**: Constitution 시스템 도입 시 발생할 수 있는 부작용 예측 및 완화 전략

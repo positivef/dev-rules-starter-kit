@@ -1,3 +1,36 @@
+---
+title: "Adoption Guide - 단계별 채택 전략"
+description: "Level 0부터 Level 3까지 점진적으로 Constitution을 채택하는 전략 (완벽보다는 지속 가능한 개선)"
+audience:
+  - "모든 팀 (처음 시작하는 사람 포함)"
+  - "팀 리더"
+  - "개발자"
+estimated_time: "1일(Level 0) → 1주(Level 1) → 2주(Level 2) → 1개월(Level 3)"
+difficulty: "Beginner to Advanced"
+prerequisites:
+  - "QUICK_START.md"
+  - "TRADEOFF_ANALYSIS.md (채택 전 읽기)"
+related_docs:
+  - "QUICK_START.md"
+  - "MIGRATION_GUIDE.md"
+  - "MULTI_SESSION_GUIDE.md"
+  - "TRADEOFF_ANALYSIS.md"
+  - "NORTH_STAR.md"
+tags:
+  - "adoption"
+  - "progressive"
+  - "levels"
+  - "onboarding"
+  - "gradual"
+last_updated: "2025-11-04"
+version: "1.0.0"
+levels:
+  - "Level 0: Minimal (1일, 20% 자동화)"
+  - "Level 1: Light (1주, 50% 자동화)"
+  - "Level 2: Standard (2주, 80% 자동화)"
+  - "Level 3: Full (1개월, 95% 자동화)"
+---
+
 # Adoption Guide - 단계별 채택 전략
 
 **목표**: Constitution 시스템을 부담 없이 시작하고 점진적으로 확대

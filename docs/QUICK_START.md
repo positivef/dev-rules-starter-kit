@@ -1,3 +1,36 @@
+---
+title: "Quick Start - 5분 시작 가이드"
+description: "5분 안에 Constitution의 핵심 3가지 체험: Git 표준화, 코드 품질, YAML 계약서"
+audience:
+  - "처음 시작하는 개발자"
+  - "Constitution 초보자"
+  - "평가 단계 사용자"
+estimated_time: "5분 (1분+2분+2분)"
+difficulty: "Beginner"
+prerequisites:
+  - "Git 기본 이해"
+  - "Python 환경 (Level 1+용)"
+related_docs:
+  - "ADOPTION_GUIDE.md"
+  - "NORTH_STAR.md"
+  - "TRADEOFF_ANALYSIS.md"
+  - "CLAUDE.md"
+  - "MIGRATION_GUIDE.md"
+tags:
+  - "quickstart"
+  - "beginner"
+  - "onboarding"
+  - "5-minutes"
+  - "first-time"
+last_updated: "2025-11-04"
+version: "1.0.0"
+steps:
+  - "1분: Git Commit 표준화"
+  - "2분: 코드 품질 체크"
+  - "2분: 첫 YAML 계약서"
+next_step: "ADOPTION_GUIDE.md (Level 1 Light Setup)"
+---
+
 # Quick Start - 5분 시작 가이드
 
 **목표**: 5분 안에 Constitution 시스템 체험하기

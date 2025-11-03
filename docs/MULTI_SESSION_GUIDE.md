@@ -1,3 +1,32 @@
+---
+title: "Multi-AI Session Guide - 동시 협업 워크플로우"
+description: "1명 개발자가 3-4개 AI 세션을 동시에 운영하며 파일 충돌을 방지하는 워크플로우"
+audience:
+  - "Solo 개발자 (1명)"
+  - "멀티 AI 세션 운영자"
+  - "고급 사용자"
+estimated_time: "30분(Setup) + 20분(첫 멀티 세션)"
+difficulty: "Advanced"
+prerequisites:
+  - "ADOPTION_GUIDE.md (Level 2+)"
+  - "CLAUDE.md (기본 워크플로우)"
+  - "agent_sync.py 이해"
+related_docs:
+  - "CLAUDE.md"
+  - "ADOPTION_GUIDE.md"
+  - "SESSION_MANAGEMENT_GUIDE.md"
+  - "TRADEOFF_ANALYSIS.md"
+tags:
+  - "multi-session"
+  - "collaboration"
+  - "file-locking"
+  - "concurrent"
+  - "advanced"
+last_updated: "2025-11-04"
+version: "1.0.0"
+use_case: "1 Developer + 3-4 AI Sessions"
+---
+
 # Multi-AI Session Guide - 동시 협업 워크플로우
 
 **Use Case**: 1명 개발자 + 3-4 AI 세션 동시 작업
