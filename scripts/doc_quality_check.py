@@ -8,9 +8,25 @@ Tracks quality metrics for documentation as defined in TRADEOFF_ANALYSIS.md:
 - Bounce rate: Target <10%
 
 Usage:
+    # Basic structure check
     python scripts/doc_quality_check.py --check
+
+    # Full quality report (ASCII-safe for terminal, emoji in saved file)
     python scripts/doc_quality_check.py --report
-    python scripts/doc_quality_check.py --simulate
+
+    # Full quality report with emoji in console (may not work on Windows)
+    python scripts/doc_quality_check.py --report --emoji
+
+    # Simulate user navigation
+    python scripts/doc_quality_check.py --simulate "CLAUDE.md" "migration"
+
+    # JSON output
+    python scripts/doc_quality_check.py --report --json
+
+Output Modes:
+    - Console: ASCII-safe brackets ([OK], [FAIL]) for Windows terminal (P10)
+    - File: Emoji symbols (✅, ❌, 📊) for web/Obsidian viewing
+    - --emoji flag: Try to display emoji in console (with fallback)
 """
 
 import argparse
@@ -240,10 +256,38 @@ class DocumentationMetrics:
             "target_met": total_time < 120,  # <2 minutes
         }
 
-    def generate_report(self) -> str:
-        """Generate a comprehensive quality report."""
+    def generate_report(self, use_emoji: bool = False) -> str:
+        """Generate a comprehensive quality report.
+
+        Args:
+            use_emoji: If True, use emoji symbols for better readability
+                      (for file output, web, Obsidian). If False, use
+                      ASCII-safe brackets (for Windows terminal).
+        """
         structure = self.check_documentation_structure()
         navigation = self.calculate_navigation_complexity()
+
+        # Symbol mapping based on output mode
+        if use_emoji:
+            symbols = {
+                "structure": "📊 STRUCTURE ANALYSIS",
+                "navigation": "🧭 NAVIGATION ANALYSIS",
+                "quality": "🎯 QUALITY SCORES",
+                "warning": "⚠️ WARNING",
+                "ok": "✅",
+                "fail": "❌",
+                "saved": "📄",
+            }
+        else:
+            symbols = {
+                "structure": "[STRUCTURE ANALYSIS]",
+                "navigation": "[NAVIGATION ANALYSIS]",
+                "quality": "[QUALITY SCORES]",
+                "warning": "[WARNING]",
+                "ok": "[OK]",
+                "fail": "[FAIL]",
+                "saved": "[SAVED]",
+            }
 
         report = []
         report.append("=" * 60)
@@ -253,7 +297,7 @@ class DocumentationMetrics:
         report.append("")
 
         # Structure Analysis
-        report.append("[STRUCTURE ANALYSIS]")
+        report.append(symbols["structure"])
         report.append("-" * 60)
         report.append(f"Total Guides: {structure['total_guides']}")
         report.append(
@@ -270,14 +314,14 @@ class DocumentationMetrics:
         )
 
         if structure["missing_elements"]:
-            report.append("\n[WARNING] Missing Elements:")
+            report.append(f"\n{symbols['warning']} Missing Elements:")
             for elem in structure["missing_elements"]:
                 report.append(f"  - {elem}")
 
         report.append("")
 
         # Navigation Analysis
-        report.append("[NAVIGATION ANALYSIS]")
+        report.append(symbols["navigation"])
         report.append("-" * 60)
         report.append(f"Documents Analyzed: {navigation['docs_analyzed']}")
         report.append(f"Avg Document Length: {navigation['avg_document_length']} lines")
@@ -288,12 +332,13 @@ class DocumentationMetrics:
             f"Estimated Navigation Time: {navigation['estimated_navigation_time_minutes']} minutes "
             f"({navigation['estimated_navigation_time_seconds']} seconds)"
         )
-        report.append(f"Target (<2 minutes): {'[OK] MET' if navigation['target_met'] else '[FAIL] NOT MET'}")
+        target_status = f"{symbols['ok']} MET" if navigation["target_met"] else f"{symbols['fail']} NOT MET"
+        report.append(f"Target (<2 minutes): {target_status}")
 
         report.append("")
 
         # Quality Scores
-        report.append("[QUALITY SCORES]")
+        report.append(symbols["quality"])
         report.append("-" * 60)
 
         # Overall score (weighted average)
@@ -350,6 +395,11 @@ def main():
         action="store_true",
         help="Output in JSON format",
     )
+    parser.add_argument(
+        "--emoji",
+        action="store_true",
+        help="Use emoji symbols in output (for web/Obsidian viewing)",
+    )
 
     args = parser.parse_args()
 
@@ -366,19 +416,33 @@ def main():
             print(f"  Cross-Reference Coverage: {structure['cross_reference_coverage']:.1f}%")
 
     elif args.report:
-        report = metrics.generate_report()
-        # P10: Windows UTF-8 compliance - use ASCII-safe output
+        # Console output: ASCII-safe for Windows terminal (P10 compliance)
+        console_report = metrics.generate_report(use_emoji=False)
         try:
-            print(report)
+            print(console_report)
         except UnicodeEncodeError:
             # Fallback: ASCII-safe output
-            ascii_report = report.encode("ascii", "ignore").decode("ascii")
+            ascii_report = console_report.encode("ascii", "ignore").decode("ascii")
             print(ascii_report)
 
-        # Also save to file
+        # File output: Use emoji for better readability in web/Obsidian
+        # User can override with --emoji flag for console too
+        file_report = metrics.generate_report(use_emoji=True)
         report_file = Path("RUNS/doc_metrics/latest_report.txt")
         report_file.parent.mkdir(parents=True, exist_ok=True)
-        report_file.write_text(report, encoding="utf-8")
+        report_file.write_text(file_report, encoding="utf-8")
+
+        # If user explicitly wants emoji in console
+        if args.emoji:
+            print("\n" + "=" * 60)
+            print("EMOJI VERSION (for copy-paste to web/Obsidian):")
+            print("=" * 60)
+            try:
+                print(file_report)
+            except UnicodeEncodeError:
+                print("[WARNING] Cannot display emoji in this terminal.")
+                print("Emoji version saved to file. View the file in web browser or Obsidian.")
+
         print(f"\n[SAVED] Report saved to: {report_file}")
 
     elif args.simulate:
@@ -388,12 +452,34 @@ def main():
         if args.json:
             print(json.dumps(session, indent=2, ensure_ascii=False))
         else:
-            print("\n[USER SESSION SIMULATION]")
-            print(f"  Start: {session['start_doc']}")
-            print(f"  Looking for: {session['target_info']}")
-            print(f"  Found in: {session.get('target_doc_found', 'N/A')}")
-            print(f"  Navigation Time: {session['navigation_time_minutes']} minutes")
-            print(f"  Target Met: {'[OK] Yes' if session.get('target_met') else '[FAIL] No'}")
+            # Use emoji if requested
+            if args.emoji:
+                header = "🔍 USER SESSION SIMULATION"
+                ok_symbol = "✅"
+                fail_symbol = "❌"
+            else:
+                header = "[USER SESSION SIMULATION]"
+                ok_symbol = "[OK]"
+                fail_symbol = "[FAIL]"
+
+            try:
+                print(f"\n{header}")
+                print(f"  Start: {session['start_doc']}")
+                print(f"  Looking for: {session['target_info']}")
+                print(f"  Found in: {session.get('target_doc_found', 'N/A')}")
+                print(f"  Navigation Time: {session['navigation_time_minutes']} minutes")
+                target_met = f"{ok_symbol} Yes" if session.get("target_met") else f"{fail_symbol} No"
+                print(f"  Target Met: {target_met}")
+            except UnicodeEncodeError:
+                # Fallback to ASCII if emoji doesn't work
+                print("\n[USER SESSION SIMULATION]")
+                print(f"  Start: {session['start_doc']}")
+                print(f"  Looking for: {session['target_info']}")
+                print(f"  Found in: {session.get('target_doc_found', 'N/A')}")
+                print(f"  Navigation Time: {session['navigation_time_minutes']} minutes")
+                target_met = "[OK] Yes" if session.get("target_met") else "[FAIL] No"
+                print(f"  Target Met: {target_met}")
+                print("[INFO] Emoji not supported in this terminal, using ASCII-safe output.")
 
     else:
         parser.print_help()
