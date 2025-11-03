@@ -1,0 +1,30 @@
+============================================================
+DOCUMENTATION QUALITY REPORT
+============================================================
+Generated: 2025-11-04 03:07:43
+
+[STRUCTURE ANALYSIS]
+------------------------------------------------------------
+Total Guides: 5
+Frontmatter Coverage: 100.0% (5/5)
+Metadata Completeness: 100.0% (5/5)
+Cross-Reference Coverage: 100.0% (5/5)
+
+[NAVIGATION ANALYSIS]
+------------------------------------------------------------
+Documents Analyzed: 33
+Avg Document Length: 387.5 lines
+Avg Cross-References: 2.3 per doc
+Total Cross-References: 75
+
+Estimated Navigation Time: 1.46 minutes (87.4 seconds)
+Target (<2 minutes): [OK] MET
+
+[QUALITY SCORES]
+------------------------------------------------------------
+Structure Quality: 100.0/100
+Navigation Quality: 100.0/100
+Overall Quality: 100.0/100
+Grade: A (Excellent)
+
+============================================================
