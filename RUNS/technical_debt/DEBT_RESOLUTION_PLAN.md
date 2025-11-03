@@ -52,6 +52,15 @@
 
 **대상**:
 ```python
+# 우선순위 0: P10 Windows UTF-8 준수 (PENDING)
+# 파일: examples/technical_debt_demo.py
+# 이슈: 329개 한글 문자 (주석 및 print 문)
+# 영향: Code Review 0/100 점수, 하지만 실제 오류 없음
+# 해결: 주석을 영어로 변경 OR 제거
+# 시간: 30분
+# 실제 위험도: LOW (Python 3.x에서 작동함)
+# 우선순위: DEFERRED (나중에 해결)
+
 # 우선순위 1: Import 최적화 (~20개)
 - unused imports 제거
 - import 순서 정리
@@ -63,7 +72,7 @@
 - 변수명 개선
 ```
 
-**예상 시간**: 3시간 (주당 1시간 × 3주)
+**예상 시간**: 3.5시간 (P10 수정 0.5h + 기존 3h)
 **기대 효과**: 266개 → 240개 (-10%)
 
 ### Phase 3: 점진적 개선 (Months 2-3)
@@ -242,11 +251,16 @@ Target: <100 items by 2026-02-01
 ✅ P3-3 TechnicalDebtTracker 구현 완료
 ✅ 베이스라인 측정: 266 items
 ✅ 해결 계획 수립
+⚠️ Code Review 발견: P10 위반 (examples/technical_debt_demo.py)
+   - 329개 한글 문자 발견
+   - 실제 위험도: LOW (Python 3.x 작동함)
+   - 결정: 나중에 수정 (Phase 2 Quick Wins에 추가)
 ⏸️ 실행 보류 (다음 세션부터 시작)
 
 다음 액션:
 - Phase 1 준비 (팀 회의)
 - 주간 루틴 시작
+- P10 수정 (선택적, 30분)
 ```
 
 ---

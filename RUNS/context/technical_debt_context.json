@@ -154,6 +154,19 @@
     "압박감 (266개나!)"
   ],
 
+  "p10_utf8_issue": {
+    "file": "examples/technical_debt_demo.py",
+    "violations": 329,
+    "type": "Korean characters in comments and print statements",
+    "code_review_score": "0/100",
+    "actual_risk": "LOW",
+    "reason": "Python 3.x handles UTF-8, program runs correctly",
+    "decision": "DEFERRED to Phase 2 Quick Wins",
+    "estimated_fix_time": "30 minutes",
+    "priority": "OPTIONAL",
+    "status": "PENDING"
+  },
+
   "metadata": {
     "last_updated": "2025-11-02T21:30:00+09:00",
     "next_review": "2025-11-09",
