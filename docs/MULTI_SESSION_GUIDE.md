@@ -345,5 +345,24 @@ sync_strategy:
 
 ---
 
-**마지막 업데이트**: 2025-11-03
-**관련 문서**: [CLAUDE.md](../CLAUDE.md), [SESSION_MANAGEMENT_GUIDE.md](SESSION_MANAGEMENT_GUIDE.md)
+## 📚 See Also
+
+**필수 참고 문서**:
+- **[CLAUDE.md](../CLAUDE.md)** - 일상 개발 명령어 및 기본 워크플로우
+- **[ADOPTION_GUIDE.md](ADOPTION_GUIDE.md)** - Level 2-3 채택 필수 (멀티 세션은 Level 2+에서 권장)
+
+**고급 활용**:
+- **[SESSION_MANAGEMENT_GUIDE.md](SESSION_MANAGEMENT_GUIDE.md)** - 세션 상태 관리 및 체크포인트 상세
+- **[TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)** - 멀티 세션 충돌 방지 전략 (부작용 #2)
+
+**마이그레이션 팀**:
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - 기존 프로젝트에 멀티 세션 도입 시 주의사항
+
+**빠른 시작**:
+- **[QUICK_START.md](QUICK_START.md)** - 단일 세션부터 시작 추천
+
+---
+
+**마지막 업데이트**: 2025-11-04
+**대상 독자**: 1 개발자 + 3-4 AI 세션 운영자
+**소요 시간**: 30분 (Setup) + 20분 (첫 멀티 세션)

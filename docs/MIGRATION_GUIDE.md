@@ -245,5 +245,22 @@ protection:
 
 ---
 
-**마지막 업데이트**: 2025-11-03
-**관련 문서**: [ADOPTION_GUIDE.md](ADOPTION_GUIDE.md), [TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)
+## 📚 See Also
+
+**필수 참고 문서**:
+- **[ADOPTION_GUIDE.md](ADOPTION_GUIDE.md)** - Level 0-3 단계별 채택 전략 (마이그레이션 후 어떻게 확산시킬지)
+- **[TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)** - 부작용 분석 및 완화 전략 (마이그레이션 리스크 이해)
+
+**선택 참고 문서**:
+- **[QUICK_START.md](QUICK_START.md)** - 5분 빠른 시작 (Pilot 팀용)
+- **[MULTI_SESSION_GUIDE.md](MULTI_SESSION_GUIDE.md)** - 멀티 AI 세션 협업 (마이그레이션 후 고급 사용)
+- **[CLAUDE.md](../CLAUDE.md)** - 일상 개발 명령어 (마이그레이션 완료 후 참조)
+
+**철학 및 방향성**:
+- **[NORTH_STAR.md](../NORTH_STAR.md)** - Constitution 시스템의 정체성과 목표
+
+---
+
+**마지막 업데이트**: 2025-11-04
+**대상 독자**: 팀 리더, 기존 프로젝트 관리자
+**소요 시간**: 1일(평가) + 1주(통합) + 2-4주(점진적 강제)

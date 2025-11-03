@@ -408,6 +408,31 @@ Danger Signs (위험 신호):
 
 ---
 
-**마지막 업데이트**: 2025-11-03
-**P14 적용**: 이 문서 자체가 P14 실천
-**관련 문서**: [ADOPTION_GUIDE.md](ADOPTION_GUIDE.md), [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+## 📚 See Also
+
+**반드시 함께 읽기**:
+- **[ADOPTION_GUIDE.md](ADOPTION_GUIDE.md)** - 부작용 완화 전략 적용 (Progressive Adoption)
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - 기존 프로젝트 리스크 관리 (Risk Mitigation)
+
+**실제 사례**:
+- **부작용 #1 (학습 곡선)** → ADOPTION_GUIDE Level 0-3 참조
+- **부작용 #2 (과도한 규제)** → ADOPTION_GUIDE Flexibility Rules 참조
+- **부작용 #3 (구축 비용)** → MIGRATION_GUIDE Phase 2 Soft Integration 참조
+- **부작용 #7 (문서 분산)** → 이 문서의 실제 적용 사례
+
+**성공 전략**:
+- **[QUICK_START.md](QUICK_START.md)** - 부작용 최소화하며 시작 (Zero Friction)
+- **[MULTI_SESSION_GUIDE.md](MULTI_SESSION_GUIDE.md)** - 팀 저항 완화 (부작용 #5)
+
+**측정 및 모니터링**:
+- **[CLAUDE.md](../CLAUDE.md)** - 일상 지표 추적 (Override 사용률, Level 진행 등)
+
+**철학 및 수렴 원칙**:
+- **P14 (Second-Order Effects)** - 이 문서 자체가 P14 실천
+- **P15 (Convergence Principle)** - 80% 도달 시 개선 중단 기준
+
+---
+
+**마지막 업데이트**: 2025-11-04
+**대상 독자**: 의사결정자, 팀 리더, 리스크 관리자
+**P14 적용**: 이 문서 자체가 2차 효과 분석의 실천 사례

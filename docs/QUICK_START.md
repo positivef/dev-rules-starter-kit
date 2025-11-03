@@ -2,6 +2,7 @@
 
 **목표**: 5분 안에 Constitution 시스템 체험하기
 **대상**: 처음 시작하는 개발자
+**소요 시간**: 5분 (1분+2분+2분)
 
 ## ⚡ 1분: Git Commit 표준화
 
@@ -55,3 +56,41 @@ task_id: "MY-FIRST-TASK"
 title: "첫 번째 작업"
 commands:
   - exec: ["echo", "Hello Constitution!"]
+
+EOF
+
+# 2. 실행
+python scripts/task_executor.py TASKS/MY-FIRST-TASK.yaml
+
+# ✅ 완료! 자동 증거 수집됨
+```
+
+**효과**:
+- 작업 자동 문서화
+- 재현 가능한 프로세스
+- Knowledge Asset 시작
+
+---
+
+## 🎉 5분 완료! 다음 단계는?
+
+### 📚 See Also
+
+**5분 체험 후 다음**:
+- **[ADOPTION_GUIDE.md](ADOPTION_GUIDE.md)** - Level 0-3 단계별 채택 (5분 → 1주 → 1개월)
+
+**더 깊이 이해하기**:
+- **[NORTH_STAR.md](../NORTH_STAR.md)** - 왜 Constitution인가? (철학 이해)
+- **[TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)** - 부작용은 없나? (현실적 기대치)
+
+**실전 적용**:
+- **[CLAUDE.md](../CLAUDE.md)** - 일상 개발 명령어 (매일 참조)
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - 기존 프로젝트 적용 (팀 도입)
+
+**고급 활용** (나중에):
+- **[MULTI_SESSION_GUIDE.md](MULTI_SESSION_GUIDE.md)** - 멀티 AI 세션 협업
+
+---
+
+**마지막 업데이트**: 2025-11-04
+**다음 단계**: Level 1 Light Setup (1주)

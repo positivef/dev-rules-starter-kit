@@ -413,5 +413,28 @@ graph LR
 
 ---
 
-**마지막 업데이트**: 2025-11-03
-**관련 문서**: [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md), [TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)
+## 📚 See Also
+
+**필수 읽기** (채택 전):
+- **[QUICK_START.md](QUICK_START.md)** - 5분 체험으로 시작 (Level 0 실습)
+- **[TRADEOFF_ANALYSIS.md](TRADEOFF_ANALYSIS.md)** - 부작용 이해 (채택 전 필독!)
+
+**다음 단계**:
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - 기존 프로젝트 도입 전략 (Level 1-2 도달 후)
+- **[MULTI_SESSION_GUIDE.md](MULTI_SESSION_GUIDE.md)** - 멀티 AI 세션 협업 (Level 2-3 도달 후)
+
+**일상 참조**:
+- **[CLAUDE.md](../CLAUDE.md)** - 일상 개발 명령어 (Level 1+ 부터 매일 참조)
+
+**철학 및 방향성**:
+- **[NORTH_STAR.md](../NORTH_STAR.md)** - 왜 이 시스템을 사용하는가? (동기 부여)
+
+**커뮤니티**:
+- GitHub Issues - 버그 리포트
+- Discussions - 질문 및 아이디어
+
+---
+
+**마지막 업데이트**: 2025-11-04
+**대상 독자**: 모든 팀 (처음 시작하는 사람 포함)
+**소요 시간**: 1일(Level 0) → 1주(Level 1) → 2주(Level 2) → 1개월(Level 3)
