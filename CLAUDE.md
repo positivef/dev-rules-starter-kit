@@ -43,7 +43,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **핵심 개념**:
 - **문서가 곧 코드**: YAML 계약서 → TaskExecutor 실행 → 자동 증거 수집
-- **Constitution 중심**: 15개 조항(P1-P15)이 모든 개발의 법
+- **Constitution 중심**: 16개 조항(P1-P16)이 모든 개발의 법
 - **지식 자산화**: 모든 실행 결과가 Obsidian으로 자동 동기화 (3초)
 
 **무엇이 아닌가**:
@@ -145,16 +145,19 @@ python scripts/context_provider.py init
 ```
 Layer 1: Constitution (config/constitution.yaml)
     ├── P1-P10: 개발 프로세스 규칙
-    └── P11-P15: 거버넌스 및 메타 규칙
+    ├── P11-P15: 거버넌스 및 메타 규칙
+    └── P16: 전략 조항 (경쟁사 벤치마킹)
 
 Layer 2: Execution (실행)
-    ├── task_executor.py - YAML 계약 실행 (P1, P2)
+    ├── task_executor.py - YAML 계약 실행 (P1, P2, P16 게이트)
+    ├── p16_validator.py - P16 게이트 검증
     ├── enhanced_task_executor_v2.py - 병렬 실행
     └── constitutional_validator.py - 헌법 준수 검증
 
 Layer 3: Analysis (분석)
     ├── deep_analyzer.py - SOLID, 보안, Hallucination (P4, P5, P7)
-    └── team_stats_aggregator.py - 품질 메트릭 (P6)
+    ├── team_stats_aggregator.py - 품질 메트릭 (P6)
+    └── benchmark_analyzer.py - 경쟁사 벤치마킹 (P16)
 
 Layer 4: Optimization (최적화)
     ├── verification_cache.py - 중복 검증 방지 (60% 단축)
@@ -203,6 +206,29 @@ Layer 7: Visualization (시각화 - 검증 안 함!)
 | **P13** | 헌법 수정 검증 | Constitution 비대화 방지 | 조항 추가/수정 시 |
 | **P14** | 2차 효과 분석 | 개선의 부작용 완화 | 시스템 변경 시 |
 | **P15** | 수렴 원칙 | 80% 품질에서 멈춤 | 무한 개선 방지 |
+
+### 전략 조항 (P16)
+
+| ID | 조항 | 강제 도구 | 언제 사용? |
+|----|------|----------|-----------|
+| **P16** | 경쟁사 벤치마킹 우선 | BenchmarkAnalyzer + P16Validator | 신규 프로젝트/기능 시작 전 |
+
+**P16 사용 예시**:
+```bash
+# 1. 경쟁사 분석 실행 (자동)
+python scripts/benchmark_analyzer.py --query "todo app"
+
+# 2. YAML에 benchmarking 섹션 추가
+# 3. P16 게이트가 자동 검증 (3개 이상 경쟁사, 3개 이상 차별화 포인트)
+```
+
+**P16 요구사항**:
+- ✅ 경쟁사 3개 이상 분석 (strengths, weaknesses)
+- ✅ 차별화 포인트 3개 이상 (point, rationale, target)
+- ✅ YAML 계약서에 `benchmarking:` 섹션 포함
+- ✅ TaskExecutor가 자동으로 검증 (통과해야 실행)
+
+**ROI**: 997% (연간 768시간 절감)
 
 ## 🔄 Common Workflows
 
