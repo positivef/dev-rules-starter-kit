@@ -227,7 +227,7 @@ def generate_yaml_frontmatter(commit_info: Dict[str, any]) -> str:
     # Build YAML
     yaml_lines = [
         "---",
-        f'date: {now.strftime("%Y-%m-%d")}',
+        f"date: {now.strftime('%Y-%m-%d')}",
         f'time: "{now.strftime("%H:%M")}"',
         f'project: "{project}"',
         f'topic: "{topic}"',
@@ -709,7 +709,20 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
             content = content.replace("{creation_date}", now.strftime("%Y-%m-%d"))
         else:
             # Fallback to simple MOC if template not found
-            content = rf"""# 개발일지 Map of Contents
+            dataview_block = (
+                "```dataview\n"
+                "TABLE\n"
+                '  file.link AS "작업",\n'
+                '  type AS "유형",\n'
+                '  date AS "날짜",\n'
+                '  time AS "시간"\n'
+                'FROM "개발일지"\n'
+                'WHERE file.folder != "개발일지/_backup_old_structure"\n'
+                "SORT date DESC, time DESC\n"
+                "LIMIT 20\n"
+                "```"
+            )
+            content = f"""# 개발일지 Map of Contents
 
 > 자동 생성 MOC - Dataview 플러그인이 설치되면 자동 쿼리가 실행됩니다
 
@@ -717,17 +730,7 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
 
 ## 📅 최근 작업
 
-```dataview
-TABLE
-  file.link AS "작업",
-  type AS "유형",
-  date AS "날짜",
-  time AS "시간"
-FROM "개발일지"
-WHERE file.folder != "개발일지/_backup_old_structure"
-SORT date DESC, time DESC
-LIMIT 20
-```
+{dataview_block}
 
 ---
 
