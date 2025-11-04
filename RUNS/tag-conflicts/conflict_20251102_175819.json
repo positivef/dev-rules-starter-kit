@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-02T17:58:19.267365",
+  "conflict": {
+    "file_path": "file2.yaml",
+    "dev_tags": [
+      "tag3"
+    ],
+    "obsidian_tags": [
+      "tag4"
+    ],
+    "conflict_type": "mismatch"
+  },
+  "resolution": {
+    "merged_tags": [
+      "tag3",
+      "tag4"
+    ],
+    "strategy_used": "keep-both",
+    "changes_made": "Merged 1 dev tags + 1 obsidian tags = 2 total"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "session_id": "2025-11-02_technical_debt_planning",
+  "created_at": "2025-11-02T21:30:00+09:00",
+  "status": "PLANNED",
+  "priority": "MEDIUM",
+  "completion_status": {
+    "p3_3_completed": true,
+    "technical_debt_tracker": "scripts/technical_debt_tracker.py",
+    "baseline_measured": true,
+    "resolution_plan_created": true
+  },
+
+  "current_state": {
+    "total_debt_items": 266,
+    "by_type": {
+      "code_smell": 203,
+      "high_complexity": 60,
+      "todo_comment": 3
+    },
+    "by_priority": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 266
+    },
+    "financial": {
+      "total_cost_usd": 96745,
+      "monthly_interest_usd": 4837,
+      "estimated_hours": 1935,
+      "average_complexity": 9.24
+    },
+    "conclusion": "긴급하지 않음, 계획된 관리 필요"
+  },
+
+  "resolution_plan": {
+    "strategy": "점진적 개선 (Gradual Improvement)",
+    "phases": [
+      {
+        "phase": 1,
+        "name": "준비 및 분석",
+        "timeline": "Week 1",
+        "hours": 2,
+        "status": "PENDING"
+      },
+      {
+        "phase": 2,
+        "name": "Quick Wins",
+        "timeline": "Weeks 2-4",
+        "target_items": "20-30",
+        "hours": 3,
+        "status": "PENDING"
+      },
+      {
+        "phase": 3,
+        "name": "점진적 개선",
+        "timeline": "Months 2-3",
+        "target_items": "90",
+        "hours": 16,
+        "status": "PENDING"
+      },
+      {
+        "phase": 4,
+        "name": "구조 개선",
+        "timeline": "Month 4+",
+        "target_items": "100",
+        "hours": 40,
+        "status": "PENDING"
+      }
+    ],
+
+    "weekly_routine": {
+      "day": "Friday",
+      "duration_minutes": 30,
+      "target_items": 5,
+      "enabled": false
+    },
+
+    "monthly_checkpoint": {
+      "enabled": false,
+      "next_date": "2025-12-01"
+    },
+
+    "quarterly_sprint": {
+      "enabled": false,
+      "next_dates": ["2026-03-01", "2026-06-01", "2026-09-01", "2026-12-01"]
+    }
+  },
+
+  "kpis": {
+    "monthly_targets": {
+      "debt_reduction_rate": -5,
+      "new_debt_limit": 10,
+      "average_complexity_target": 8.0,
+      "critical_high_limit": 0
+    },
+    "quarterly_targets": {
+      "total_items_target": 200,
+      "resolution_cost_limit_usd": 20000,
+      "roi_target_percent": 300,
+      "team_satisfaction_target": 8.0
+    }
+  },
+
+  "warning_signals": {
+    "immediate_action_required": [
+      "CRITICAL debt appears",
+      "Monthly debt increase > 20%",
+      "Average complexity > 10",
+      "Development speed decrease > 50%"
+    ],
+    "response": [
+      "Emergency debt resolution meeting",
+      "Temporary development pause",
+      "1-week focused refactoring"
+    ]
+  },
+
+  "files": {
+    "baseline": "RUNS/technical_debt/baseline_2025-11-02.txt",
+    "plan": "RUNS/technical_debt/DEBT_RESOLUTION_PLAN.md",
+    "tool": "scripts/technical_debt_tracker.py",
+    "guide": "docs/TECHNICAL_DEBT_TRACKER_GUIDE.md",
+    "demo": "examples/technical_debt_demo.py"
+  },
+
+  "next_session_actions": [
+    "cat RUNS/technical_debt/DEBT_RESOLUTION_PLAN.md",
+    "python scripts/technical_debt_tracker.py | head -50",
+    "Check: Weekly Friday 30min routine started?",
+    "Check: Team meeting scheduled?",
+    "Check: Definition of Done updated?"
+  ],
+
+  "reminders": [
+    "주간 루틴: 매주 금요일 30분 (5개 항목)",
+    "월간 체크포인트: 매월 첫째 주",
+    "분기 스프린트: 3, 6, 9, 12월",
+    "목표: 2026-02-01까지 100개 미만으로 감소",
+    "원칙: 점진적, 꾸준히, 측정 기반, 예방 우선"
+  ],
+
+  "lessons_learned": [
+    "점진적 개선 - 한 번에 많이 하지 말 것",
+    "꾸준함 - 주 30분이 월 8시간보다 효과적",
+    "측정 기반 - 감으로 하지 말고 데이터로",
+    "예방 우선 - 신규 부채 발생 최소화",
+    "팀 합의 - 혼자 하면 지속 불가능"
+  ],
+
+  "avoid": [
+    "대청소 시도 (1주일 집중 리팩토링)",
+    "완벽주의 (모든 부채 0개 목표)",
+    "무계획 방치 (나중에...)",
+    "압박감 (266개나!)"
+  ],
+
+  "p10_utf8_issue": {
+    "file": "examples/technical_debt_demo.py",
+    "violations": 329,
+    "type": "Korean characters in comments and print statements",
+    "code_review_score": "0/100",
+    "actual_risk": "LOW",
+    "reason": "Python 3.x handles UTF-8, program runs correctly",
+    "decision": "DEFERRED to Phase 2 Quick Wins",
+    "estimated_fix_time": "30 minutes",
+    "priority": "OPTIONAL",
+    "status": "PENDING"
+  },
+
+  "metadata": {
+    "last_updated": "2025-11-02T21:30:00+09:00",
+    "next_review": "2025-11-09",
+    "owner": "Development Team",
+    "urgency": "LOW",
+    "importance": "HIGH"
+  }
+}

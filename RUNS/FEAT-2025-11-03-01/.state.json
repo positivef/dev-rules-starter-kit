@@ -1,0 +1,5 @@
+{
+  "status": "failed",
+  "error": "Command '.venv\\Scripts\\pip' is not in the allowed commands list",
+  "failed_at": "2025-11-03T14:51:41.958604+00:00"
+}

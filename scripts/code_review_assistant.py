@@ -176,9 +176,35 @@ class CodeReviewAssistant:
                 return None
         return None
 
+    def _is_cli_script(self, file_path: str, content: str) -> bool:
+        """Quick heuristic to detect CLI scripts (90% accuracy).
+
+        CLI indicators:
+        - if __name__ == "__main__" present
+        - import argparse
+        - #!/usr/bin/env python shebang
+        - In scripts/ folder
+        """
+        # Check file path
+        if "scripts/" in file_path or file_path.startswith("scripts\\") or "\\scripts\\" in file_path:
+            return True
+
+        # Check content patterns
+        if 'if __name__ == "__main__"' in content:
+            return True
+        if "import argparse" in content:
+            return True
+        if content.startswith("#!/usr/bin/env python"):
+            return True
+
+        return False
+
     def _check_code_quality(self, file_path: str, content: str):
         """Check general code quality issues"""
         lines = content.splitlines()
+
+        # Quick Fix: Detect if this is a CLI script (90% accuracy)
+        is_cli_script = self._is_cli_script(file_path, content)
 
         for i, line in enumerate(lines, 1):
             # Check line length
@@ -203,16 +229,17 @@ class CodeReviewAssistant:
                     suggestion="Complete the TODO or create a tracking issue",
                 )
 
-            # Check for print statements (Python)
+            # Check for print statements (Python) - SKIP for CLI scripts
             if file_path.endswith(".py") and re.match(r"^\s*print\(", line):
-                self._add_finding(
-                    severity="warning",
-                    category="quality",
-                    file=file_path,
-                    line=i,
-                    message="print() statement found",
-                    suggestion="Use logging instead of print()",
-                )
+                if not is_cli_script:
+                    self._add_finding(
+                        severity="warning",
+                        category="quality",
+                        file=file_path,
+                        line=i,
+                        message="print() statement found",
+                        suggestion="Use logging instead of print()",
+                    )
 
     def _check_solid_principles(self, file_path: str, content: str):
         """

@@ -1,0 +1,591 @@
+task_id: "FEAT-2025-11-02-02"
+title: "Python TODO CLI - Constitution 기반 개발"
+project: "python_todo_cli"
+category: "feature"
+priority: "high"
+
+description: |
+  Clean Architecture 기반 Python TODO CLI 애플리케이션 구현
+  - CRUD 기능 (생성, 읽기, 수정, 삭제, 완료 토글)
+  - JSON 파일 저장소
+  - Click 프레임워크 CLI
+  - TDD 기반 개발
+  - SOLID 원칙 준수
+
+acceptance_criteria:
+  - Clean Architecture 레이어 구현 (domain/data/presentation)
+  - TODO CRUD 기능 동작
+  - ruff check 에러 0개
+  - pytest 커버리지 90% 이상
+  - deep_analyzer.py 검증 통과
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P4", "P6", "P7", "P8"]
+    enforcement: "strict"
+
+  - type: "quality"
+    metrics:
+      test_coverage: 90
+      ruff_errors: 0
+      solid_score: 85
+
+commands:
+  # 01: 프로젝트 구조 생성
+  - id: "01-create-structure"
+    description: "Clean Architecture 구조 생성"
+    exec:
+      cmd: "bash"
+      args:
+        - "-c"
+        - |
+          cd C:/Users/user/Documents/GitHub/python_todo_cli
+          mkdir -p src/domain/entities
+          mkdir -p src/domain/repositories
+          mkdir -p src/domain/usecases
+          mkdir -p src/data/models
+          mkdir -p src/data/repositories
+          mkdir -p src/presentation/cli
+          mkdir -p tests/domain
+          mkdir -p tests/data
+          mkdir -p tests/presentation
+          touch src/__init__.py
+          touch src/domain/__init__.py
+          touch src/data/__init__.py
+          touch src/presentation/__init__.py
+          echo "Clean Architecture structure created"
+
+  # 02: requirements.txt
+  - id: "02-create-requirements"
+    description: "의존성 파일 생성"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/requirements.txt"
+      content: |
+        click>=8.1.0
+        pytest>=7.4.0
+        pytest-cov>=4.1.0
+        ruff>=0.1.0
+
+  # 03: Domain Entity (P8 - Test First)
+  - id: "03-test-entity-first"
+    description: "TODO Entity 테스트 먼저 작성 (TDD)"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/tests/domain/test_todo_entity.py"
+      content: |
+        from datetime import datetime
+        import pytest
+        from src.domain.entities.todo import Todo
+
+
+        class TestTodoEntity:
+            def test_create_todo_with_required_fields(self):
+                todo = Todo(
+                    title="Test TODO",
+                    created_at=datetime.now()
+                )
+
+                assert todo.title == "Test TODO"
+                assert todo.is_completed is False
+                assert todo.description is None
+                assert todo.id is None
+
+            def test_create_completed_todo(self):
+                todo = Todo(
+                    title="Completed TODO",
+                    is_completed=True,
+                    created_at=datetime.now()
+                )
+
+                assert todo.is_completed is True
+
+            def test_todo_with_all_fields(self):
+                now = datetime.now()
+                todo = Todo(
+                    id=1,
+                    title="Complete TODO",
+                    description="Test description",
+                    is_completed=True,
+                    created_at=now
+                )
+
+                assert todo.id == 1
+                assert todo.title == "Complete TODO"
+                assert todo.description == "Test description"
+                assert todo.is_completed is True
+                assert todo.created_at == now
+
+            def test_todo_equality(self):
+                now = datetime.now()
+                todo1 = Todo(id=1, title="Test", created_at=now)
+                todo2 = Todo(id=1, title="Test", created_at=now)
+
+                assert todo1 == todo2
+
+  # 04: Domain Entity Implementation
+  - id: "04-implement-entity"
+    description: "TODO Entity 구현"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/src/domain/entities/todo.py"
+      content: |
+        from dataclasses import dataclass
+        from datetime import datetime
+        from typing import Optional
+
+
+        @dataclass
+        class Todo:
+            title: str
+            created_at: datetime
+            id: Optional[int] = None
+            description: Optional[str] = None
+            is_completed: bool = False
+
+            def __eq__(self, other):
+                if not isinstance(other, Todo):
+                    return False
+                return (
+                    self.id == other.id and
+                    self.title == other.title and
+                    self.description == other.description and
+                    self.is_completed == other.is_completed
+                )
+
+            def toggle_completion(self) -> None:
+                self.is_completed = not self.is_completed
+
+  # 05: __init__.py files
+  - id: "05-create-init-files"
+    description: "패키지 초기화 파일 생성"
+    exec:
+      cmd: "bash"
+      args:
+        - "-c"
+        - |
+          cd C:/Users/user/Documents/GitHub/python_todo_cli
+          touch src/domain/entities/__init__.py
+          touch src/domain/repositories/__init__.py
+          touch src/domain/usecases/__init__.py
+          touch tests/__init__.py
+          touch tests/domain/__init__.py
+          echo "Init files created"
+
+  # 06: Repository Interface (P4 - Dependency Inversion)
+  - id: "06-repository-interface"
+    description: "TodoRepository 인터페이스 (SOLID - DIP)"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/src/domain/repositories/todo_repository.py"
+      content: |
+        from abc import ABC, abstractmethod
+        from typing import List, Optional
+        from src.domain.entities.todo import Todo
+
+
+        class TodoRepository(ABC):
+            """
+            Repository interface for TODO operations.
+            Following SOLID - Dependency Inversion Principle (P4).
+            """
+
+            @abstractmethod
+            def get_all(self) -> List[Todo]:
+                pass
+
+            @abstractmethod
+            def get_by_id(self, todo_id: int) -> Optional[Todo]:
+                pass
+
+            @abstractmethod
+            def create(self, todo: Todo) -> Todo:
+                pass
+
+            @abstractmethod
+            def update(self, todo: Todo) -> Todo:
+                pass
+
+            @abstractmethod
+            def delete(self, todo_id: int) -> bool:
+                pass
+
+  # 07: JSON Repository Implementation
+  - id: "07-json-repository"
+    description: "JSON 파일 기반 Repository 구현"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/src/data/repositories/json_todo_repository.py"
+      content: |
+        import json
+        from pathlib import Path
+        from typing import List, Optional
+        from datetime import datetime
+        from src.domain.entities.todo import Todo
+        from src.domain.repositories.todo_repository import TodoRepository
+
+
+        class JsonTodoRepository(TodoRepository):
+            """JSON file-based TODO repository implementation."""
+
+            def __init__(self, file_path: str = "todos.json"):
+                self.file_path = Path(file_path)
+                self._ensure_file_exists()
+
+            def _ensure_file_exists(self) -> None:
+                if not self.file_path.exists():
+                    self.file_path.write_text("[]")
+
+            def _read_todos(self) -> List[dict]:
+                return json.loads(self.file_path.read_text())
+
+            def _write_todos(self, todos: List[dict]) -> None:
+                self.file_path.write_text(json.dumps(todos, indent=2))
+
+            def _todo_to_dict(self, todo: Todo) -> dict:
+                return {
+                    "id": todo.id,
+                    "title": todo.title,
+                    "description": todo.description,
+                    "is_completed": todo.is_completed,
+                    "created_at": todo.created_at.isoformat()
+                }
+
+            def _dict_to_todo(self, data: dict) -> Todo:
+                return Todo(
+                    id=data["id"],
+                    title=data["title"],
+                    description=data.get("description"),
+                    is_completed=data["is_completed"],
+                    created_at=datetime.fromisoformat(data["created_at"])
+                )
+
+            def get_all(self) -> List[Todo]:
+                todos_data = self._read_todos()
+                return [self._dict_to_todo(data) for data in todos_data]
+
+            def get_by_id(self, todo_id: int) -> Optional[Todo]:
+                todos = self.get_all()
+                for todo in todos:
+                    if todo.id == todo_id:
+                        return todo
+                return None
+
+            def create(self, todo: Todo) -> Todo:
+                todos = self.get_all()
+                new_id = max([t.id for t in todos], default=0) + 1
+                todo.id = new_id
+
+                todos_data = self._read_todos()
+                todos_data.append(self._todo_to_dict(todo))
+                self._write_todos(todos_data)
+
+                return todo
+
+            def update(self, todo: Todo) -> Todo:
+                todos_data = self._read_todos()
+                for i, data in enumerate(todos_data):
+                    if data["id"] == todo.id:
+                        todos_data[i] = self._todo_to_dict(todo)
+                        self._write_todos(todos_data)
+                        return todo
+                raise ValueError(f"Todo with id {todo.id} not found")
+
+            def delete(self, todo_id: int) -> bool:
+                todos_data = self._read_todos()
+                original_length = len(todos_data)
+                todos_data = [t for t in todos_data if t["id"] != todo_id]
+
+                if len(todos_data) < original_length:
+                    self._write_todos(todos_data)
+                    return True
+                return False
+
+  # 08: Use Cases (P4 - Single Responsibility)
+  - id: "08-create-usecases"
+    description: "Use Cases 구현 (SOLID - SRP)"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/src/domain/usecases/todo_usecases.py"
+      content: |
+        from typing import List, Optional
+        from datetime import datetime
+        from src.domain.entities.todo import Todo
+        from src.domain.repositories.todo_repository import TodoRepository
+
+
+        class CreateTodoUseCase:
+            """Single Responsibility: Create TODO (P4 - SRP)"""
+
+            def __init__(self, repository: TodoRepository):
+                self.repository = repository
+
+            def execute(self, title: str, description: Optional[str] = None) -> Todo:
+                if not title or not title.strip():
+                    raise ValueError("Title cannot be empty")
+
+                todo = Todo(
+                    title=title.strip(),
+                    description=description.strip() if description else None,
+                    created_at=datetime.now()
+                )
+                return self.repository.create(todo)
+
+
+        class ListTodosUseCase:
+            """Single Responsibility: List TODOs (P4 - SRP)"""
+
+            def __init__(self, repository: TodoRepository):
+                self.repository = repository
+
+            def execute(self, show_completed: bool = True) -> List[Todo]:
+                todos = self.repository.get_all()
+                if not show_completed:
+                    todos = [t for t in todos if not t.is_completed]
+                return todos
+
+
+        class ToggleTodoUseCase:
+            """Single Responsibility: Toggle TODO completion (P4 - SRP)"""
+
+            def __init__(self, repository: TodoRepository):
+                self.repository = repository
+
+            def execute(self, todo_id: int) -> Todo:
+                todo = self.repository.get_by_id(todo_id)
+                if not todo:
+                    raise ValueError(f"Todo with id {todo_id} not found")
+
+                todo.toggle_completion()
+                return self.repository.update(todo)
+
+
+        class DeleteTodoUseCase:
+            """Single Responsibility: Delete TODO (P4 - SRP)"""
+
+            def __init__(self, repository: TodoRepository):
+                self.repository = repository
+
+            def execute(self, todo_id: int) -> bool:
+                return self.repository.delete(todo_id)
+
+  # 09: CLI Interface
+  - id: "09-cli-interface"
+    description: "Click 기반 CLI 인터페이스"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/src/presentation/cli/todo_cli.py"
+      content: |
+        import click
+        from src.data.repositories.json_todo_repository import JsonTodoRepository
+        from src.domain.usecases.todo_usecases import (
+            CreateTodoUseCase,
+            ListTodosUseCase,
+            ToggleTodoUseCase,
+            DeleteTodoUseCase
+        )
+
+
+        @click.group()
+        def cli():
+            """Simple TODO CLI application with Clean Architecture"""
+            pass
+
+
+        @cli.command()
+        @click.argument('title')
+        @click.option('--description', '-d', default=None, help='TODO description')
+        def add(title: str, description: str):
+            """Add a new TODO"""
+            repo = JsonTodoRepository()
+            usecase = CreateTodoUseCase(repo)
+
+            try:
+                todo = usecase.execute(title, description)
+                click.echo(f"[SUCCESS] Created TODO #{todo.id}: {todo.title}")
+            except ValueError as e:
+                click.echo(f"[ERROR] {e}", err=True)
+
+
+        @cli.command()
+        @click.option('--all', '-a', is_flag=True, help='Show completed TODOs')
+        def list(all: bool):
+            """List all TODOs"""
+            repo = JsonTodoRepository()
+            usecase = ListTodosUseCase(repo)
+
+            todos = usecase.execute(show_completed=all)
+
+            if not todos:
+                click.echo("No TODOs found")
+                return
+
+            for todo in todos:
+                status = "[X]" if todo.is_completed else "[ ]"
+                click.echo(f"{status} #{todo.id}: {todo.title}")
+                if todo.description:
+                    click.echo(f"    {todo.description}")
+
+
+        @cli.command()
+        @click.argument('todo_id', type=int)
+        def toggle(todo_id: int):
+            """Toggle TODO completion status"""
+            repo = JsonTodoRepository()
+            usecase = ToggleTodoUseCase(repo)
+
+            try:
+                todo = usecase.execute(todo_id)
+                status = "completed" if todo.is_completed else "pending"
+                click.echo(f"[SUCCESS] TODO #{todo_id} marked as {status}")
+            except ValueError as e:
+                click.echo(f"[ERROR] {e}", err=True)
+
+
+        @cli.command()
+        @click.argument('todo_id', type=int)
+        @click.confirmation_option(prompt='Are you sure you want to delete this TODO?')
+        def delete(todo_id: int):
+            """Delete a TODO"""
+            repo = JsonTodoRepository()
+            usecase = DeleteTodoUseCase(repo)
+
+            if usecase.execute(todo_id):
+                click.echo(f"[SUCCESS] TODO #{todo_id} deleted")
+            else:
+                click.echo(f"[ERROR] TODO #{todo_id} not found", err=True)
+
+
+        if __name__ == '__main__':
+            cli()
+
+  # 10: Main entry point
+  - id: "10-main-entry"
+    description: "메인 진입점 생성"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/main.py"
+      content: |
+        #!/usr/bin/env python3
+        # -*- coding: utf-8 -*-
+        """
+        Python TODO CLI Application
+        Constitution-based development (P1-P10)
+        Clean Architecture implementation
+        """
+
+        from src.presentation.cli.todo_cli import cli
+
+        if __name__ == '__main__':
+            cli()
+
+  # 11: 통합 테스트 (P8)
+  - id: "11-integration-tests"
+    description: "통합 테스트 작성"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/python_todo_cli/tests/test_integration.py"
+      content: |
+        import pytest
+        from pathlib import Path
+        from datetime import datetime
+        from src.data.repositories.json_todo_repository import JsonTodoRepository
+        from src.domain.usecases.todo_usecases import (
+            CreateTodoUseCase,
+            ListTodosUseCase,
+            ToggleTodoUseCase,
+            DeleteTodoUseCase
+        )
+
+
+        @pytest.fixture
+        def temp_repo(tmp_path):
+            test_file = tmp_path / "test_todos.json"
+            return JsonTodoRepository(str(test_file))
+
+
+        class TestTodoIntegration:
+            def test_full_todo_workflow(self, temp_repo):
+                # Create
+                create_uc = CreateTodoUseCase(temp_repo)
+                todo1 = create_uc.execute("Task 1", "Description 1")
+                assert todo1.id == 1
+                assert todo1.title == "Task 1"
+
+                # List
+                list_uc = ListTodosUseCase(temp_repo)
+                todos = list_uc.execute()
+                assert len(todos) == 1
+
+                # Toggle
+                toggle_uc = ToggleTodoUseCase(temp_repo)
+                updated = toggle_uc.execute(1)
+                assert updated.is_completed is True
+
+                # Delete
+                delete_uc = DeleteTodoUseCase(temp_repo)
+                result = delete_uc.execute(1)
+                assert result is True
+
+                # Verify deletion
+                todos = list_uc.execute()
+                assert len(todos) == 0
+
+            def test_multiple_todos(self, temp_repo):
+                create_uc = CreateTodoUseCase(temp_repo)
+
+                todo1 = create_uc.execute("Task 1")
+                todo2 = create_uc.execute("Task 2")
+                todo3 = create_uc.execute("Task 3")
+
+                list_uc = ListTodosUseCase(temp_repo)
+                todos = list_uc.execute()
+
+                assert len(todos) == 3
+                assert todos[0].id == 1
+                assert todos[1].id == 2
+                assert todos[2].id == 3
+
+  # 12: 테스트 실행 (P8)
+  - id: "12-run-tests"
+    description: "모든 테스트 실행"
+    exec:
+      cmd: "bash"
+      args:
+        - "-c"
+        - "cd C:/Users/user/Documents/GitHub/python_todo_cli && pytest tests/ -v --cov=src --cov-report=term-missing"
+
+  # 13: Ruff 검증 (P6)
+  - id: "13-ruff-check"
+    description: "Ruff 린팅 실행"
+    exec:
+      cmd: "bash"
+      args:
+        - "-c"
+        - "cd C:/Users/user/Documents/GitHub/python_todo_cli && ruff check src/ tests/"
+
+evidence:
+  required: true
+  output_dir: "RUNS/evidence/FEAT-2025-11-02-02"
+  collect:
+    - "pytest 결과"
+    - "ruff check 결과"
+    - "생성된 파일 목록"
+    - "프로젝트 구조 트리"
+
+verification:
+  automated:
+    - command: "pytest tests/ --cov=src"
+      expect: "90% coverage"
+    - command: "ruff check src/ tests/"
+      expect: "No errors"
+
+  manual:
+    - "Clean Architecture 구조 확인"
+    - "SOLID 원칙 준수 확인"
+
+metadata:
+  created_at: "2025-11-02T22:00:00Z"
+  created_by: "claude-code"
+  constitution_version: "1.0.0"
+  estimated_time: "30min"
+
+notes: |
+  Constitution 기반 Python TODO CLI
+  - P1: YAML 계약서
+  - P2: Evidence 자동 수집
+  - P4: Clean Architecture + SOLID
+  - P6: Ruff 90% 품질
+  - P8: TDD (테스트 먼저)
+  - P10: UTF-8 인코딩
