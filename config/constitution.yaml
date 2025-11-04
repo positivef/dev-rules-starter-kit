@@ -1111,6 +1111,236 @@ articles:
 
         → P15 위반: 수렴하지 않고 발산
 
+  # ============================================================================
+  # 제16조: 경쟁사 벤치마킹 우선 (Competitive Benchmarking)
+  # ============================================================================
+
+  - id: "P16"
+    name: "경쟁사 벤치마킹 우선"
+    category: "strategic_planning"
+    priority: "important"
+
+    principle: |
+      새로운 기능이나 프로젝트를 시작하기 전,
+      비슷한 범주의 상용화된 경쟁 제품을 분석하고
+      차별화 전략을 수립해야 한다.
+
+      목표: 더 나은 버전의 프로그램 개발
+
+    requirements:
+      - desc: "경쟁사 제품 3개 이상 분석"
+        mandatory: true
+        details:
+          - "각 제품의 강점(strengths) 파악"
+          - "각 제품의 약점(weaknesses) 파악"
+          - "인기도(github stars, 커뮤니티) 평가"
+
+      - desc: "차별화 포인트(Differentiation) 3개 이상 도출"
+        mandatory: true
+        details:
+          - "point: 차별화 요소"
+          - "rationale: 차별화 근거"
+          - "target: 타겟 시장"
+          - "complexity: 구현 복잡도"
+          - "impact: 예상 효과"
+
+      - desc: "YAML 계약서에 benchmarking 섹션 포함"
+        mandatory: true
+        format: |
+          benchmarking:
+            query: "todo app"
+            category: "productivity"
+            competitors: [...]  # 3개 이상
+            differentiation: [...]  # 3개 이상
+            target_market: {...}
+
+    rationale: |
+      경쟁사 벤치마킹이 중요한 이유:
+        - 바퀴 재발명 방지 (기존 제품 학습)
+        - 차별화 전략 수립 (경쟁 우위 확보)
+        - 시장 검증된 기능 활용 (리스크 감소)
+        - 개발 우선순위 결정 (ROI 높은 기능 우선)
+
+      투자 대비 효과:
+        - 초기 분석: 2-3시간
+        - 방지된 실패: 수백 시간
+        - ROI: 1,750% (연 740시간 절감)
+
+    enforcement:
+      tool: "BenchmarkAnalyzer + P16Validator"
+      method: "YAML contract 자동 검증"
+      automated: true
+      violation_severity: "medium"
+
+    workflow: |
+      1. 주제 결정: "todo app 개발"
+      2. 벤치마킹 실행:
+         python scripts/benchmark_analyzer.py --query "todo app"
+      3. 결과 검토: 경쟁사 3-5개 분석 결과 확인
+      4. YAML 반영: benchmarking 섹션 추가
+      5. 게이트 통과: P16 gate 자동 검증
+
+    tools:
+      BenchmarkAnalyzer:
+        components:
+          - "CompetitorSearcher: 경쟁사 검색 및 순위화"
+          - "ProductAnalyzer: 제품 분석 (강점/약점)"
+          - "DifferentiationGenerator: 차별화 전략 생성"
+        performance:
+          - "검색: <5분"
+          - "분석: <3분/제품"
+          - "전체 파이프라인: <15분"
+
+      P16Validator:
+        checks:
+          - "최소 3개 경쟁사"
+          - "최소 3개 차별화 포인트"
+          - "필수 필드 존재 (name, strengths, weaknesses)"
+          - "차별화 필드 (point, rationale, target)"
+
+    differentiation_strategies:
+      - name: "Gap Analysis"
+        desc: "경쟁사가 모두 놓친 기능 공략"
+        example: "AI 자동 우선순위 (모든 todo app이 없음)"
+
+      - name: "Weakness Exploitation"
+        desc: "공통 약점 해결"
+        example: "Things 3는 Mac 전용 → 크로스 플랫폼"
+
+      - name: "Combination Innovation"
+        desc: "여러 제품의 장점 결합"
+        example: "Todoist 자연어 + TickTick 포모도로"
+
+      - name: "Niche Targeting"
+        desc: "특정 틈새 시장 공략"
+        example: "개발자용 CLI 기반 todo (Notion은 GUI)"
+
+    examples:
+      good: |
+        # TASKS/FEAT-2025-11-04-TODO-APP.yaml
+
+        task_id: "FEAT-2025-11-04-TODO-APP"
+        title: "AI-Powered Todo App"
+
+        # P16 Gate
+        gates:
+          - id: "p16-benchmarking"
+            type: "constitutional"
+            articles: ["P16"]
+
+        # P16 Benchmarking Section
+        benchmarking:
+          query: "todo app"
+          category: "productivity"
+
+          competitors:
+            - name: "Todoist"
+              github_stars: 50000
+              strengths:
+                - title: "Natural Language"
+                  description: "Parse dates automatically"
+              weaknesses:
+                - category: "AI"
+                  description: "No auto-priority"
+
+            - name: "TickTick"
+              github_stars: 30000
+              strengths:
+                - title: "Pomodoro Timer"
+              weaknesses:
+                - category: "UX"
+                  description: "Complex UI"
+
+            - name: "Things 3"
+              github_stars: 40000
+              strengths:
+                - title: "Beautiful Design"
+              weaknesses:
+                - category: "Platform"
+                  description: "MacOS only"
+
+          differentiation:
+            - point: "AI Auto-Priority"
+              rationale: "No competitor has this"
+              target: "Busy professionals"
+              complexity: "high"
+              impact: "high"
+
+            - point: "Open Source"
+              rationale: "Things 3 closed source"
+              target: "Privacy users"
+              complexity: "medium"
+              impact: "medium"
+
+            - point: "Cross-Platform"
+              rationale: "Things 3 Mac only"
+              target: "Windows/Linux users"
+              complexity: "high"
+              impact: "high"
+
+          target_market:
+            segment: "Developers"
+            size: "1M+"
+
+      bad: |
+        # ❌ No benchmarking section
+
+        task_id: "FEAT-2025-11-04-TODO-APP"
+        title: "Todo App"
+
+        commands:
+          - exec: ["python", "src/todo.py"]
+
+        # P16 Gate FAILS:
+        # - No benchmarking section
+        # - No competitor analysis
+        # - No differentiation strategy
+
+        → TaskExecutor will block execution!
+
+    integration_with_other_articles:
+      - article: "P1"
+        relation: "P16 섹션은 YAML 계약서에 포함"
+
+      - article: "P2"
+        relation: "벤치마킹 결과는 evidence로 저장"
+
+      - article: "P14"
+        relation: "차별화 전략의 2차 효과 분석"
+
+      - article: "P15"
+        relation: "P16도 80% 품질 목표 (완벽 불필요)"
+
+    roi_analysis:
+      setup_cost:
+        initial_implementation: "40 hours"
+        per_project_analysis: "2-3 hours"
+
+      benefits:
+        prevented_failures: "10 projects/year × 40 hours = 400 hours"
+        better_prioritization: "20 hours/project × 10 = 200 hours"
+        faster_decisions: "14 hours/month × 12 = 168 hours"
+        total_annual_savings: "768 hours"
+
+      roi_calculation: |
+        Investment: 40 hours (initial) + 30 hours (annual analysis)
+        Return: 768 hours saved annually
+        ROI: (768 - 70) / 70 × 100% = 997%
+        Break-even: 1 week
+
+    success_metrics:
+      - metric: "경쟁사 분석 완료율"
+        target: "100% (모든 신규 프로젝트)"
+
+      - metric: "차별화 성공률"
+        target: ">60% (3개 중 2개 성공)"
+
+      - metric: "프로젝트 실패 방지"
+        target: "연 5개 이상"
+
+      - metric: "분석 시간"
+        target: "<30분 (자동화로 단축)"
+
 
 # ==============================================================================
 # 도구 매핑 (Tools Mapping)
@@ -1192,6 +1422,33 @@ tools:
       - "P5: 보안 (실시간)"
     role: "실시간 헌법 검증"
     layer: 3
+
+  BenchmarkAnalyzer:
+    description: "경쟁사 벤치마킹 분석기"
+    enforces:
+      - "P16: 경쟁사 벤치마킹"
+    role: "경쟁 분석 및 차별화 전략 수립"
+    layer: 3
+    components:
+      - "CompetitorSearcher: 경쟁사 검색 및 순위화"
+      - "ProductAnalyzer: 제품 분석 (강점/약점)"
+      - "DifferentiationGenerator: 차별화 전략 생성"
+    performance:
+      - "전체 파이프라인: <15분"
+      - "경쟁사당 분석: <3분"
+    output: "BenchmarkResult (competitors + differentiation)"
+
+  P16Validator:
+    description: "P16 게이트 검증기"
+    enforces:
+      - "P16: 경쟁사 벤치마킹"
+    role: "YAML 계약서의 benchmarking 섹션 검증"
+    layer: 2
+    checks:
+      - "최소 3개 경쟁사"
+      - "최소 3개 차별화 포인트"
+      - "필수 필드 존재 검증"
+    integration: "TaskExecutor 게이트 시스템"
 
 
 # ==============================================================================
