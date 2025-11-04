@@ -709,7 +709,7 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
             content = content.replace("{creation_date}", now.strftime("%Y-%m-%d"))
         else:
             # Fallback to simple MOC if template not found
-            content = f"""# 개발일지 Map of Contents
+            content = rf"""# 개발일지 Map of Contents
 
 > 자동 생성 MOC - Dataview 플러그인이 설치되면 자동 쿼리가 실행됩니다
 
@@ -717,7 +717,7 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
 
 ## 📅 최근 작업
 
-\`\`\`dataview
+```dataview
 TABLE
   file.link AS "작업",
   type AS "유형",
@@ -727,7 +727,7 @@ FROM "개발일지"
 WHERE file.folder != "개발일지/_backup_old_structure"
 SORT date DESC, time DESC
 LIMIT 20
-\`\`\`
+```
 
 ---
 

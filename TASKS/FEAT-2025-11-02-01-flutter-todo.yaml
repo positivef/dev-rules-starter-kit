@@ -21,7 +21,7 @@ acceptance_criteria:
 
 gates:
   - type: "constitutional"
-    articles: ["P1", "P2", "P4", "P6", "P8"]
+    articles: ["P1", "P2", "P4", "P6", "P8", "P16"]
     enforcement: "strict"
 
   - type: "quality"
@@ -29,6 +29,84 @@ gates:
       test_coverage: 90
       analyze_errors: 0
       build_success: true
+
+# P16: Competitive Benchmarking (Auto-generated)
+benchmarking:
+  query: "flutter todo app"
+  category: "productivity"
+
+  competitors:
+    - name: "Todoist"
+      github_stars: 50000
+      strengths:
+        - title: "Natural Language Input"
+          description: "Type 'tomorrow 3pm meeting' and it parses automatically"
+        - title: "Project Hierarchy"
+          description: "Organize tasks with projects and labels"
+        - title: "Karma Points"
+          description: "Gamification with productivity scoring"
+      weaknesses:
+        - category: "AI"
+          description: "No AI-powered auto-priority"
+        - category: "Time Tracking"
+          description: "No built-in time tracking"
+
+    - name: "Things 3"
+      github_stars: 40000
+      strengths:
+        - title: "Clean Design"
+          description: "Minimalist and intuitive UI"
+        - title: "Magic Plus"
+          description: "Quick entry from anywhere"
+        - title: "Areas Concept"
+          description: "Organize by life areas"
+      weaknesses:
+        - category: "Platform"
+          description: "MacOS/iOS only"
+        - category: "Collaboration"
+          description: "No team features"
+
+    - name: "TickTick"
+      github_stars: 30000
+      strengths:
+        - title: "Pomodoro Timer"
+          description: "Built-in timer for focused work sessions"
+        - title: "Habit Tracking"
+          description: "Track daily habits alongside tasks"
+        - title: "Calendar Integration"
+          description: "Seamless calendar view"
+      weaknesses:
+        - category: "UX"
+          description: "Complex UI for beginners"
+        - category: "AI"
+          description: "No context-aware suggestions"
+
+  differentiation:
+    - point: "AI Auto-Priority"
+      rationale: "None of the 3 competitors provide AI-powered automatic task prioritization"
+      target: "Busy professionals who struggle with task prioritization"
+      implementation_complexity: "medium"
+      estimated_impact: "high"
+
+    - point: "Open Source & Privacy-First"
+      rationale: "Most competitors are closed-source or SaaS-only, users want data ownership"
+      target: "Privacy-conscious users and developers"
+      implementation_complexity: "low"
+      estimated_impact: "medium"
+
+    - point: "True Cross-Platform (Flutter)"
+      rationale: "Things 3 is Mac-only, we support all platforms from day one"
+      target: "Users with mixed device ecosystems (Windows + iOS, etc.)"
+      implementation_complexity: "low"
+      estimated_impact: "high"
+
+  target_market:
+    segment: "Tech-savvy professionals and students"
+    size: "500K+ potential users globally"
+    pain_points:
+      - "Existing tools lack smart prioritization"
+      - "Vendor lock-in and subscription fatigue"
+      - "Platform limitations"
 
 commands:
   # 01: 프로젝트 초기화
