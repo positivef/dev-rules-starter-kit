@@ -48,7 +48,8 @@
       "Bash(docs/QUICK_START.md)",
       "Bash(Select-Object -First 30)",
       "WebSearch",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
