@@ -1,0 +1,263 @@
+task_id: "TIER1-WEEK7-SESSION-MANAGEMENT"
+title: "Week 7: Session & Context Management Enhancement"
+description: |
+  Enhance session and context management for multi-AI collaboration
+
+  Current State:
+  - session_manager.py exists but basic functionality
+  - context_provider.py provides context but limited
+  - agent_sync.py for file locking
+  - No automatic recovery from crashes
+  - No cross-session context analytics
+
+  Goal:
+  - Automatic session recovery from crashes
+  - Cross-session context sharing (multi-AI)
+  - Context analytics and insights
+  - Comprehensive session dashboard
+
+  Expected ROI: 500% (5x efficiency in multi-session workflows)
+
+priority: "high"
+estimated_hours: 32
+phase: "week7"
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P6", "P8"]
+    description: "YAML-first, Evidence-based, Quality gates, Test-first"
+
+  - type: "test"
+    min_coverage: 85
+    description: "Minimum 85% test coverage for all new code"
+
+phases:
+  - name: "Phase 1: Session Recovery Automation"
+    description: "Automatic recovery from crashed sessions"
+    estimated_hours: 8
+    tasks:
+      - "Design crash detection mechanism"
+      - "Implement automatic checkpoint system (30min intervals)"
+      - "Create session recovery workflow"
+      - "Add context integrity validation"
+      - "Test recovery scenarios"
+
+    deliverables:
+      - file: "scripts/session_recovery.py"
+        description: "Automatic session recovery system"
+        lines: ~400
+
+      - file: "tests/test_session_recovery.py"
+        description: "Recovery system tests"
+        lines: ~300
+        tests: 20
+
+    success_criteria:
+      - "Recovery success rate >95%"
+      - "Context integrity 100%"
+      - "Recovery time <5 seconds"
+
+  - name: "Phase 2: Cross-Session Context Sharing"
+    description: "Enable context sharing across multiple AI sessions"
+    estimated_hours: 10
+    tasks:
+      - "Design shared context protocol"
+      - "Enhance agent_sync.py for context sharing"
+      - "Implement real-time context synchronization"
+      - "Add conflict resolution for concurrent edits"
+      - "Create session coordination system"
+
+    deliverables:
+      - file: "scripts/session_coordinator.py"
+        description: "Multi-session coordination system"
+        lines: ~500
+
+      - file: "scripts/shared_context_manager.py"
+        description: "Shared context management"
+        lines: ~450
+
+      - file: "tests/test_session_coordinator.py"
+        description: "Coordinator tests"
+        lines: ~350
+        tests: 25
+
+    success_criteria:
+      - "Context sync latency <1 second"
+      - "Conflict resolution 100% automatic"
+      - "Supports 4+ concurrent sessions"
+
+  - name: "Phase 3: Context Analytics"
+    description: "Analyze context usage and provide insights"
+    estimated_hours: 8
+    tasks:
+      - "Design context metrics collection"
+      - "Implement session productivity tracking"
+      - "Create context usage pattern analysis"
+      - "Add optimization recommendations"
+      - "Generate context health reports"
+
+    deliverables:
+      - file: "scripts/context_analytics.py"
+        description: "Context analytics engine"
+        lines: ~450
+
+      - file: "tests/test_context_analytics.py"
+        description: "Analytics tests"
+        lines: ~300
+        tests: 20
+
+    metrics:
+      - name: "Context Efficiency Score"
+        formula: "(useful_context / total_context) * 100"
+        target: ">80%"
+
+      - name: "Session Productivity"
+        formula: "commits_per_hour * context_quality"
+        target: ">5 commits/hour"
+
+      - name: "Context Reuse Rate"
+        formula: "(reused_context / total_context) * 100"
+        target: ">60%"
+
+    success_criteria:
+      - "Metrics collection overhead <2%"
+      - "Analysis accuracy >90%"
+      - "Actionable insights >5 per session"
+
+  - name: "Phase 4: Session Dashboard"
+    description: "Comprehensive session monitoring dashboard"
+    estimated_hours: 6
+    tasks:
+      - "Design dashboard layout"
+      - "Integrate with session_manager.py"
+      - "Add real-time session status display"
+      - "Create context health visualization"
+      - "Add session history and analytics"
+
+    deliverables:
+      - file: "scripts/session_dashboard.py"
+        description: "Enhanced Streamlit session dashboard"
+        lines: ~600
+
+      - file: "tests/test_session_dashboard.py"
+        description: "Dashboard tests"
+        lines: ~250
+        tests: 15
+
+    features:
+      - "Active sessions list with status"
+      - "Context health indicators"
+      - "Session productivity metrics"
+      - "Crash history and recovery status"
+      - "Cross-session conflict log"
+      - "Optimization recommendations"
+
+    success_criteria:
+      - "Dashboard load time <2 seconds"
+      - "Real-time updates <500ms"
+      - "All metrics displayed accurately"
+
+commands:
+  - exec: ["python", "scripts/session_recovery.py", "--test"]
+    description: "Test session recovery system"
+
+  - exec: ["python", "scripts/session_coordinator.py", "--status"]
+    description: "Check multi-session coordination status"
+
+  - exec: ["python", "scripts/context_analytics.py", "--analyze"]
+    description: "Analyze context usage patterns"
+
+  - exec: ["streamlit", "run", "scripts/session_dashboard.py"]
+    description: "Launch session monitoring dashboard"
+
+  - exec: ["pytest", "tests/test_session_*.py", "-v", "--cov=scripts"]
+    description: "Run all session management tests with coverage"
+
+evidence:
+  location: "RUNS/evidence/week7-session-management/"
+  artifacts:
+    - "Session recovery success rate logs"
+    - "Context synchronization metrics"
+    - "Analytics reports"
+    - "Dashboard screenshots"
+    - "Test coverage reports"
+
+integration:
+  - component: "tier1_cli.py"
+    commands:
+      - "session-recover: Recover from crashed session"
+      - "session-status: Show all active sessions"
+      - "context-analyze: Analyze context usage"
+      - "session-dashboard: Launch session dashboard"
+
+  - component: "agent_sync.py"
+    enhancement: "Add context sharing protocol"
+
+  - component: "context_provider.py"
+    enhancement: "Add analytics hooks"
+
+constitutional_compliance:
+  P1_yaml_first: "All tasks defined in YAML contract"
+  P2_evidence_based: "All session events logged to RUNS/evidence/"
+  P6_quality_gates: "Minimum 85% test coverage, all metrics tracked"
+  P8_test_first: "Tests written before implementation for all phases"
+  P10_windows_utf8: "No emojis in code, ASCII alternatives only"
+
+roi_calculation:
+  investment:
+    development_hours: 32
+    cost_per_hour: 50  # USD
+    total_cost: 1600  # USD
+
+  benefits_6_months:
+    time_saved_per_session: 15  # minutes
+    sessions_per_week: 20
+    weeks: 26
+    total_minutes_saved: 7800  # 130 hours
+    value_per_hour: 50  # USD
+    total_benefit: 6500  # USD
+
+  roi: "306%"  # (6500 - 1600) / 1600 * 100
+  breakeven: "4.9 weeks"
+
+success_metrics:
+  - metric: "Session Recovery Rate"
+    current: "0% (manual only)"
+    target: "95% (automatic)"
+    measurement: "recovery_success / total_crashes"
+
+  - metric: "Multi-Session Efficiency"
+    current: "100% (baseline single session)"
+    target: "400% (4 sessions working in parallel)"
+    measurement: "parallel_work_completed / time"
+
+  - metric: "Context Reuse"
+    current: "20%"
+    target: "60%"
+    measurement: "reused_context / total_context"
+
+  - metric: "Session Crash Impact"
+    current: "15 min average recovery time"
+    target: "<5 sec automatic recovery"
+    measurement: "time_to_recovery"
+
+risks:
+  - risk: "Context synchronization conflicts"
+    probability: "medium"
+    impact: "medium"
+    mitigation: "Implement optimistic locking with automatic conflict resolution"
+
+  - risk: "Session recovery data corruption"
+    probability: "low"
+    impact: "high"
+    mitigation: "Multiple checkpoint backups, integrity validation"
+
+  - risk: "Dashboard performance with many sessions"
+    probability: "low"
+    impact: "medium"
+    mitigation: "Lazy loading, pagination, caching"
+
+next_steps:
+  - "Week 8: MCP Integration Enhancement"
+  - "Week 9: Production Readiness & Deployment"
+  - "Week 10: Performance Optimization"

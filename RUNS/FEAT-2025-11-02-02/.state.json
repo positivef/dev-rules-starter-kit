@@ -1,0 +1,5 @@
+{
+  "status": "failed",
+  "error": "Command 'bash' is not in the allowed commands list",
+  "failed_at": "2025-11-02T12:44:04.840120+00:00"
+}

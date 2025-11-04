@@ -1,0 +1,251 @@
+task_id: "FEAT-2025-11-02-01"
+title: "Flutter TODO App - Constitution 기반 개발"
+project: "flutter_todo_app"
+category: "feature"
+priority: "high"
+
+description: |
+  Clean Architecture 기반 Flutter TODO 애플리케이션 구현
+  - CRUD 기능 (생성, 읽기, 수정, 삭제)
+  - 로컬 SQLite 저장소
+  - Riverpod 상태 관리
+  - TDD 기반 개발
+
+acceptance_criteria:
+  - Flutter 프로젝트 생성 및 구조 구성
+  - Clean Architecture 레이어 구현 (domain/data/presentation)
+  - TODO CRUD 기능 동작
+  - flutter analyze 에러 0개
+  - flutter test 통과율 90% 이상
+  - flutter build 성공
+
+gates:
+  - type: "constitutional"
+    articles: ["P1", "P2", "P4", "P6", "P8"]
+    enforcement: "strict"
+
+  - type: "quality"
+    metrics:
+      test_coverage: 90
+      analyze_errors: 0
+      build_success: true
+
+commands:
+  # 01: 프로젝트 초기화
+  - id: "01-init-project"
+    description: "Flutter 프로젝트 생성"
+    write_file:
+      path: "temp_init_project.sh"
+      content: |
+        #!/bin/bash
+        cd C:/Users/user/Documents/GitHub
+        flutter create flutter_todo_app
+        cd flutter_todo_app
+
+        # 의존성 추가
+        flutter pub add riverpod flutter_riverpod
+        flutter pub add sqflite path
+        flutter pub add equatable
+
+        # 개발 의존성
+        flutter pub add --dev mockito build_runner
+        flutter pub add --dev flutter_test
+
+  # 02: Clean Architecture 구조 생성
+  - id: "02-create-structure"
+    description: "Clean Architecture 디렉토리 구조"
+    write_file:
+      path: "temp_create_dirs.sh"
+      content: |
+        #!/bin/bash
+        cd C:/Users/user/Documents/GitHub/flutter_todo_app
+
+        # Domain Layer
+        mkdir -p lib/domain/entities
+        mkdir -p lib/domain/repositories
+        mkdir -p lib/domain/usecases
+
+        # Data Layer
+        mkdir -p lib/data/models
+        mkdir -p lib/data/datasources
+        mkdir -p lib/data/repositories
+
+        # Presentation Layer
+        mkdir -p lib/presentation/pages
+        mkdir -p lib/presentation/widgets
+        mkdir -p lib/presentation/providers
+
+        # Core
+        mkdir -p lib/core/database
+        mkdir -p lib/core/error
+
+        # Tests
+        mkdir -p test/domain
+        mkdir -p test/data
+        mkdir -p test/presentation
+
+  # 03: Domain Layer - Entity
+  - id: "03-domain-entity"
+    description: "TODO Entity 작성 (TDD)"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/flutter_todo_app/lib/domain/entities/todo.dart"
+      content: |
+        import 'package:equatable/equatable.dart';
+
+        class Todo extends Equatable {
+          final int? id;
+          final String title;
+          final String? description;
+          final bool isCompleted;
+          final DateTime createdAt;
+
+          const Todo({
+            this.id,
+            required this.title,
+            this.description,
+            this.isCompleted = false,
+            required this.createdAt,
+          });
+
+          Todo copyWith({
+            int? id,
+            String? title,
+            String? description,
+            bool? isCompleted,
+            DateTime? createdAt,
+          }) {
+            return Todo(
+              id: id ?? this.id,
+              title: title ?? this.title,
+              description: description ?? this.description,
+              isCompleted: isCompleted ?? this.isCompleted,
+              createdAt: createdAt ?? this.createdAt,
+            );
+          }
+
+          @override
+          List<Object?> get props => [id, title, description, isCompleted, createdAt];
+        }
+
+  # 04: Domain Layer - Repository Interface
+  - id: "04-domain-repository"
+    description: "TodoRepository 인터페이스"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/flutter_todo_app/lib/domain/repositories/todo_repository.dart"
+      content: |
+        import '../entities/todo.dart';
+
+        abstract class TodoRepository {
+          Future<List<Todo>> getAllTodos();
+          Future<Todo?> getTodoById(int id);
+          Future<int> createTodo(Todo todo);
+          Future<int> updateTodo(Todo todo);
+          Future<int> deleteTodo(int id);
+        }
+
+  # 05: Test First - Entity Test (P8)
+  - id: "05-test-entity"
+    description: "TODO Entity 테스트 (TDD)"
+    write_file:
+      path: "C:/Users/user/Documents/GitHub/flutter_todo_app/test/domain/entities/todo_test.dart"
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter_todo_app/domain/entities/todo.dart';
+
+        void main() {
+          group('Todo Entity', () {
+            test('should create Todo with required fields', () {
+              final todo = Todo(
+                title: 'Test TODO',
+                createdAt: DateTime.now(),
+              );
+
+              expect(todo.title, 'Test TODO');
+              expect(todo.isCompleted, false);
+              expect(todo.description, null);
+            });
+
+            test('should create completed Todo', () {
+              final todo = Todo(
+                title: 'Completed TODO',
+                isCompleted: true,
+                createdAt: DateTime.now(),
+              );
+
+              expect(todo.isCompleted, true);
+            });
+
+            test('copyWith should return updated Todo', () {
+              final original = Todo(
+                id: 1,
+                title: 'Original',
+                createdAt: DateTime.now(),
+              );
+
+              final updated = original.copyWith(
+                title: 'Updated',
+                isCompleted: true,
+              );
+
+              expect(updated.id, 1);
+              expect(updated.title, 'Updated');
+              expect(updated.isCompleted, true);
+            });
+
+            test('Equatable should work correctly', () {
+              final date = DateTime.now();
+              final todo1 = Todo(id: 1, title: 'Test', createdAt: date);
+              final todo2 = Todo(id: 1, title: 'Test', createdAt: date);
+
+              expect(todo1, equals(todo2));
+            });
+          });
+        }
+
+  # 06: 테스트 실행 (P8)
+  - id: "06-run-tests"
+    description: "Entity 테스트 실행"
+    exec:
+      cmd: "bash"
+      args: ["-c", "cd C:/Users/user/Documents/GitHub/flutter_todo_app && flutter test test/domain/entities/todo_test.dart"]
+
+  # 07: Flutter Analyze (P6)
+  - id: "07-flutter-analyze"
+    description: "정적 분석 실행"
+    exec:
+      cmd: "bash"
+      args: ["-c", "cd C:/Users/user/Documents/GitHub/flutter_todo_app && flutter analyze"]
+
+evidence:
+  required: true
+  output_dir: "RUNS/evidence/FEAT-2025-11-02-01"
+  collect:
+    - "flutter analyze 결과"
+    - "flutter test 결과"
+    - "생성된 파일 목록"
+    - "프로젝트 구조 트리"
+
+verification:
+  automated:
+    - command: "flutter analyze"
+      expect: "No issues found"
+    - command: "flutter test"
+      expect: "All tests passed"
+
+  manual:
+    - "Clean Architecture 구조 확인"
+    - "코드 리뷰 체크리스트"
+
+metadata:
+  created_at: "2025-11-02T21:00:00Z"
+  created_by: "claude-code"
+  constitution_version: "1.0.0"
+  estimated_time: "2h"
+
+notes: |
+  Constitution 기반 첫 Flutter 프로젝트
+  - P1: 이 YAML이 계약서
+  - P2: evidence/ 에 모든 결과 저장
+  - P4: Clean Architecture (SOLID)
+  - P6: flutter analyze 에러 0개 목표
+  - P8: TDD - 테스트 먼저 작성

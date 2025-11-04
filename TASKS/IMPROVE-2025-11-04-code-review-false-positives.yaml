@@ -1,0 +1,507 @@
+task_id: "IMPROVE-2025-11-04-code-review-false-positives"
+title: "Reduce Constitutional Validator False Positives (<5%)"
+description: |
+  Improve code_review_assistant.py to reduce false positive rate from 40% to <5%
+  through context-aware detection of CLI scripts and safe emoji usage contexts.
+
+  Problem: Current validator flags ALL print() statements and emoji in strings,
+  creating noise that erodes developer trust in automated checks.
+
+  Solution: Implement AST-based context analysis to distinguish:
+  - CLI scripts vs library modules (allow print in CLI contexts)
+  - Safe emoji contexts (docstrings, literals) vs unsafe (direct print)
+
+priority: "high"
+estimated_effort: "15 hours"
+complexity: "medium"
+risk_level: "low-medium"
+
+# Academic Verification (Stage 3)
+verification:
+  status: "verified"
+  confidence: 0.9125  # 91.25% weighted consensus
+  sources:
+    - title: "Mitigating False Positive Static Analysis Warnings"
+      type: "academic"
+      venue: "IEEE Transactions on Software Engineering 2023"
+      doi: "10.1109/TSE.2023.3329667"
+      relevance: "Context-aware analysis reduces FP by 70%+"
+      weight: 0.25
+
+    - title: "How we ensure less than 5% false positive rate"
+      type: "industry"
+      organization: "DeepSource"
+      url: "https://deepsource.com/blog/how-deepsource-ensures-less-false-positives"
+      relevance: "Production proof: <5% FP achievable with multi-stage pipeline"
+      weight: 0.30
+
+    - title: "Utilizing Precise and Complete Code Context to Guide LLM"
+      type: "preprint"
+      venue: "arXiv 2024"
+      url: "https://arxiv.org/html/2411.03079v1"
+      relevance: "Code context is critical for SAST accuracy"
+      weight: 0.20
+
+    - title: "Python AST NodeVisitor Documentation"
+      type: "documentation"
+      organization: "Python Software Foundation"
+      url: "https://docs.python.org/3/library/ast.html"
+      relevance: "Standard AST traversal pattern"
+      weight: 0.15
+
+    - title: "MOPSA: Modular Static Analysis Framework"
+      type: "framework"
+      organization: "Inria"
+      url: "https://mopsa.lip6.fr/"
+      relevance: "Modular detector pattern with separation of concerns"
+      weight: 0.10
+
+# Constitution Compliance
+constitutional:
+  articles:
+    - id: "P10"
+      title: "Windows UTF-8 Compliance"
+      relevance: "primary"
+      current_issue: "Blanket emoji ban creates false positives"
+      improvement: "Context-aware enforcement (safe: docstrings, literals)"
+
+    - id: "P7"
+      title: "Hallucination Prevention"
+      relevance: "high"
+      current_issue: "40% false positives = hallucinating problems"
+      improvement: "<5% FP rate = accurate reality representation"
+
+    - id: "P4"
+      title: "SOLID Principles"
+      relevance: "medium"
+      current_issue: "Monolithic check method"
+      improvement: "Separate CLIScriptDetector and EmojiContextAnalyzer classes"
+
+    - id: "P6"
+      title: "Quality Gates"
+      relevance: "medium"
+      target_metrics:
+        - "False positive rate: <5%"
+        - "True positive rate: >95%"
+        - "Performance: <200ms per file"
+
+# Functional Requirements
+requirements:
+  functional:
+    - id: "FR1"
+      title: "CLI Script Detection"
+      priority: "P0"
+      description: "Detect if Python file is CLI script vs library module"
+      acceptance_criteria:
+        - "Files with 'if __name__ == \"__main__\"' classified as CLI"
+        - "Files with 'import argparse' classified as CLI"
+        - "Files with '#!/usr/bin/env python' shebang classified as CLI"
+        - "print() in CLI main() context allowed"
+        - "print() in library functions flagged"
+      test_scenarios:
+        - given: "Python file with argparse and main guard"
+          when: "Validator analyzes print() statements"
+          then: "No warnings raised for print() in main()"
+        - given: "Library module without CLI markers"
+          when: "Validator analyzes print() statements"
+          then: "Warnings raised with 'Use logging instead'"
+
+    - id: "FR2"
+      title: "Context-Aware Print Detection"
+      priority: "P0"
+      description: "Allow print() only in appropriate CLI contexts"
+      allowed_contexts:
+        - "Inside 'if __name__ == \"__main__\"' block"
+        - "Inside main() function"
+        - "Preceded by '# CLI output' or '# User output' comment"
+        - "Inside functions with cli_ or main_ prefix"
+      forbidden_contexts:
+        - "Module-level print() outside main guard"
+        - "Inside library functions (no cli/main prefix)"
+        - "Inside class methods (unless CLI command class)"
+      test_scenarios:
+        - given: "CLI script with print() inside main()"
+          when: "Validator analyzes the file"
+          then: "No warning raised"
+        - given: "CLI script with print() in helper function"
+          when: "Validator analyzes the file"
+          then: "Warning raised suggesting logging"
+
+    - id: "FR3"
+      title: "UTF-8/Emoji Context Analysis"
+      priority: "P0"
+      description: "Allow emoji in safe contexts that won't crash Windows"
+      safe_contexts:
+        - "Docstrings (triple-quoted strings at function/class start)"
+        - "String literal assignments to variables"
+        - "Comments (not executed)"
+        - "F-strings assigned to variables (delayed execution)"
+      unsafe_contexts:
+        - "Direct print() arguments"
+        - "sys.stdout.write() arguments"
+        - "Variable/function names"
+        - "logger calls without encoding guard"
+      test_scenarios:
+        - given: "Python file with emoji in docstring"
+          when: "Validator checks UTF-8 compliance"
+          then: "No P10 violation raised"
+        - given: "Python file with print('✅ Done')"
+          when: "Validator checks UTF-8 compliance"
+          then: "P10 violation raised with ASCII suggestion"
+
+    - id: "FR4"
+      title: "Improved Warning Messages"
+      priority: "P1"
+      description: "Provide context-specific, actionable suggestions"
+      improvements:
+        - "Include function name in library module warnings"
+        - "Suggest specific ASCII alternatives for emoji"
+        - "Differentiate CLI vs library context in messages"
+      test_scenarios:
+        - given: "Library module with print() in utility function"
+          when: "Validator generates warning"
+          then: "Message includes function name and suggests logger.debug()"
+
+  non_functional:
+    - id: "NFR1"
+      title: "Performance"
+      target: "<200ms per file"
+      baseline: "150ms per file"
+      constraint: "AST parsing adds ~50ms overhead"
+      mitigation: "Cache AST parsing results, lazy evaluation"
+
+    - id: "NFR2"
+      title: "Backward Compatibility"
+      target: "All existing true positives still detected"
+      approach: "Add new logic as opt-in layer, then migrate"
+
+    - id: "NFR3"
+      title: "Maintainability"
+      target: "Clear separation of concerns"
+      approach: "Extract detection logic into separate classes"
+
+    - id: "NFR4"
+      title: "Testability"
+      target: ">95% code coverage"
+      test_categories:
+        - "CLI detection: 8 test cases"
+        - "Emoji context: 10 test cases"
+        - "Integration: 5 end-to-end scenarios"
+        - "Regression: existing test suite"
+
+# Implementation Plan (4 Phases)
+implementation:
+  phase_1:
+    title: "CLI Script Detection"
+    duration: "4 hours"
+    tasks:
+      - "Create CLIScriptDetector class"
+      - "Implement detection patterns (argparse, main guard, shebang)"
+      - "Add unit tests (8 test cases)"
+      - "Integrate into CodeReviewAssistant"
+    deliverables:
+      - "scripts/cli_script_detector.py"
+      - "tests/test_cli_script_detector.py"
+
+  phase_2:
+    title: "Emoji Context Analysis"
+    duration: "4 hours"
+    tasks:
+      - "Create EmojiContextAnalyzer class with AST support"
+      - "Implement safe context detection (docstrings, literals)"
+      - "Implement unsafe context detection (print, names)"
+      - "Add unit tests (10 test cases)"
+    deliverables:
+      - "scripts/emoji_context_analyzer.py"
+      - "tests/test_emoji_context_analyzer.py"
+
+  phase_3:
+    title: "Enhanced Messages & Integration"
+    duration: "4 hours"
+    tasks:
+      - "Update _add_finding() with context metadata"
+      - "Create context-aware message templates"
+      - "Integrate both detectors into CodeReviewAssistant"
+      - "Update existing _check_code_quality() method"
+    deliverables:
+      - "scripts/code_review_assistant.py (modified)"
+      - "Enhanced warning messages"
+
+  phase_4:
+    title: "Testing & Validation"
+    duration: "3 hours"
+    tasks:
+      - "Create end-to-end test scenarios (5 cases)"
+      - "Run regression tests with existing suite"
+      - "Performance benchmarking (<200ms target)"
+      - "Update documentation"
+    deliverables:
+      - "tests/test_code_review_integration.py"
+      - "Performance report"
+      - "Updated README section"
+
+# Execution Commands
+commands:
+  - name: "setup_test_environment"
+    exec: ["python", "-m", "venv", ".venv"]
+    description: "Create virtual environment for testing"
+
+  - name: "install_dependencies"
+    exec: [".venv/Scripts/python", "-m", "pip", "install", "pytest", "pytest-cov", "pytest-benchmark"]
+    description: "Install testing dependencies"
+
+  - name: "phase_1_create_detector"
+    exec: ["python", "scripts/create_cli_detector.py"]
+    description: "Generate CLI detector class with tests"
+
+  - name: "phase_1_test"
+    exec: [".venv/Scripts/pytest", "tests/test_cli_script_detector.py", "-v", "--cov=scripts.cli_script_detector"]
+    description: "Run CLI detector unit tests"
+
+  - name: "phase_2_create_analyzer"
+    exec: ["python", "scripts/create_emoji_analyzer.py"]
+    description: "Generate emoji analyzer class with tests"
+
+  - name: "phase_2_test"
+    exec: [".venv/Scripts/pytest", "tests/test_emoji_context_analyzer.py", "-v", "--cov=scripts.emoji_context_analyzer"]
+    description: "Run emoji analyzer unit tests"
+
+  - name: "phase_3_integrate"
+    exec: ["python", "scripts/integrate_detectors.py"]
+    description: "Integrate detectors into CodeReviewAssistant"
+
+  - name: "phase_4_integration_test"
+    exec: [".venv/Scripts/pytest", "tests/test_code_review_integration.py", "-v"]
+    description: "Run end-to-end integration tests"
+
+  - name: "phase_4_regression_test"
+    exec: [".venv/Scripts/pytest", "tests/", "-v", "--cov=scripts"]
+    description: "Run full regression test suite"
+
+  - name: "phase_4_benchmark"
+    exec: [".venv/Scripts/pytest", "tests/test_performance.py", "--benchmark-only"]
+    description: "Benchmark performance (<200ms target)"
+
+  - name: "validate_constitution"
+    exec: ["python", "scripts/constitutional_validator.py", "--validate"]
+    description: "Validate Constitution compliance"
+
+# Quality Gates
+gates:
+  - type: "constitutional"
+    articles: ["P10", "P7", "P4", "P6"]
+    enforcement: "strict"
+
+  - type: "test_coverage"
+    threshold: 0.95
+    enforcement: "strict"
+    command: [".venv/Scripts/pytest", "--cov=scripts", "--cov-fail-under=95"]
+
+  - type: "performance"
+    metric: "avg_time_per_file"
+    threshold: 200  # milliseconds
+    enforcement: "warning"
+    command: [".venv/Scripts/pytest", "tests/test_performance.py", "--benchmark-only"]
+
+  - type: "false_positive_rate"
+    threshold: 0.05  # <5%
+    enforcement: "strict"
+    measurement: "manual_review_100_warnings"
+
+  - type: "true_positive_rate"
+    threshold: 0.95  # >95%
+    enforcement: "strict"
+    measurement: "regression_test_suite"
+
+# Success Metrics
+metrics:
+  quantitative:
+    - name: "false_positive_rate"
+      baseline: 0.40
+      target: 0.05
+      measurement: "Manual review of 100 warnings"
+
+    - name: "true_positive_rate"
+      baseline: 0.95
+      target: 0.95
+      measurement: "Regression test suite pass rate"
+
+    - name: "performance_per_file"
+      baseline: 150  # ms
+      target: 200  # ms
+      measurement: "pytest-benchmark average"
+
+    - name: "code_coverage"
+      baseline: null
+      target: 0.95
+      measurement: "pytest-cov report"
+
+  qualitative:
+    - name: "developer_satisfaction"
+      measurement: "Survey after 2 weeks"
+      target: "80% positive feedback"
+
+    - name: "warning_actionability"
+      measurement: "% of warnings fixed without questions"
+      target: ">90%"
+
+    - name: "validator_trust"
+      measurement: "Reduction in --no-verify usage"
+      target: "50% reduction"
+
+# Edge Cases & Known Limitations
+edge_cases:
+  - id: "EC1"
+    title: "Mixed-Mode Files"
+    scenario: "File has both library functions AND CLI entry point"
+    resolution: "Flag print() in functions OUTSIDE main guard"
+    rationale: "Encourages clean separation, function might be reused"
+
+  - id: "EC2"
+    title: "Dynamic Emoji Construction"
+    scenario: "Emoji assembled at runtime (emoji = '✅'; print(emoji))"
+    resolution: "Document as known limitation"
+    rationale: "Data flow analysis out of scope (complexity explosion)"
+    mitigation: "Suggest static analysis linters (mypy, pyright)"
+
+  - id: "EC3"
+    title: "Third-Party Code"
+    scenario: "Vendor libraries use print() or emoji"
+    resolution: ".constitutionignore support for vendor/ directories"
+    status: "Already exists"
+
+  - id: "EC4"
+    title: "Auto-Generated Code"
+    scenario: "Protobuf, OpenAPI generated files"
+    resolution: "Skip files with '# AUTO-GENERATED' comment"
+    implementation: "Add comment detection in file header"
+
+  - id: "EC5"
+    title: "Logging with Emoji"
+    scenario: "logger.info('✅ Task complete')"
+    resolution: "Info-level warning, suggest encoding configuration"
+    rationale: "Logging frameworks CAN handle encoding, not guaranteed"
+
+# Risk Assessment
+risks:
+  technical:
+    - risk: "AST parsing failures on malformed Python"
+      likelihood: "medium"
+      impact: "high"
+      mitigation: "Add try/except, skip malformed files gracefully"
+
+    - risk: "Performance regression from AST overhead"
+      likelihood: "low"
+      impact: "medium"
+      mitigation: "Benchmark early, add caching if needed"
+
+    - risk: "Breaking existing checks"
+      likelihood: "low"
+      impact: "high"
+      mitigation: "Comprehensive regression tests before merge"
+
+    - risk: "False negatives introduced"
+      likelihood: "medium"
+      impact: "high"
+      mitigation: "Acceptance tests for all existing true positives"
+
+  process:
+    - risk: "Scope creep"
+      likelihood: "high"
+      impact: "medium"
+      mitigation: "Strict adherence to FR1-FR4, defer enhancements"
+
+    - risk: "Over-engineering"
+      likelihood: "medium"
+      impact: "low"
+      mitigation: "Start with simple heuristics, add AST only if needed"
+
+# Evidence Collection
+evidence:
+  pre_execution:
+    - "Current false positive rate baseline (40%)"
+    - "Performance baseline (150ms per file)"
+    - "Existing test suite pass rate"
+
+  during_execution:
+    - "Unit test results per phase"
+    - "Integration test results"
+    - "Performance benchmark data"
+
+  post_execution:
+    - "Final false positive rate (<5% target)"
+    - "Final true positive rate (>95% target)"
+    - "Performance report (<200ms target)"
+    - "Code coverage report (>95% target)"
+    - "Manual review of 100 warnings"
+
+# Documentation Requirements
+documentation:
+  updates_required:
+    - file: "scripts/code_review_assistant.py"
+      sections:
+        - "Docstring: Add CLI detection and emoji context analysis"
+        - "Architecture: Document new detector classes"
+
+    - file: "DEVELOPMENT_RULES.md"
+      sections:
+        - "P10: Update with context-aware rules"
+        - "Examples: Add safe vs unsafe emoji usage"
+
+    - file: "README.md"
+      sections:
+        - "Code Review: Explain false positive reduction"
+        - "Usage: Document new detection behavior"
+
+  new_files:
+    - file: "docs/CODE_REVIEW_CONTEXT_ANALYSIS.md"
+      content: "Detailed explanation of context-aware detection"
+
+    - file: "docs/CLI_DETECTION_PATTERNS.md"
+      content: "How CLI scripts are identified"
+
+    - file: "docs/EMOJI_SAFETY_RULES.md"
+      content: "Safe vs unsafe emoji contexts with examples"
+
+# Rollback Plan
+rollback:
+  triggers:
+    - "False positive rate increase >10%"
+    - "True positive rate drop >5%"
+    - "Performance degradation >50ms per file"
+    - "Critical bug in production"
+
+  steps:
+    - "Revert commit: git revert HEAD"
+    - "Disable new checks: Feature flag in code_review_assistant.py"
+    - "Restore baseline: git checkout <baseline_commit>"
+    - "Hotfix critical bugs: Apply minimal fix, re-test"
+
+  validation:
+    - "Run regression tests on rollback"
+    - "Verify baseline metrics restored"
+    - "Document rollback reason for post-mortem"
+
+# Metadata
+metadata:
+  created_by: "Claude (requirements-analyst mode)"
+  created_at: "2025-11-04"
+  verified_by: "Academic research (5 sources)"
+  verification_confidence: 0.9125
+  constitution_version: "1.0.0"
+  related_tasks:
+    - "FEAT-2025-11-04-doc-quality-metrics"
+    - "FEAT-2025-11-03-emoji-support"
+  depends_on: []
+  blocks: []
+
+tags:
+  - "code-quality"
+  - "false-positive-reduction"
+  - "static-analysis"
+  - "context-aware"
+  - "ast-based"
+  - "P10-compliance"
+  - "P7-hallucination-prevention"
+  - "verified-high-confidence"
+  - "academic-validated"

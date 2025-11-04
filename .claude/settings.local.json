@@ -36,7 +36,19 @@
       "Bash(del debug_test.py debug_test2.py debug_test3.py)",
       "Bash(cmd /c \"dir /B \"\"C:\\Users\\user\\Documents\\Obsidian Vault\\개발일지\\2025-11-02\"\" 2>nul | findstr -i \".md\"\")",
       "Bash(awk:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(cmd /c \"dir /B \"C:UsersuserDocumentsObsidian Vault개발일지\" 2>nul | findstr 2025-11\")",
+      "Bash(git reset:*)",
+      "Bash(.venvScriptspython.exe -m pytest tests/unit/test_test_generator_enhanced.py -v)",
+      "Bash(pip install:*)",
+      "Bash(streamlit run:*)",
+      "Bash(.venvScriptspython.exe -m pytest teststest_session_recovery.py -v)",
+      "Bash(cp:*)",
+      "Bash(cat:*)",
+      "Bash(docs/QUICK_START.md)",
+      "Bash(Select-Object -First 30)",
+      "WebSearch",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []
