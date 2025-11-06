@@ -49,7 +49,18 @@
       "Bash(Select-Object -First 30)",
       "WebSearch",
       "Bash(xargs:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(findstr:*)",
+      "Bash(cmd /c \"dir /b TASKS\\*.yaml 2>nul | find /c /v \"\"\")",
+      "Bash(Select-Object -First 50)",
+      "Bash(Select-String -Pattern \"SyntaxWarning\")",
+      "Bash(ruff format:*)",
+      "Bash(.venv\\Scripts\\python.exe -m pytest:*)",
+      "Bash(tests/test_task_executor_comprehensive_clean.py)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(.venvScriptspython.exe -m pytest tests/test_pre_execution_guard.py -v)",
+      "Bash(copy RUNSsession_summary_2025-11-05.md \"%OBSIDIAN_VAULT_PATH%\\개발일지\\2025-11-05\\Session-Summary-Test-Coverage.md\")"
     ],
     "deny": [],
     "ask": []
