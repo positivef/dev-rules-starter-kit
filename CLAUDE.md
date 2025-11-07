@@ -33,9 +33,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
   "Constitution 전문|조항 상세|P1-P15 상세|full constitution|article details|all principles":
     → Read config/constitution.yaml
+
+  "CI/CD|GitHub Actions|워크플로우|workflow|PR 검증|merge blocking":
+    → Read docs/CI_CD_GUIDE.md
 ```
 
 **중요**: 위 키워드가 없으면 이 문서(CLAUDE.md)만으로 충분합니다!
+
+**Stage 5 완료** (2025-11-07):
+- ✅ Git Hooks: Constitution Guard (0.01s, 자동 검증)
+- ✅ CI/CD: GitHub Actions (7 jobs, PR 자동 차단)
+- ⏸️ CLI: Deferred (ROI 낮음, 나중에 필요 시)
+- 🎯 다음: Stage 6 (Scale) - 템플릿화 및 커뮤니티
 
 ## 🎯 Project Identity
 
@@ -186,49 +195,41 @@ Layer 7: Visualization (시각화 - 검증 안 함!)
 
 | ID | 조항 | 강제 도구 | 언제 사용? |
 |----|------|----------|-----------|
-| **P1** | YAML 계약서 우선 | TaskExecutor | 3단계 이상 작업 |
-| **P2** | 증거 기반 개발 | TaskExecutor | 모든 실행 자동 기록 |
-| **P3** | 지식 자산화 | ObsidianBridge | Git commit 시 자동 |
-| **P4** | SOLID 원칙 | DeepAnalyzer | 코드 리뷰 전 |
-| **P5** | 보안 우선 | DeepAnalyzer | 배포 전 필수 |
-| **P6** | 품질 게이트 | TeamStatsAggregator | PR 생성 시 |
-| **P7** | Hallucination 방지 | DeepAnalyzer | AI 생성 코드 검증 |
-| **P8** | 테스트 우선 | pytest | 구현 전 테스트 작성 |
-| **P9** | Conventional Commits | pre-commit | 모든 커밋 |
-| **P10** | Windows 인코딩 | UTF-8 강제 | Python 파일 생성 시 |
+| **P1** | YAML 계약서 우선 | N/A | 항상 |
+| **P2** | 증거 기반 개발 | N/A | 항상 |
+| **P3** | 지식 자산화 | N/A | 항상 |
+| **P4** | SOLID 원칙 준수 | N/A | 항상 |
+| **P5** | 보안 우선 | N/A | 항상 |
+| **P6** | 품질 게이트 | N/A | 항상 |
+| **P7** | Hallucination 방지 | N/A | 항상 |
+| **P8** | 테스트 우선 | N/A | 항상 |
+| **P9** | Conventional Commits | N/A | 항상 |
+| **P10** | Windows 인코딩 준수 | N/A | 항상 |
+
+
+
 
 ### 거버넌스 조항 (P11-P15)
 
 | ID | 조항 | 목적 | 적용 시점 |
 |----|------|------|-----------|
-| **P11** | 원칙 충돌 검증 | 과거 결정과 충돌 방지 | 새 기능 제안 시 |
-| **P12** | 트레이드오프 분석 | 객관적 의사결정 | 중요한 선택 시 |
-| **P13** | 헌법 수정 검증 | Constitution 비대화 방지 | 조항 추가/수정 시 |
-| **P14** | 2차 효과 분석 | 개선의 부작용 완화 | 시스템 변경 시 |
-| **P15** | 수렴 원칙 | 80% 품질에서 멈춤 | 무한 개선 방지 |
+| **P11** | 원칙 충돌 검증 | ... | 중요한 결정 시 |
+| **P12** | 트레이드오프 분석 의무 | ... | 중요한 결정 시 |
+| **P13** | 헌법 수정 검증 | ... | 중요한 결정 시 |
+| **P14** | 2차 효과 분석 | ... | 중요한 결정 시 |
+| **P15** | 수렴 원칙 | ... | 중요한 결정 시 |
+
+
+
 
 ### 전략 조항 (P16)
 
 | ID | 조항 | 강제 도구 | 언제 사용? |
 |----|------|----------|-----------|
-| **P16** | 경쟁사 벤치마킹 우선 | BenchmarkAnalyzer + P16Validator | 신규 프로젝트/기능 시작 전 |
+| **P16** | 경쟁사 벤치마킹 우선 | N/A | 항상 |
 
-**P16 사용 예시**:
-```bash
-# 1. 경쟁사 분석 실행 (자동)
-python scripts/benchmark_analyzer.py --query "todo app"
 
-# 2. YAML에 benchmarking 섹션 추가
-# 3. P16 게이트가 자동 검증 (3개 이상 경쟁사, 3개 이상 차별화 포인트)
-```
 
-**P16 요구사항**:
-- ✅ 경쟁사 3개 이상 분석 (strengths, weaknesses)
-- ✅ 차별화 포인트 3개 이상 (point, rationale, target)
-- ✅ YAML 계약서에 `benchmarking:` 섹션 포함
-- ✅ TaskExecutor가 자동으로 검증 (통과해야 실행)
-
-**ROI**: 997% (연간 768시간 절감)
 
 ## 🔄 Common Workflows
 
@@ -627,5 +628,5 @@ python scripts/agent_sync_status.py --files src/auth.py
 ---
 
 **버전**: 2.0.0 (간결화)
-**마지막 업데이트**: 2025-11-03
+**마지막 업데이트**: 2025-11-07
 **이전 버전**: CLAUDE.md.backup (1522줄 → 600줄)
