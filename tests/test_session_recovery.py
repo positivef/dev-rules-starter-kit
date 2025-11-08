@@ -1,392 +1,381 @@
-"""Unit tests for Session Recovery System.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Test Session Recovery - Week 7 Phase 1
 
-Tests for automatic crash detection and recovery:
-- Crash detection via session state
-- Context integrity validation
-- Checkpoint creation and cleanup
-- Session recovery workflow
-- Recovery statistics calculation
-- CLI interface
+Tests:
+- Checkpoint creation
+- Crash detection (4 types)
+- Session recovery
+- Success rate calculation
+- Edge cases and error handling
 
-Constitutional Compliance:
-- P8: Test-First Development (testing the recovery system)
-- P2: Evidence-Based (verify recovery works)
+Target: 20+ tests for 95% coverage
 """
 
 import json
-import sys
-from datetime import datetime, timedelta
-from pathlib import Path
+import os
+import time
+from datetime import datetime, timezone
+from unittest.mock import patch
 
 import pytest
 
-# Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-
-from session_recovery import CrashInfo, RecoveryResult, SessionRecovery
-
-
-class TestCrashInfo:
-    """Tests for CrashInfo dataclass."""
-
-    def test_crash_info_creation(self):
-        """Test CrashInfo creation."""
-        crash = CrashInfo(
-            session_id="test_session",
-            crash_time=datetime.now(),
-            last_checkpoint=datetime.now() - timedelta(minutes=30),
-            context_hash="abc123",
-            crash_reason="Power failure",
-            recovery_attempted=False,
-            recovery_success=False,
-        )
-
-        assert crash.session_id == "test_session"
-        assert crash.context_hash == "abc123"
-        assert crash.crash_reason == "Power failure"
-        assert crash.recovery_attempted is False
-        assert crash.recovery_success is False
+from scripts.session_recovery import (
+    SessionRecovery,
+    RecoveryStatus,
+    CrashReason,
+    RecoveryLog,
+)
 
 
-class TestRecoveryResult:
-    """Tests for RecoveryResult dataclass."""
+@pytest.fixture
+def temp_recovery_dir(tmp_path):
+    """Create temporary recovery directories"""
+    checkpoint_dir = tmp_path / "sessions"
+    recovery_log_dir = tmp_path / "recovery"
+    heartbeat_dir = tmp_path / "heartbeats"
 
-    def test_recovery_result_success(self):
-        """Test RecoveryResult creation for success."""
-        result = RecoveryResult(
-            success=True,
-            session_id="test_session",
-            recovered_at=datetime.now(),
-            context_valid=True,
-            data_loss=False,
-            recovery_time_seconds=2.5,
-        )
+    checkpoint_dir.mkdir(parents=True)
+    recovery_log_dir.mkdir(parents=True)
+    heartbeat_dir.mkdir(parents=True)
 
-        assert result.success is True
-        assert result.context_valid is True
-        assert result.data_loss is False
-        assert result.recovery_time_seconds == 2.5
-        assert result.error_message is None
+    return {
+        "checkpoint": checkpoint_dir,
+        "recovery": recovery_log_dir,
+        "heartbeat": heartbeat_dir,
+        "root": tmp_path,
+    }
+
+
+@pytest.fixture
+def recovery(temp_recovery_dir):
+    """Create SessionRecovery instance with temp dirs"""
+    recovery = SessionRecovery()
+    recovery.checkpoint_dir = temp_recovery_dir["checkpoint"]
+    recovery.recovery_log_dir = temp_recovery_dir["recovery"]
+    recovery.heartbeat_dir = temp_recovery_dir["heartbeat"]
+    return recovery
+
+
+class TestCheckpointCreation:
+    """Test checkpoint creation"""
+
+    def test_create_checkpoint_basic(self, recovery):
+        """Test basic checkpoint creation"""
+        session_id = "session_test_001"
+        context_data = {"task": "test", "count": 42}
+
+        checkpoint = recovery.create_checkpoint(session_id, context_data)
+
+        assert checkpoint.session_id == session_id
+        assert checkpoint.context_data == context_data
+        assert checkpoint.pid == os.getpid()
+        assert len(checkpoint.context_hash) == 16
+
+    def test_checkpoint_file_saved(self, recovery):
+        """Test checkpoint file is saved"""
+        session_id = "session_test_002"
+        context_data = {"test": "data"}
+
+        checkpoint = recovery.create_checkpoint(session_id, context_data)
+
+        checkpoint_file = recovery.checkpoint_dir / f"{checkpoint.checkpoint_id}.json"
+        assert checkpoint_file.exists()
+
+        with open(checkpoint_file, "r", encoding="utf-8") as f:
+            saved_data = json.load(f)
+
+        assert saved_data["session_id"] == session_id
+        assert saved_data["context_data"] == context_data
+
+    def test_heartbeat_updated(self, recovery):
+        """Test heartbeat is updated"""
+        session_id = "session_test_003"
+        context_data = {}
+
+        recovery.create_checkpoint(session_id, context_data)
+
+        heartbeat_file = recovery.heartbeat_dir / f"{session_id}.heartbeat"
+        assert heartbeat_file.exists()
+
+        with open(heartbeat_file, "r", encoding="utf-8") as f:
+            heartbeat_data = json.load(f)
+
+        assert heartbeat_data["session_id"] == session_id
+        assert heartbeat_data["pid"] == os.getpid()
+
+    def test_checkpoint_hash_deterministic(self, recovery):
+        """Test context hash is deterministic"""
+        context_data = {"a": 1, "b": 2}
+
+        checkpoint1 = recovery.create_checkpoint("sess1", context_data)
+        checkpoint2 = recovery.create_checkpoint("sess2", context_data)
+
+        assert checkpoint1.context_hash == checkpoint2.context_hash
+
+    def test_checkpoint_file_states_captured(self, recovery):
+        """Test file states are captured"""
+        checkpoint = recovery.create_checkpoint("sess_files", {})
+
+        assert "config/constitution.yaml" in checkpoint.file_states
+
+
+class TestCrashDetection:
+    """Test crash detection"""
+
+    def test_detect_no_crash(self, recovery):
+        """Test no crash when process alive"""
+        session_id = "session_alive_001"
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=True):
+            recovery.create_checkpoint(session_id, {})
+            crash_reason = recovery.detect_crash(session_id)
+
+        assert crash_reason is None
+
+    def test_detect_process_killed(self, recovery):
+        """Test detect process killed"""
+        session_id = "session_killed_001"
+        recovery.create_checkpoint(session_id, {})
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            crash_reason = recovery.detect_crash(session_id)
+
+        assert crash_reason == CrashReason.PROCESS_KILLED
+
+    def test_detect_heartbeat_timeout(self, recovery):
+        """Test detect heartbeat timeout"""
+        session_id = "session_timeout_001"
+        recovery.create_checkpoint(session_id, {})
+
+        heartbeat_file = recovery.heartbeat_dir / f"{session_id}.heartbeat"
+        old_mtime = time.time() - 400
+
+        os.utime(heartbeat_file, (old_mtime, old_mtime))
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=True):
+            crash_reason = recovery.detect_crash(session_id)
+
+        assert crash_reason == CrashReason.HEARTBEAT_TIMEOUT
+
+    def test_detect_corrupted_state(self, recovery):
+        """Test detect corrupted state"""
+        session_id = "session_corrupted_001"
+        checkpoint = recovery.create_checkpoint(session_id, {"data": "original"})
+
+        checkpoint_file = recovery.checkpoint_dir / f"{checkpoint.checkpoint_id}.json"
+        with open(checkpoint_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        data["context_data"] = {"data": "modified"}
+
+        with open(checkpoint_file, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=True):
+            crash_reason = recovery.detect_crash(session_id)
+
+        assert crash_reason == CrashReason.CORRUPTED_STATE
+
+    def test_detect_no_checkpoint(self, recovery):
+        """Test detect no checkpoint"""
+        crash_reason = recovery.detect_crash("nonexistent_session")
+        assert crash_reason is None
 
 
 class TestSessionRecovery:
-    """Tests for SessionRecovery class."""
-
-    def test_initialization(self, tmp_path):
-        """Test SessionRecovery initialization."""
-        recovery = SessionRecovery(tmp_path)
-
-        assert recovery.project_root == tmp_path
-        assert recovery.sessions_dir.exists()
-        assert recovery.checkpoints_dir.exists()
-        assert recovery.crashes_dir.exists()
-        assert recovery.context_dir.exists()
-        assert recovery.checkpoint_interval == 30
-        assert recovery.max_recovery_attempts == 3
-
-    def test_detect_crashes_no_crashes(self, tmp_path):
-        """Test crash detection with no crashes."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create session with graceful shutdown
-        session_file = recovery.sessions_dir / "session_test1.json"
-        session_data = {
-            "session_id": "test1",
-            "graceful_shutdown": True,
-            "last_update": datetime.now().isoformat(),
-        }
-        session_file.write_text(json.dumps(session_data), encoding="utf-8")
-
-        crashes = recovery.detect_crashes()
-        assert len(crashes) == 0
-
-    def test_detect_crashes_single_crash(self, tmp_path):
-        """Test crash detection with single crash."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create session without graceful shutdown, older than 1 hour
-        session_file = recovery.sessions_dir / "session_test2.json"
-        crash_time = datetime.now() - timedelta(hours=2)
-        session_data = {
-            "session_id": "test2",
-            "graceful_shutdown": False,
-            "last_update": crash_time.isoformat(),
-            "context_hash": "hash123",
-        }
-        session_file.write_text(json.dumps(session_data), encoding="utf-8")
-
-        crashes = recovery.detect_crashes()
-        assert len(crashes) == 1
-        assert crashes[0].session_id == "test2"
-        assert crashes[0].context_hash == "hash123"
-
-    def test_detect_crashes_multiple_crashes(self, tmp_path):
-        """Test crash detection with multiple crashes."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create 3 crashed sessions
-        for i in range(3):
-            session_file = recovery.sessions_dir / f"session_test{i}.json"
-            crash_time = datetime.now() - timedelta(hours=2 + i)
-            session_data = {
-                "session_id": f"test{i}",
-                "graceful_shutdown": False,
-                "last_update": crash_time.isoformat(),
-            }
-            session_file.write_text(json.dumps(session_data), encoding="utf-8")
-
-        crashes = recovery.detect_crashes()
-        assert len(crashes) == 3
-
-    def test_detect_crashes_corrupted_file(self, tmp_path):
-        """Test crash detection with corrupted session file."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create corrupted session file
-        session_file = recovery.sessions_dir / "session_corrupted.json"
-        session_file.write_text("not valid json", encoding="utf-8")
-
-        # Should not crash, should skip corrupted file
-        crashes = recovery.detect_crashes()
-        assert len(crashes) == 0
-
-    def test_validate_context_integrity_valid(self, tmp_path):
-        """Test context integrity validation with valid hash."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create checkpoint with valid context
-        context = {"key": "value", "data": [1, 2, 3]}
-        recovery.create_checkpoint("test_session", context)
-
-        # Validate should pass
-        valid = recovery.validate_context_integrity("test_session")
-        assert valid is True
-
-    def test_validate_context_integrity_invalid(self, tmp_path):
-        """Test context integrity validation with invalid hash."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create checkpoint
-        context = {"key": "value"}
-        checkpoint_file = recovery.create_checkpoint("test_session", context)
-
-        # Manually corrupt the hash
-        with open(checkpoint_file, encoding="utf-8") as f:
-            checkpoint_data = json.load(f)
-        checkpoint_data["context_hash"] = "corrupted_hash"
-        checkpoint_file.write_text(json.dumps(checkpoint_data), encoding="utf-8")
-
-        # Validation should fail
-        valid = recovery.validate_context_integrity("test_session")
-        assert valid is False
-
-    def test_validate_context_integrity_no_checkpoint(self, tmp_path):
-        """Test context integrity validation with no checkpoint."""
-        recovery = SessionRecovery(tmp_path)
-
-        # No checkpoint exists
-        valid = recovery.validate_context_integrity("nonexistent_session")
-        assert valid is False
-
-    def test_create_checkpoint(self, tmp_path):
-        """Test checkpoint creation."""
-        recovery = SessionRecovery(tmp_path)
-
-        context = {"key": "value", "data": [1, 2, 3]}
-        checkpoint_file = recovery.create_checkpoint("test_session", context)
-
-        assert checkpoint_file.exists()
-
-        # Load and verify
-        with open(checkpoint_file, encoding="utf-8") as f:
-            checkpoint_data = json.load(f)
-
-        assert checkpoint_data["session_id"] == "test_session"
-        assert checkpoint_data["context"] == context
-        assert "context_hash" in checkpoint_data
-        assert checkpoint_data["checkpoint_type"] == "automatic"
-
-    def test_create_checkpoint_hash_correctness(self, tmp_path):
-        """Test checkpoint hash calculation correctness."""
-        import hashlib
-
-        recovery = SessionRecovery(tmp_path)
-
-        context = {"key": "value", "data": [1, 2, 3]}
-        checkpoint_file = recovery.create_checkpoint("test_session", context)
-
-        # Load checkpoint
-        with open(checkpoint_file, encoding="utf-8") as f:
-            checkpoint_data = json.load(f)
-
-        # Manually calculate hash
-        context_str = json.dumps(context, sort_keys=True)
-        expected_hash = hashlib.sha256(context_str.encode()).hexdigest()
-
-        assert checkpoint_data["context_hash"] == expected_hash
-
-    def test_create_checkpoint_cleanup(self, tmp_path):
-        """Test checkpoint cleanup keeps last 5 only."""
-        recovery = SessionRecovery(tmp_path)
-
-        context = {"key": "value"}
-
-        # Create 7 checkpoints
-        for i in range(7):
-            recovery.create_checkpoint("test_session", context)
-
-        # Should have only 5 checkpoints
-        checkpoints = list(recovery.checkpoints_dir.glob("checkpoint_test_session_*.json"))
-        assert len(checkpoints) == 5
-
-    def test_recover_session_success(self, tmp_path):
-        """Test successful session recovery."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create checkpoint
-        context = {"key": "value", "data": [1, 2, 3]}
-        recovery.create_checkpoint("test_session", context)
-
-        # Recover
-        result = recovery.recover_session("test_session")
-
-        assert result.success is True
-        assert result.context_valid is True
-        assert result.session_id == "test_session"
-        assert result.recovery_time_seconds > 0
-
-        # Check recovery file created
-        recovery_file = recovery.sessions_dir / "session_test_session_recovered.json"
-        assert recovery_file.exists()
-
-    def test_recover_session_no_checkpoint(self, tmp_path):
-        """Test recovery failure with no checkpoint."""
-        recovery = SessionRecovery(tmp_path)
-
-        # No checkpoint exists
-        result = recovery.recover_session("nonexistent_session")
-
-        assert result.success is False
-        assert result.context_valid is False
-        assert result.data_loss is True
-        assert result.error_message == "No checkpoints found"
-
-    def test_recover_session_invalid_context(self, tmp_path):
-        """Test recovery failure with invalid context."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create checkpoint
-        context = {"key": "value"}
-        checkpoint_file = recovery.create_checkpoint("test_session", context)
-
-        # Corrupt the hash
-        with open(checkpoint_file, encoding="utf-8") as f:
-            checkpoint_data = json.load(f)
-        checkpoint_data["context_hash"] = "corrupted"
-        checkpoint_file.write_text(json.dumps(checkpoint_data), encoding="utf-8")
-
-        # Recovery should fail
-        result = recovery.recover_session("test_session")
-
-        assert result.success is False
-        assert result.context_valid is False
-        assert "integrity check failed" in result.error_message
-
-    def test_recover_session_data_loss_detection(self, tmp_path):
-        """Test data loss detection in recovery."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create old checkpoint (45 minutes ago, >30 min threshold)
-        context = {"key": "value"}
-        checkpoint_file = recovery.create_checkpoint("test_session", context)
-
-        # Manually set checkpoint timestamp to 45 minutes ago
-        with open(checkpoint_file, encoding="utf-8") as f:
-            checkpoint_data = json.load(f)
-        old_time = datetime.now() - timedelta(minutes=45)
-        checkpoint_data["timestamp"] = old_time.isoformat()
-        checkpoint_file.write_text(json.dumps(checkpoint_data), encoding="utf-8")
-
-        # Recover
-        result = recovery.recover_session("test_session")
-
-        assert result.success is True
-        assert result.data_loss is True  # More than 30 minutes
-
-    def test_recover_session_time_measurement(self, tmp_path):
-        """Test recovery time measurement."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create checkpoint
-        context = {"key": "value"}
-        recovery.create_checkpoint("test_session", context)
-
-        # Recover and check time
-        result = recovery.recover_session("test_session")
-
-        assert result.recovery_time_seconds > 0
-        assert result.recovery_time_seconds < 5  # Should be fast
-
-    def test_get_recovery_statistics_empty(self, tmp_path):
-        """Test recovery statistics with no crashes."""
-        recovery = SessionRecovery(tmp_path)
-
-        stats = recovery.get_recovery_statistics()
-
-        assert stats["total_crashes"] == 0
-        assert stats["successful_recoveries"] == 0
-        assert stats["recovery_rate"] == 0
-        assert stats["data_loss_incidents"] == 0
-
-    def test_get_recovery_statistics_with_crashes(self, tmp_path):
-        """Test recovery statistics calculation."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create 3 crash logs
-        for i in range(3):
-            crash_log = recovery.crashes_dir / f"crash_test{i}_20251103_120000.json"
-            log_data = {
-                "session_id": f"test{i}",
-                "recovery_success": i < 2,  # 2 successes, 1 failure
-                "data_loss": i == 1,  # 1 with data loss
-            }
-            crash_log.write_text(json.dumps(log_data), encoding="utf-8")
-
-        stats = recovery.get_recovery_statistics()
-
-        assert stats["total_crashes"] == 3
-        assert stats["successful_recoveries"] == 2
-        assert abs(stats["recovery_rate"] - 66.67) < 0.1  # 2/3 * 100
-        assert stats["data_loss_incidents"] == 1
-
-    def test_auto_recover_all(self, tmp_path):
-        """Test automatic recovery of all crashed sessions."""
-        recovery = SessionRecovery(tmp_path)
-
-        # Create 2 crashed sessions with checkpoints
-        for i in range(2):
-            session_id = f"test{i}"
-            # Create checkpoint
-            context = {"session": session_id}
-            recovery.create_checkpoint(session_id, context)
-
-            # Create crashed session
-            session_file = recovery.sessions_dir / f"session_{session_id}.json"
-            crash_time = datetime.now() - timedelta(hours=2)
-            session_data = {
-                "session_id": session_id,
-                "graceful_shutdown": False,
-                "last_update": crash_time.isoformat(),
-                "recovery_attempted": False,
-            }
-            session_file.write_text(json.dumps(session_data), encoding="utf-8")
-
-        # Auto-recover all
-        results = recovery.auto_recover_all()
-
-        assert len(results) == 2
-        assert all(r.success for r in results)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
+    """Test session recovery"""
+
+    def test_recover_no_checkpoint(self, recovery):
+        """Test recovery fails with no checkpoint"""
+        log = recovery.recover_session("nonexistent_session")
+
+        assert log.status == RecoveryStatus.FAILED.value
+        assert log.error_message == "No checkpoint found"
+        assert log.files_restored == 0
+        assert log.context_restored is False
+
+    def test_recover_success(self, recovery):
+        """Test successful recovery"""
+        session_id = "session_recover_001"
+        context_data = {"task": "important", "progress": 75}
+
+        recovery.create_checkpoint(session_id, context_data)
+
+        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        session_file.write_text(
+            json.dumps(
+                {
+                    "session_id": session_id,
+                    "scope_data": {"SESSION": {}, "USER": {}, "APP": {}, "TEMP": {}},
+                },
+                ensure_ascii=True,
+            ),
+            encoding="utf-8",
+        )
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            log = recovery.recover_session(session_id)
+
+        assert log.status == RecoveryStatus.SUCCESS.value
+        assert log.crash_reason == CrashReason.PROCESS_KILLED.value
+        assert log.context_restored is True
+        assert log.recovery_time_sec < 1.0
+
+    def test_recover_partial(self, recovery):
+        """Test partial recovery"""
+        session_id = "session_partial_001"
+        checkpoint = recovery.create_checkpoint(session_id, {})
+
+        checkpoint_file = recovery.checkpoint_dir / f"{checkpoint.checkpoint_id}.json"
+        with open(checkpoint_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        data["context_hash"] = "invalid_hash"
+
+        with open(checkpoint_file, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+
+        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        session_file.write_text(
+            json.dumps({"session_id": session_id, "scope_data": {"SESSION": {}}}, ensure_ascii=True),
+            encoding="utf-8",
+        )
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            log = recovery.recover_session(session_id)
+
+        assert log.status == RecoveryStatus.PARTIAL.value
+
+    def test_recovery_log_saved(self, recovery):
+        """Test recovery log is saved"""
+        session_id = "session_log_001"
+        recovery.create_checkpoint(session_id, {})
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            log = recovery.recover_session(session_id)
+
+        log_file = recovery.recovery_log_dir / f"{log.recovery_id}.json"
+        assert log_file.exists()
+
+
+class TestSuccessRate:
+    """Test success rate calculation"""
+
+    def test_success_rate_no_logs(self, recovery):
+        """Test success rate with no logs"""
+        rate = recovery.get_recovery_success_rate()
+        assert rate == 0.0
+
+    def test_success_rate_all_success(self, recovery):
+        """Test success rate with all successes"""
+        for i in range(5):
+            log = RecoveryLog(
+                recovery_id=f"recovery_{i}",
+                session_id=f"session_{i}",
+                crash_reason=CrashReason.PROCESS_KILLED.value,
+                detected_at=datetime.now(timezone.utc).isoformat(),
+                started_at=datetime.now(timezone.utc).isoformat(),
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status=RecoveryStatus.SUCCESS.value,
+                checkpoint_used="checkpoint_001",
+                files_restored=3,
+                context_restored=True,
+                error_message=None,
+                recovery_time_sec=0.5,
+            )
+
+            log_file = recovery.recovery_log_dir / f"{log.recovery_id}.json"
+            with open(log_file, "w", encoding="utf-8") as f:
+                json.dump(log.to_dict(), f)
+
+        rate = recovery.get_recovery_success_rate()
+        assert rate == 1.0
+
+    def test_success_rate_mixed(self, recovery):
+        """Test success rate with mixed results"""
+        statuses = [
+            RecoveryStatus.SUCCESS,
+            RecoveryStatus.SUCCESS,
+            RecoveryStatus.FAILED,
+            RecoveryStatus.SUCCESS,
+            RecoveryStatus.PARTIAL,
+        ]
+
+        for i, status in enumerate(statuses):
+            log = RecoveryLog(
+                recovery_id=f"recovery_{i}",
+                session_id=f"session_{i}",
+                crash_reason=CrashReason.UNKNOWN.value,
+                detected_at=datetime.now(timezone.utc).isoformat(),
+                started_at=datetime.now(timezone.utc).isoformat(),
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status=status.value,
+                checkpoint_used=None,
+                files_restored=0,
+                context_restored=False,
+                error_message=None,
+                recovery_time_sec=1.0,
+            )
+
+            log_file = recovery.recovery_log_dir / f"{log.recovery_id}.json"
+            with open(log_file, "w", encoding="utf-8") as f:
+                json.dump(log.to_dict(), f)
+
+        rate = recovery.get_recovery_success_rate()
+        assert rate == 0.6
+
+
+class TestEdgeCases:
+    """Test edge cases and error handling"""
+
+    def test_checkpoint_with_empty_context(self, recovery):
+        """Test checkpoint with empty context"""
+        checkpoint = recovery.create_checkpoint("empty_session", {})
+        assert checkpoint.context_data == {}
+        assert len(checkpoint.context_hash) == 16
+
+    def test_multiple_checkpoints_latest(self, recovery):
+        """Test latest checkpoint is used"""
+        session_id = "multi_checkpoint_001"
+
+        recovery.create_checkpoint(session_id, {"version": 1})
+        time.sleep(0.1)
+        recovery.create_checkpoint(session_id, {"version": 2})
+        time.sleep(0.1)
+        recovery.create_checkpoint(session_id, {"version": 3})
+
+        checkpoints = sorted(
+            recovery.checkpoint_dir.glob(f"checkpoint_{session_id}_*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+
+        assert len(checkpoints) == 3
+
+        with open(checkpoints[0], "r", encoding="utf-8") as f:
+            latest_data = json.load(f)
+
+        assert latest_data["context_data"]["version"] == 3
+
+    def test_disk_space_check(self, recovery):
+        """Test disk space check"""
+        has_space = recovery._check_disk_space()
+        assert isinstance(has_space, bool)
+
+    def test_file_states_nonexistent_files(self, recovery):
+        """Test file states with nonexistent files"""
+        file_states = recovery._capture_file_states()
+        assert isinstance(file_states, dict)
+
+    def test_recovery_time_measurement(self, recovery):
+        """Test recovery time is measured"""
+        session_id = "time_test_001"
+        recovery.create_checkpoint(session_id, {})
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            log = recovery.recover_session(session_id)
+
+        assert log.recovery_time_sec >= 0
+        assert log.recovery_time_sec < 5.0

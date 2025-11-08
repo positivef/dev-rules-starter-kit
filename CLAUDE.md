@@ -747,6 +747,34 @@ python scripts/codex_auto_init.py
 "4주 측정 후 RICE로 비교하겠습니다"
 ```
 
+**P11 Pattern 4: 설계 검토 필수 (NEW!)** 🔥
+```python
+# ❌ NEVER say this
+"좋아요! 바로 만들겠습니다"
+"간단하니까 바로 진행할게요"
+"일단 시작하고 나중에 수정"
+
+# ✅ ALWAYS say this
+"좋은 아이디어네요! 먼저 설계 검토부터 할게요"
+"위험 분석 후 진행하겠습니다"
+"부작용 체크 완료 후 시작하겠습니다"
+```
+
+**Pattern 4 필수 단계**:
+1. 설계 문서 작성 (`docs/[FEATURE]_DESIGN_REVIEW.md`)
+2. 8가지 위험 체크 (기존 시스템, Git conflict, Multi-session, 성능, 복잡도, workflow, 롤백, 테스트)
+3. 모든 위험에 대한 완화 전략
+4. 안전장치 설계 (Fail-safe, Idempotent, Read-only, State 분리)
+5. 3단계 롤백 전략 (즉시/1분/5분)
+6. 사용자 승인 후 구현
+
+**Triggers**:
+- 새 스크립트/hook 추가
+- CLAUDE.md/Constitution 수정
+- 폴더 구조 변경
+- 자동화 시스템 추가
+- 성능 영향 가능한 변경
+
 **가능하면 피할 것** (긴급 시 OK):
 - ⚠️ 복잡한 작업에 YAML 생략 → `SKIP_CONSTITUTION=true`
 - ⚠️ Constitution 없이 기능 추가 → 프로토타입만 예외
