@@ -120,7 +120,7 @@ User question: "{user_query}"
 Detected keywords: {', '.join(keywords)}
 
 Next steps:
-1. Search Obsidian with MCP tool: "{'\" OR \"'.join(keywords)}"
+1. Search Obsidian with MCP tool: "{'" OR "'.join(keywords)}"
 2. Check past solutions
 3. Answer based on findings
 

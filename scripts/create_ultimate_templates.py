@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Create Ultimate Template Package with Multiple Levels
-최고 성능을 위한 완벽한 템플릿 패키지 생성
 
-4개 레벨:
-1. Essential (32KB) - 최소 기능
-2. Standard (60KB) - 기본 + Streamlit
-3. Professional (200KB) - 핵심 분석 도구 포함
-4. Enterprise (500KB) - 모든 기능 포함
+Perfect template package creation for optimal performance
+
+4 Levels:
+1. Essential (32KB) - Minimal features
+2. Standard (60KB) - Basic + Streamlit
+3. Professional (200KB) - Core analysis tools included
+4. Enterprise (500KB) - All features included
 
 Usage:
     python scripts/create_ultimate_templates.py
@@ -147,6 +148,13 @@ typer==0.9.0
 def create_readme(level, config):
     """Generate level-specific README"""
 
+    # Python 3.8 compatibility: Define recommendation texts
+    nl = chr(10)
+    essential_rec = f"- Quick prototypes{nl}- Simple projects{nl}- Learning"
+    standard_rec = f"- Small teams{nl}- Web apps with monitoring{nl}- Standard projects"
+    professional_rec = f"- Professional development{nl}- Performance critical{nl}- Knowledge management"
+    enterprise_rec = f"- Large teams{nl}- Enterprise projects{nl}- Maximum capabilities"
+
     return f"""# Project Template - {level.upper()}
 
 **Level**: {level.capitalize()}
@@ -183,17 +191,17 @@ if isinstance(config['dashboards'], list) else '- All dashboards included'}
 
 ## Performance Features
 
-{'✓ Basic execution' if level == 'essential' else ''}
-{'✓ Basic execution + Dashboards' if level == 'standard' else ''}
-{'✓ Code analysis + Optimization + Obsidian' if level == 'professional' else ''}
-{'✓ Complete enterprise stack (135+ tools)' if level == 'enterprise' else ''}
+{'[OK] Basic execution' if level == 'essential' else ''}
+{'[OK] Basic execution + Dashboards' if level == 'standard' else ''}
+{'[OK] Code analysis + Optimization + Obsidian' if level == 'professional' else ''}
+{'[OK] Complete enterprise stack (135+ tools)' if level == 'enterprise' else ''}
 
 ## Recommended For
 
-{'- Quick prototypes\n- Simple projects\n- Learning' if level == 'essential' else ''}
-{'- Small teams\n- Web apps with monitoring\n- Standard projects' if level == 'standard' else ''}
-{'- Professional development\n- Performance critical\n- Knowledge management' if level == 'professional' else ''}
-{'- Large teams\n- Enterprise projects\n- Maximum capabilities' if level == 'enterprise' else ''}
+{essential_rec if level == 'essential' else ''}
+{standard_rec if level == 'standard' else ''}
+{professional_rec if level == 'professional' else ''}
+{enterprise_rec if level == 'enterprise' else ''}
 
 Built with Constitution Framework
 """
@@ -310,7 +318,7 @@ DEBUG=true
         file_count += 1
 
     size_kb = os.path.getsize(output_zip) / 1024
-    print(f"\n✓ Created: {output_zip.name}")
+    print(f"\n[OK] Created: {output_zip.name}")
     print(f"  Size: {size_kb:.1f} KB")
     print(f"  Files: {file_count}")
 
@@ -344,35 +352,35 @@ def create_all_templates():
     print("\n" + "=" * 70)
     print("TEMPLATE PACKAGE COMPLETE!")
     print("=" * 70)
-    print("\n📦 Generated Templates:\n")
+    print("\n[TEMPLATES] Generated Templates:\n")
 
     for r in results:
         print(f"  {r['level'].upper():12} - {r['size_kb']:6.1f} KB - {r['file_count']:3} files")
 
-    print("\n🚀 Usage:")
+    print("\n[USAGE]")
     print("  1. Choose your level based on project needs")
     print("  2. Extract the corresponding ZIP")
     print("  3. Start developing!\n")
 
-    print("📊 Recommendations:")
-    print("  - Solo/Learning    → essential")
-    print("  - Small team       → standard")
-    print("  - Professional     → professional")
-    print("  - Enterprise       → enterprise\n")
+    print("[RECOMMENDATIONS]")
+    print("  - Solo/Learning    -> essential")
+    print("  - Small team       -> standard")
+    print("  - Professional     -> professional")
+    print("  - Enterprise       -> enterprise\n")
 
     # Create comparison chart
     chart = """
-╔════════════════╦═══════════╦══════════╦════════════╦════════════╗
-║ Feature        ║ Essential ║ Standard ║ Pro        ║ Enterprise ║
-╠════════════════╬═══════════╬══════════╬════════════╬════════════╣
-║ Flask          ║ ✓         ║ ✓        ║ ✓          ║ ✓          ║
-║ Streamlit      ║           ║ ✓        ║ ✓          ║ ✓          ║
-║ Code Analysis  ║           ║          ║ ✓          ║ ✓          ║
-║ Optimization   ║           ║          ║ ✓          ║ ✓          ║
-║ Obsidian       ║           ║          ║ ✓          ║ ✓          ║
-║ TDD Tools      ║           ║          ║ ✓          ║ ✓          ║
-║ All 135 Tools  ║           ║          ║            ║ ✓          ║
-╚════════════════╩═══════════╩══════════╩════════════╩════════════╝
++----------------+-----------+----------+------------+------------+
+| Feature        | Essential | Standard | Pro        | Enterprise |
++----------------+-----------+----------+------------+------------+
+| Flask          | [OK]      | [OK]     | [OK]       | [OK]       |
+| Streamlit      |           | [OK]     | [OK]       | [OK]       |
+| Code Analysis  |           |          | [OK]       | [OK]       |
+| Optimization   |           |          | [OK]       | [OK]       |
+| Obsidian       |           |          | [OK]       | [OK]       |
+| TDD Tools      |           |          | [OK]       | [OK]       |
+| All 135 Tools  |           |          |            | [OK]       |
++----------------+-----------+----------+------------+------------+
 """
     print(chart)
 
