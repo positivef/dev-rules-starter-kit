@@ -82,8 +82,10 @@ python scripts/p8_impact_monitor.py --report
 # Decision: Continue / Monitor / Rollback
 ```
 
-### 아무때나
-- Pattern 2 테스트 (Scenario 1): `docs/PATTERN2_TEST_SCENARIOS.md`
+### 완료됨 ✅
+- ✅ Pattern 2 테스트 (Scenario 1): PASSED (7/7)
+- ✅ 2-Track 파일럿: 완료 (3-item vs 10-item)
+- ✅ Uncertainty Map 가이드: `docs/UNCERTAINTY_MAP_GUIDE.md`
 
 **상세**: `TASKS/WEEK1-CONSTITUTION-MONITORING.yaml` 참조
 
@@ -736,7 +738,7 @@ python scripts/codex_auto_init.py
 - ❌ System Python 사용 (venv 없이)
 - 🚨 **미검증 = 거부 판단** (P11 Pattern 2, AI 고질적 편향!)
 
-**P11 Pattern 2 경고 (CRITICAL)**:
+**P11 Pattern 2 경고 (CRITICAL)** - ✅ **VALIDATED** (2025-11-09):
 ```python
 # ❌ NEVER say this
 "미검증이라 안 됩니다"
@@ -746,6 +748,12 @@ python scripts/codex_auto_init.py
 "미검증이니 2-Track 파일럿으로 검증하겠습니다"
 "4주 측정 후 RICE로 비교하겠습니다"
 ```
+
+**검증 완료** (Scenario 1: 10-item uncertainty map proposal):
+- Test Score: 7/7 (100%)
+- 2-Track Pilot: 2 projects completed
+- Decision: 3-item default (RICE 1000), 10-item optional (RICE 341)
+- Evidence: `RUNS/uncertainty_pilot/pattern2_validation_complete.md`
 
 **P11 Pattern 4: 설계 검토 필수 (NEW!)** 🔥
 ```python
@@ -784,6 +792,91 @@ python scripts/codex_auto_init.py
 - 3줄 수정에 YAML? → 과도함, 건너뛰기
 - 모든 것을 검증? → CI/CD에서만
 - 100% Constitution 준수? → 80%면 충분 (P15)
+
+---
+
+## 🗺️ Uncertainty Map Decision Tree
+
+**Purpose**: 새 프로젝트/기능 시작 전 위험 분석 프레임워크
+
+**Official** (2025-11-09): 2-Track 파일럿 완료, RICE 기반 결정
+
+### Quick Decision
+
+```
+새 프로젝트/기능 시작?
+  ↓
+위험도 평가:
+  ├─ 고위험? (보안, 프로덕션, 크리티컬)
+  │   └─ 10-Item Map 사용
+  │       - 시간: ~26분
+  │       - 품질: 10개 상세 위험 분석
+  │       - RICE: 341 (검증됨)
+  │
+  └─ 일반/저위험? (내부 도구, 알려진 도메인)
+      └─ 3-Item Map 사용 (기본)
+          - 시간: ~12분
+          - 품질: 4개 주요 위험 분석
+          - RICE: 1000 (검증됨)
+```
+
+### 3-Item Map (Default)
+
+**언제 사용**:
+- ✅ 내부 도구 프로젝트
+- ✅ 알려진 도메인 (Python, 자동화, 리팩토링)
+- ✅ 빠른 반복 필요
+- ✅ 저위험 변경
+
+**구조**:
+1. **Known Knowns** (90%) - 표준 프로세스로 구현
+2. **Known Unknowns** (60%) - 검증 필요
+3. **Unknown Unknowns** (30%) - 점진적 롤아웃
+
+**ROI**: 60-70% 시간 절감 (vs 임시 분석)
+
+### 10-Item Map (Optional)
+
+**언제 사용**:
+- ✅ 고위험 프로젝트 (보안, 프로덕션, 크리티컬)
+- ✅ 미지의 도메인 (새 기술 스택, 미지의 영역)
+- ✅ 비싼 실패 (실패 비용 > 분석 시간)
+- ✅ 이해관계자가 상세 분석 요구
+
+**구조**: 10-tier (Tier 1-4)
+- Tier 1: Known Territory (70-100%)
+- Tier 2: Partial Knowledge (40-70%)
+- Tier 3: Unknown Territory (10-40%)
+- Tier 4: Unknown Unknowns (0-10%)
+
+**ROI**: +150% 품질 (2.5배 더 많은 위험 발견), +29% 신뢰도
+
+### Usage
+
+**3-Item Map**:
+```bash
+# docs/UNCERTAINTY_MAP_GUIDE.md 참조
+# 시간: 12분
+# 템플릿: docs/DESIGN_REVIEW_TEMPLATE.md (Section 2.1-2.3)
+```
+
+**10-Item Map**:
+```bash
+# docs/UNCERTAINTY_MAP_10_ITEMS.md 참조
+# 시간: 26분
+# 템플릿: docs/DESIGN_REVIEW_TEMPLATE.md (Section 2 - 10-Item)
+```
+
+### Data (from 2-Track Pilot)
+
+| Map | RICE | 시간 | 위험 발견 | 신뢰도 | 프로젝트 |
+|-----|------|------|-----------|--------|----------|
+| 3-Item | **1000** | 12.5분 | 4 | 3.5/5 | P8/Pattern 4, Pattern Sync |
+| 10-Item | 341 | 26.5분 | 10 | 4.5/5 | Same |
+
+**상세**: `RUNS/uncertainty_pilot/PILOT_COMPLETE.md`
+
+---
 
 ## 📊 Performance Optimization
 

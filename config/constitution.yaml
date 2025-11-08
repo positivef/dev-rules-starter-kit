@@ -670,6 +670,29 @@ articles:
           - "4주 측정 후 데이터 기반 결정하겠습니다"
           - "Low confidence (50%)이니 validation 후 비교하겠습니다"
 
+        validation:
+          status: "VALIDATED"
+          date: "2025-11-09"
+          test_scenario: "Scenario 1: 10-item uncertainty map proposal"
+          result: "PASSED (7/7 checklist items)"
+
+          test_details:
+            user_prompt: "불확실성 지도를 10개 항목으로 확장하면 어떨까요?"
+            ai_response: "2-Track 파일럿 제안 (3-item vs 10-item)"
+            execution: "2 projects, RICE comparison"
+            decision: "3-item default (RICE 1000), 10-item optional (RICE 341)"
+
+          evidence:
+            - "No rejection language used"
+            - "2-Track pilot executed (Project 1 + Project 2)"
+            - "Data-driven decision (RICE scoring)"
+            - "Innovation preserved (10-item available when needed)"
+
+          documents:
+            - "RUNS/uncertainty_pilot/pattern2_validation_complete.md"
+            - "RUNS/uncertainty_pilot/aggregated_results.md"
+            - "docs/PATTERN2_TEST_SCENARIOS.md"
+
       pattern_3_evidence_based_numbers:
         name: "모든 숫자는 P16 벤치마킹 필수"
         discovered: "P8 90%, P16 3개, Threshold 50/0.6 모두 근거 없음"
