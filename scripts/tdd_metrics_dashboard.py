@@ -249,11 +249,11 @@ def main():
         st.metric("Total Tests", gates["test_count"], "tests")
 
     with col3:
-        status_color = "🟢" if gates["coverage_gate"] else "🔴"
+        status_color = "[OK]" if gates["coverage_gate"] else "[X]"
         st.metric("Coverage Gate", f"{status_color} {'PASS' if gates['coverage_gate'] else 'FAIL'}", ">= 4.0%")
 
     with col4:
-        status_color = "🟢" if gates["overall_status"] == "PASS" else "🔴"
+        status_color = "[OK]" if gates["overall_status"] == "PASS" else "[X]"
         st.metric("Overall Status", f"{status_color} {gates['overall_status']}", "Quality Gates")
 
     # Coverage trend chart
@@ -363,7 +363,7 @@ def main():
                     if compliance >= 60
                     else "[CRITICAL]"
                 )
-                status_color = "🟢" if compliance >= 80 else "🟡" if compliance >= 60 else "🔴"
+                status_color = "[OK]" if compliance >= 80 else "[WARN]" if compliance >= 60 else "[X]"
                 st.metric("Status", f"{status_color} {status}", "")
 
             # Developer breakdown
@@ -475,7 +475,7 @@ def main():
                     )
 
                 with col3:
-                    enforcement_status = "🟢 [ACTIVE]" if violation_age.seconds < 300 else "🟡 [IDLE]"
+                    enforcement_status = "[OK] [ACTIVE]" if violation_age.seconds < 300 else "[WARN] [IDLE]"
                     st.metric("Enforcement", enforcement_status, "")
 
                 # Show latest violation details
@@ -485,7 +485,8 @@ def main():
 
                     summary = violation_data.get("summary", {})
                     st.caption(
-                        f"Latest: {summary.get('total_violations', 0)} missing tests, {summary.get('total_coverage_gaps', 0)} coverage gaps"
+                        f"Latest: {summary.get('total_violations', 0)} missing tests, "
+                        f"{summary.get('total_coverage_gaps', 0)} coverage gaps"
                     )
                 except Exception:
                     pass
