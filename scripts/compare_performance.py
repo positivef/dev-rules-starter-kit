@@ -298,7 +298,7 @@ class PerformanceComparison:
         simple_total = simple["total_errors"]
         hybrid_t1 = hybrid["tier1_hits"]
         hybrid_total = hybrid["total_errors"]
-        t1_improvement = ((hybrid_t1 - simple_t1) / simple_total * 100)
+        t1_improvement = (hybrid_t1 - simple_t1) / simple_total * 100
 
         simple_t2 = simple["tier2_auto"] + simple.get("tier2_confirmed", 0)
         hybrid_t2_auto = hybrid["tier2_auto"]
@@ -343,9 +343,19 @@ class PerformanceComparison:
 
 ## Conclusion
 
-{'The Hybrid Confidence-Based system shows significant improvement over the baseline.' if auto_improvement > 200 else 'The Hybrid system shows moderate improvement.' if auto_improvement > 100 else 'The Hybrid system shows modest improvement.'}
+{(
+    'The Hybrid Confidence-Based system shows significant improvement over the baseline.'
+    if auto_improvement > 200
+    else 'The Hybrid system shows moderate improvement.'
+    if auto_improvement > 100
+    else 'The Hybrid system shows modest improvement.'
+)}
 
-**Recommendation**: {'Continue with current configuration' if hybrid['automation_rate'] > 0.6 else 'Review configuration'}
+**Recommendation**: {(
+    'Continue with current configuration'
+    if hybrid['automation_rate'] > 0.6
+    else 'Review configuration'
+)}
 """
 
         with open(report_path, "w", encoding="utf-8") as f:
