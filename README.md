@@ -1,13 +1,32 @@
 # Development Rules Starter Kit
 
+<!-- Badges -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub Template](https://img.shields.io/badge/GitHub-Template-green.svg)](https://github.com/positivef/dev-rules-starter-kit/generate)
+[![Constitution-Based](https://img.shields.io/badge/Constitution-Based-purple.svg)](config/constitution.yaml)
+
+## 30초 소개
+
+**Constitution(헌법) 기반 개발 프레임워크** - 품질을 자동화하는 실행형 지식 시스템
+
+- **문서가 곧 코드**: YAML 계약서 → TaskExecutor → 자동 증거 수집
+- **16개 조항**: P1-P16 Constitution이 모든 개발의 법
+- **95% 자동화**: Git Hooks + CI/CD로 품질 검증 zero-touch
+- **연간 264시간 절감**: 증거 기반 + 지식 자산화 (Obsidian 3초 동기화)
+
+**5분 시작**: [Use this template](https://github.com/positivef/dev-rules-starter-kit/generate) 클릭 → Setup script 실행 → 즉시 사용
+
+---
+
 > 📖 **[CLAUDE.md](CLAUDE.md)** - **AI 에이전트 필수 가이드** (Claude, Cursor, Copilot 사용자는 먼저 읽어주세요!)
 > 👨‍💻 **[초보 개발자 가이드](docs/BEGINNER_DEVELOPER_GUIDE.md)** - **8주 학습 로드맵** (Git, YAML, TaskExecutor 단계별 학습)
 > 🎯 **부담 없이 시작하세요** - Level 0부터 단계적 적용 가능합니다.
 > 🤖 **Multi-AI Session 지원** - 1명 개발자 + 3-4 AI 세션 동시 협업 가능!
 
-**버전**: 1.0.0
+**버전**: 1.0.0 | **Stage**: 5 (Hook) 완료 ✅
 **기반**: DoubleDiver 프로젝트에서 추출한 검증된 개발 규칙 시스템
-**재활용성**: 95% (프로젝트명만 교체하면 즉시 사용 가능)
+**재활용성**: 95% (GitHub Template으로 즉시 복제 가능)
 
 ## 🎯 개요
 
@@ -21,6 +40,10 @@
 4. **문서 생명주기 관리** (claudedocs/ 구조)
 5. **CI/CD 파이프라인** (GitHub Actions)
 6. **🆕 Hybrid Error Resolution** (신뢰도 기반 3-Tier 자동 에러 해결)
+7. **🆕 ADRBuilder** (Architecture Decision Records 자동화, Constitution 매핑)
+8. **🆕 ProductionMonitor** (Production 예외 추적 및 SLA 모니터링, 장애 대응 75% 단축)
+9. **🆕 PerformanceDashboard** (실시간 성능 모니터링 및 트렌드 분석, 병목 발견 86% 단축)
+10. **🆕 TechnicalDebtTracker** (기술부채 정량화 및 우선순위 자동 매핑, 리팩토링 결정 99% 단축)
 
 ### 검증된 효과
 
@@ -168,68 +191,96 @@ Layer 7: Visualization (Streamlit Dashboard - 시각화만)
 
 ## 🚀 빠른 시작 (5분)
 
-### Option 1: Bash Wrapper (권장 - Linux/macOS/Git Bash)
+### Step 1: GitHub Template 사용 (추천) ⭐
 
-`setup.sh`는 내부적으로 `setup.py`를 호출하며, 실패 시 자동 롤백 기능을 포함합니다.
+**가장 빠른 방법**:
 
-```bash
-# 1. 프로젝트 생성 및 이동
-mkdir ~/my-new-project && cd ~/my-new-project
+1. **"Use this template" 클릭**
+   - [Use this template](https://github.com/positivef/dev-rules-starter-kit/generate) 링크 클릭
+   - 또는 GitHub 페이지 우측 상단 "Use this template" 버튼
 
-# 2. 스타터 킷 파일 복사
-cp -r path/to/dev-rules-starter-kit/{*,.*} .
+2. **새 저장소 생성**
+   - Repository name: `my-new-project`
+   - Description: (선택사항)
+   - Public/Private 선택
+   - "Create repository from template" 클릭
 
-# 3. 초기화 스크립트 실행
-./setup.sh --project-name "MyNewProject" --framework fastapi
-```
+3. **Clone & Setup**
+   ```bash
+   # Clone your new repository
+   git clone https://github.com/YOUR_USERNAME/my-new-project.git
+   cd my-new-project
 
-### Option 2: Python Direct (Windows/모든 플랫폼)
-
-```bash
-# Windows PowerShell 예시
-mkdir MyNewProject; cd MyNewProject
-Copy-Item -Recurse path/to/dev-rules-starter-kit/* -Destination .
-Copy-Item -Recurse path/to/dev-rules-starter-kit/.* -Destination . -ErrorAction SilentlyContinue
-
-python setup.py --project-name "MyNewProject" --framework fastapi
-```
+   # Run setup script
+   python scripts/setup_new_project.py
+   # 또는 대화형 마법사
+   python scripts/setup_wizard.py
+   ```
 
 **✨ 자동 처리 항목**:
-- ✅ 프로젝트명 일괄 변경
-- ✅ 프레임워크별 파일 스캐폴딩 (`.editorconfig`, `Dockerfile` 등)
-- ✅ Python 의존성 설치 (`requirements.txt`)
-- ✅ `pre-commit` 훅 설치 (코드/커밋 자동 검증)
-- ✅ `gitleaks` 설치 (비밀 정보 유출 방지)
-- ✅ (Bash) 실패 시 자동 롤백 (`git stash`)
+- ✅ Git history 초기화 (템플릿 커밋 제거)
+- ✅ 프로젝트명 일괄 변경 (대화형 프롬프트)
+- ✅ Python 가상환경 생성 (`.venv`)
+- ✅ 의존성 자동 설치 (`requirements.txt`)
+- ✅ Pre-commit hooks 설치 (Constitution Guard, Ruff, Gitleaks)
+- ✅ `.env` 파일 생성 (Obsidian 경로 설정)
+- ✅ 첫 커밋 준비
 
+### Step 2: 수동 복사 (Alternative)
+
+GitHub Template을 사용하지 않는 경우:
+
+```bash
+# 1. 저장소 Clone
+git clone https://github.com/positivef/dev-rules-starter-kit.git
+cd dev-rules-starter-kit
+
+# 2. Setup script 실행
+python scripts/setup_new_project.py --project-name "MyNewProject"
+
+# 또는 기존 방식 (Bash)
+./setup.sh --project-name "MyNewProject" --framework fastapi
+```
 
 ### Step 3: 즉시 사용
 
 ```bash
-# 1. 첫 작업 실행
+# 1. 가상환경 활성화
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# 2. 첫 작업 실행
 python scripts/task_executor.py TASKS/TEMPLATE.yaml --plan
 # 계획 확인 후 승인
 python scripts/task_executor.py TASKS/TEMPLATE.yaml
 
-# 2. 커밋 (자동 검증됨)
+# 3. 커밋 (자동 검증됨)
 git add .
 git commit -m "feat: initial project setup"
 # → Pre-commit hooks 자동 실행:
-#    - Ruff linting
+#    - Constitution Guard (P4/P5/P7/P10) - 0.18s
+#    - Ruff linting (P10)
 #    - YAML/JSON validation
-#    - Commitlint format check
-#    - Gitleaks secret scan
+#    - Commitlint format check (P9)
+#    - Gitleaks secret scan (P5)
 
-# 3. 버전 릴리스
+# 4. 버전 릴리스 (선택사항)
 git push origin main
-# → GitHub Actions의 `semantic-release` 워크플로우가 실행되며,
-#    루트의 `package.json`과 `.releaserc.json`에 정의된 전략을 사용해 버전을 산출합니다.
-# (선택) 로컬에서 릴리스 파이프라인 점검
-nvm use  # 또는 corepack enable/npm을 사용해 Node 20 활성화
-python scripts/check_release_env.py  # 환경 진단 (문제 없으면 0으로 종료)
-npm install --no-fund --no-audit
-npm run release -- --dry-run
-# 참고: 루트에 `.nvmrc`(Node 20)를 제공하므로 `nvm use` 혹은 `corepack enable` 환경에서 맞춰 실행하세요.
+# → GitHub Actions 자동 실행:
+#    - Constitution Check (7 jobs, ~2min)
+#    - Semantic Release
+```
+
+### Step 4: Obsidian 연동 (선택사항)
+
+```bash
+# .env 파일 수정
+OBSIDIAN_VAULT_PATH=C:\Users\YourName\Documents\ObsidianVault
+
+# 연결 테스트
+python scripts/obsidian_bridge.py test
+
+# 이제 모든 커밋이 자동으로 Obsidian에 동기화됩니다 (3초)
 ```
 
 ---
@@ -260,7 +311,10 @@ dev-rules-starter-kit/
 │
 ├── scripts/                         # 자동화 스크립트
 │   ├── task_executor.py            # YAML 계약 실행기 (100% 재활용)
-│   └── obsidian_bridge.py          # 옵시디언 동기화 (100% 재활용)
+│   ├── obsidian_bridge.py          # 옵시디언 동기화 (100% 재활용)
+│   ├── adr_builder.py              # Architecture Decision Records (ADR) 자동화
+│   ├── code_review_assistant.py    # 코드 리뷰 자동화 (Constitution 검증)
+│   └── deployment_planner.py       # 배포 계획 자동화 (리스크 평가)
 │
 ├── TASKS/                           # 작업 계약서
 │   └── TEMPLATE.yaml
