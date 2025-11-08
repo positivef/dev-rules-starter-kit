@@ -7,8 +7,9 @@ Pattern 4를 포함한 모든 Constitution 패턴의 일관성을 보장합니�
 
 import json
 import hashlib
+import yaml
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -112,7 +113,27 @@ class PatternSyncManager:
         """컨텐츠의 체크섬 계산"""
         return hashlib.md5(content.encode()).hexdigest()[:8]
 
-    def check_pattern_consistency(self, pattern_id: str) -> Dict[str, Dict]:
+    def _check_yaml_pattern(self, file_path: Path, pattern_id: str) -> bool:
+        """YAML 파일에서 패턴 존재 확인 (리스트 구조 지원)"""
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+
+            # constitution.yaml의 경우: articles 리스트에서 P11 찾기
+            if "articles" in data and isinstance(data["articles"], list):
+                for article in data["articles"]:
+                    if article.get("id") == "P11":
+                        anti_patterns = article.get("anti_patterns", {})
+                        if pattern_id == "pattern_4_design_review":
+                            return "pattern_4_design_review_first" in anti_patterns
+                        elif pattern_id == "pattern_2_unverified":
+                            return "pattern_2_unverified_not_rejection" in anti_patterns
+                        return False
+            return False
+        except Exception:
+            return False
+
+    def check_pattern_consistency(self, pattern_id: str) -> Dict[str, Any]:
         """특정 패턴의 모든 위치에서 일관성 검사"""
 
         if pattern_id not in self.locations:
@@ -126,11 +147,13 @@ class PatternSyncManager:
                 results["consistent"] = False
                 continue
 
-            # 파일 읽기
-            content = location.path.read_text(encoding="utf-8")
-
-            # 섹션 찾기 (간단한 구현, 실제로는 더 정교하게)
-            section_found = location.section in content
+            # 파일 타입별 검증
+            if location.file_type == "yaml":
+                section_found = self._check_yaml_pattern(location.path, pattern_id)
+            else:
+                # Markdown 파일은 단순 문자열 검색
+                content = location.path.read_text(encoding="utf-8")
+                section_found = location.section in content
 
             results["locations"][str(location.path)] = {
                 "exists": True,
