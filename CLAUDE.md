@@ -57,6 +57,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - ✅ Customization Guide: 10단계 체크리스트
 - 🎯 다음: Stage 6 Phase 2 (Documentation Consolidation)
 
+## 🔔 이번 주 할 일 (2025-11-08 ~ 2025-11-15)
+
+**⚡ 중요**: Constitution Zero-Based Redesign 모니터링 진행 중!
+
+### 한 번만 (이번 주)
+```bash
+# P8 베이스라인 설정 (5분)
+python scripts/p8_impact_monitor.py --baseline \
+  --baseline-time 15.0 --baseline-coverage 90.0 --baseline-escape 5.0
+```
+
+### 개발 세션마다
+```bash
+# 메트릭 기록 (2분)
+python scripts/p8_impact_monitor.py --record \
+  --time 30 --coverage 82 --tests 5 --notes "작업 내용"
+```
+
+### 금요일 (2025-11-15)
+```bash
+# 주간 리포트
+python scripts/p8_impact_monitor.py --report
+# Decision: Continue / Monitor / Rollback
+```
+
+### 아무때나
+- Pattern 2 테스트 (Scenario 1): `docs/PATTERN2_TEST_SCENARIOS.md`
+
+**상세**: `TASKS/WEEK1-CONSTITUTION-MONITORING.yaml` 참조
+
+---
+
 ## 🎯 Project Identity
 
 **Dev Rules Starter Kit** - Constitution-Based Development Framework

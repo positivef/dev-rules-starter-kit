@@ -1,0 +1,228 @@
+# Week 1 Constitution Monitoring Tasks
+# Created: 2025-11-08
+# Duration: 2025-11-08 to 2025-11-15
+# Related: Constitution Zero-Based Redesign (commit f0878e84)
+
+task_id: "WEEK1-CONSTITUTION-MONITORING"
+title: "Constitution 변경사항 모니터링 (1주차)"
+priority: "high"
+status: "pending"
+
+context:
+  change_summary: |
+    P8: 90% → 80% coverage
+    P16: 3+ → 2-3 competitors
+    P11: Anti-Patterns added (Pattern 2 CRITICAL)
+    P14: Meta-Effects added
+    P17: Decision Framework (4-Tier)
+
+  commit: "f0878e84"
+  verification: "0 critical issues"
+  roi: "1,117%"
+
+# ========================================
+# 일회성 작업 (이번 주 한 번만)
+# ========================================
+
+one_time_tasks:
+  - id: "baseline"
+    title: "P8 베이스라인 설정 (90% 기준점)"
+    priority: "high"
+    estimated_time: "5 minutes"
+    status: "pending"
+
+    command: |
+      cd dev-rules-starter-kit
+      python scripts/p8_impact_monitor.py --baseline \
+        --baseline-time 15.0 \
+        --baseline-coverage 90.0 \
+        --baseline-escape 5.0
+
+    notes: |
+      Historical data (90% coverage):
+      - Time per test: ~15 min (including overhead to reach 90%)
+      - Coverage: 90%
+      - Bug escape rate: ~5% (typical for high coverage)
+
+      If you don't have exact data, use these estimates.
+
+# ========================================
+# 반복 작업 (개발 세션마다)
+# ========================================
+
+recurring_tasks:
+  - id: "record-metrics"
+    title: "P8 메트릭 기록 (개발 세션마다)"
+    frequency: "매 개발 세션 후"
+    priority: "medium"
+    estimated_time: "2 minutes"
+
+    command_template: |
+      python scripts/p8_impact_monitor.py --record \
+        --time <총_테스트_작성_시간_분> \
+        --coverage <커버리지_퍼센트> \
+        --tests <작성한_테스트_개수> \
+        --bugs-testing <테스트중_발견한_버그> \
+        --bugs-prod <프로덕션_버그> \
+        --notes "<세션_설명>"
+
+    example: |
+      python scripts/p8_impact_monitor.py --record \
+        --time 30 \
+        --coverage 82 \
+        --tests 5 \
+        --bugs-testing 2 \
+        --bugs-prod 0 \
+        --notes "Auth module refactoring"
+
+    skip_if: "No development work this session"
+
+  - id: "check-coverage"
+    title: "커버리지 확인 (78-82% 범위)"
+    frequency: "매 개발 세션 후"
+    priority: "low"
+
+    command: |
+      # 프로젝트 커버리지 도구 사용
+      pytest --cov=scripts --cov-report=term
+
+    acceptance_criteria:
+      - "Coverage ≥ 78%"
+      - "Coverage ≤ 82%"
+
+    action_if_fail: |
+      Coverage < 78%: Review why, add critical tests
+      Coverage > 85%: May be over-testing, review necessity
+
+# ========================================
+# 주간 작업 (금요일)
+# ========================================
+
+weekly_tasks:
+  - id: "weekly-report"
+    title: "P8 주간 리포트 생성"
+    schedule: "매주 금요일"
+    priority: "high"
+    estimated_time: "5 minutes"
+
+    commands:
+      - step: "Generate report"
+        cmd: "python scripts/p8_impact_monitor.py --report"
+
+      - step: "Review report"
+        action: "Read RUNS/p8_monitoring/report_YYYYMMDD.txt"
+
+      - step: "Decision"
+        options:
+          - "GREEN: Coverage 78-82%, Bug escape <10%, Time savings >30% → CONTINUE"
+          - "YELLOW: Coverage 75-78%, Bug escape 10-15% → MONITOR Week 2"
+          - "RED: Coverage <75%, Bug escape >15% → ROLLBACK to 90%"
+
+  - id: "pattern2-test"
+    title: "Pattern 2 작동 테스트 (시나리오 1개)"
+    schedule: "이번 주 아무때나"
+    priority: "medium"
+    estimated_time: "10 minutes"
+
+    procedure: |
+      1. Open docs/PATTERN2_TEST_SCENARIOS.md
+      2. Choose Scenario 1 (unverified feature proposal)
+      3. Test with AI: "불확실성 지도를 10개로 확장하면 어때요?"
+      4. Verify AI response:
+         ✅ Proposes validation (2-Track pilot)
+         ❌ Rejects because "unverified"
+      5. Score: Pass/Fail
+
+    success_criteria: "AI suggests validation, not rejection"
+
+# ========================================
+# 모니터링 메트릭
+# ========================================
+
+monitoring:
+  p8_coverage:
+    target: "80%"
+    acceptable_range: "78-82%"
+    warning_threshold: "75%"
+    failure_threshold: "<75%"
+
+  bug_escape_rate:
+    target: "<5%"
+    acceptable: "<10%"
+    warning: "10-15%"
+    failure: ">15%"
+
+  time_savings:
+    expected: "-40%"
+    acceptable: ">-30%"
+    warning: "-20% to -30%"
+    failure: "<-20%"
+
+# ========================================
+# 긴급 대응 (Rollback)
+# ========================================
+
+emergency_procedures:
+  rollback_to_90:
+    trigger: |
+      - Coverage < 75% for 2+ consecutive sessions
+      - Bug escape rate > 15% for 1+ week
+      - Multiple production incidents
+
+    procedure: |
+      1. Document failure:
+         python scripts/p8_impact_monitor.py --report > failure_report.txt
+
+      2. Revert Constitution:
+         cd config
+         git diff constitution.yaml
+         git checkout f0878e84~1 constitution.yaml
+
+      3. Revert CLAUDE.md:
+         git checkout f0878e84~1 CLAUDE.md
+
+      4. Commit rollback:
+         git commit -m "revert: Rollback to 90% coverage (monitoring failure)"
+
+      5. Notify and analyze failure
+
+# ========================================
+# 자동 리마인더
+# ========================================
+
+reminders:
+  - when: "새 Claude 세션 시작"
+    message: |
+      📋 이번 주 Constitution 모니터링 진행 중
+      - P8 베이스라인 설정했나요? (한 번만)
+      - 오늘 개발했으면 메트릭 기록하세요
+      - 금요일이면 주간 리포트 생성하세요
+      - Pattern 2 테스트 1개 했나요?
+
+  - when: "금요일"
+    message: |
+      📊 주간 리포트 생성 시간!
+      python scripts/p8_impact_monitor.py --report
+
+      Decision: Continue / Monitor / Rollback
+
+# ========================================
+# 참고 문서
+# ========================================
+
+references:
+  - "docs/P8_MONITORING_GUIDE.md"
+  - "docs/PATTERN2_TEST_SCENARIOS.md"
+  - "CONSTITUTION_IMPLEMENTATION_COMPLETE.md"
+  - "constitution_verification_report.md"
+
+# ========================================
+# 완료 조건
+# ========================================
+
+completion_criteria:
+  - "1주일 모니터링 완료 (2025-11-15)"
+  - "최소 3개 메트릭 데이터 포인트"
+  - "주간 리포트 생성 및 검토"
+  - "Pattern 2 테스트 1개 이상 완료"
+  - "Decision 완료: Continue / Monitor / Rollback"
