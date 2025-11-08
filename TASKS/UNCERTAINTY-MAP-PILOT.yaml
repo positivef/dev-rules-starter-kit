@@ -1,0 +1,257 @@
+task_id: "UNCERTAINTY-MAP-PILOT"
+title: "2-Track Pilot: 3 Items vs 10 Items Uncertainty Map"
+created: "2025-11-09"
+period: "2025-11-09 ~ 2025-12-06 (4 weeks)"
+priority: "medium"
+type: "experiment"
+
+description: |
+  Track A (Baseline): 3-item uncertainty map (Known Knowns, Known Unknowns, Unknown Unknowns)
+  Track B (Experiment): 10-item uncertainty map (fine-grained classification)
+
+  Goal: Measure quality improvement vs time cost increase
+  Decision: Week 4 based on RICE comparison
+
+# ========================================
+# Track A: Baseline (3 Items)
+# ========================================
+
+track_a_baseline:
+  name: "3-Item Uncertainty Map"
+  status: "Current Standard"
+  rice_score: 100
+
+  structure:
+    - name: "Known Knowns"
+      confidence: 90%
+      action: "Implement with standard process"
+
+    - name: "Known Unknowns"
+      confidence: 60%
+      action: "2-Track pilot + validation"
+
+    - name: "Unknown Unknowns"
+      confidence: 30%
+      action: "Progressive rollout + monitoring"
+
+  metrics:
+    avg_time_minutes: 15
+    risks_identified: 5
+    decision_confidence: 4.0  # out of 5
+
+# ========================================
+# Track B: Experiment (10 Items)
+# ========================================
+
+track_b_experiment:
+  name: "10-Item Uncertainty Map"
+  status: "Pilot Testing"
+  rice_score: null  # To be measured
+
+  structure:
+    tier_1_known:
+      - name: "Fully Validated (95%)"
+      - name: "Mostly Validated (80%)"
+
+    tier_2_partial:
+      - name: "Partially Validated (65%)"
+      - name: "Theoretically Sound (55%)"
+      - name: "Educated Guess (45%)"
+
+    tier_3_unknown:
+      - name: "Speculative (35%)"
+      - name: "Highly Uncertain (25%)"
+      - name: "Mostly Unknown (15%)"
+
+    tier_4_unknown_unknowns:
+      - name: "Known Unknowns (7%)"
+      - name: "Unknown Unknowns (2%)"
+
+  metrics:
+    avg_time_minutes: null  # To be measured
+    risks_identified: null  # To be measured
+    decision_confidence: null  # To be measured
+
+# ========================================
+# Week 1-2: Data Collection
+# ========================================
+
+week1_2_tasks:
+  - id: "project1"
+    title: "Apply both maps to Project 1"
+    project: "[Select real project]"
+
+    steps:
+      - step: "Baseline measurement (3 items)"
+        actions:
+          - "Use 3-item map for risk analysis"
+          - "Record time spent"
+          - "Record risks identified"
+          - "Record decision confidence (1-5)"
+
+      - step: "Experiment measurement (10 items)"
+        actions:
+          - "Use 10-item map for same project"
+          - "Record time spent"
+          - "Record risks identified"
+          - "Record decision confidence (1-5)"
+
+      - step: "Compare results"
+        metrics:
+          - "Time difference: ? minutes"
+          - "Risk quality: ? additional risks found"
+          - "Confidence improvement: ? points"
+
+  - id: "project2"
+    title: "Apply both maps to Project 2"
+    project: "[Select another real project]"
+
+    steps:
+      - "Repeat same process as Project 1"
+      - "Collect second data point"
+
+# ========================================
+# Week 3: Analysis
+# ========================================
+
+week3_tasks:
+  - id: "aggregate-data"
+    title: "Aggregate pilot data"
+
+    metrics_to_calculate:
+      time_cost:
+        - "Average time (3 items): ? min"
+        - "Average time (10 items): ? min"
+        - "Time increase: ?%"
+
+      quality_improvement:
+        - "Risks found (3 items): ? avg"
+        - "Risks found (10 items): ? avg"
+        - "Improvement: ?%"
+
+      usability:
+        - "Confidence (3 items): ? / 5"
+        - "Confidence (10 items): ? / 5"
+        - "Change: ? points"
+
+  - id: "rice-calculation"
+    title: "Calculate RICE scores"
+
+    formulas:
+      track_a:
+        impact: 2.0  # baseline
+        confidence: 100  # validated
+        effort: 2  # person-days
+        rice: 100
+
+      track_b:
+        impact: "? (measured quality improvement)"
+        confidence: 50  # pilot data
+        effort: "? (measured time cost in person-days)"
+        rice: "? (to calculate)"
+
+# ========================================
+# Week 4: Decision
+# ========================================
+
+week4_tasks:
+  - id: "decision"
+    title: "Make adoption decision"
+
+    decision_criteria:
+      adopt_10_items:
+        - "RICE_10 > RICE_3 (100)"
+        - "Quality improvement >30%"
+        - "Time cost increase <50%"
+        - "User satisfaction >4/5"
+
+      keep_3_items:
+        - "RICE_10 < 80"
+        - "Quality improvement <20%"
+        - "Time cost increase >100%"
+        - "Users report confusion"
+
+      optional:
+        - "80 < RICE_10 < 100"
+        - "Let users choose 3 or 10 items"
+
+    outputs:
+      - "Decision document: docs/UNCERTAINTY_MAP_DECISION.md"
+      - "Update constitution if adopted"
+      - "Archive pilot data: RUNS/uncertainty_pilot/"
+
+# ========================================
+# Measurement Template
+# ========================================
+
+measurement_template: |
+  Project: [Name]
+  Date: [YYYY-MM-DD]
+  Analyst: [Name]
+
+  # Track A (3 Items)
+  - Start time: [HH:MM]
+  - End time: [HH:MM]
+  - Duration: [X] minutes
+  - Risks identified: [N]
+  - Decision confidence: [1-5]
+  - Notes: [Any observations]
+
+  # Track B (10 Items)
+  - Start time: [HH:MM]
+  - End time: [HH:MM]
+  - Duration: [X] minutes
+  - Risks identified: [N]
+  - Decision confidence: [1-5]
+  - Notes: [Any observations]
+
+  # Comparison
+  - Time difference: [+/- X] minutes
+  - Quality difference: [+/- N] risks
+  - Confidence difference: [+/- X] points
+  - Preference: [3 items / 10 items / No preference]
+
+# ========================================
+# Success Criteria
+# ========================================
+
+success_criteria:
+  pilot_completion:
+    - "2 projects analyzed with both maps"
+    - "All metrics collected"
+    - "RICE scores calculated"
+    - "Decision documented"
+
+  pattern2_validation:
+    - "Unverified proposal (10 items) was NOT rejected"
+    - "Validation process (2-Track) was executed"
+    - "Data-driven decision was made"
+    - "Innovation was preserved"
+
+# ========================================
+# References
+# ========================================
+
+references:
+  - "docs/UNCERTAINTY_MAP_10_ITEMS.md"
+  - "docs/PATTERN2_TEST_SCENARIOS.md"
+  - "config/constitution.yaml (P11 Pattern 2)"
+
+# ========================================
+# Notes
+# ========================================
+
+notes: |
+  This pilot is also a Pattern 2 test:
+  - User proposed unverified idea (10 items)
+  - AI did NOT reject
+  - AI proposed 2-Track validation
+  - AI will make data-driven decision
+
+  If RICE_10 < RICE_3, we KEEP 3 items (validated by data)
+  If RICE_10 > RICE_3, we ADOPT 10 items (validated by data)
+
+  Either outcome validates Pattern 2:
+  - We didn't reject unverified idea
+  - We validated with data
+  - We made evidence-based decision
