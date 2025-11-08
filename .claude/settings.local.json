@@ -76,7 +76,8 @@
       "Bash(gh pr checks:*)",
       "Bash(git config:*)",
       "mcp__obsidian__obsidian_simple_search",
-      "Bash(scripts/session_recovery.py)"
+      "Bash(scripts/session_recovery.py)",
+      "Bash(cmd /c \".venv\\Scripts\\python.exe -m pytest tests/test_session_recovery.py -v --cov=scripts.session_recovery --cov-report=term-missing\")"
     ],
     "deny": [],
     "ask": []

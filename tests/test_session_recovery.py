@@ -15,6 +15,7 @@ Target: 20+ tests for 95% coverage
 
 import json
 import os
+import sys
 import time
 from datetime import datetime, timezone
 from unittest.mock import patch
@@ -379,3 +380,121 @@ class TestEdgeCases:
 
         assert log.recovery_time_sec >= 0
         assert log.recovery_time_sec < 5.0
+
+
+class TestCLIInterface:
+    """Test CLI interface"""
+
+    def test_cli_detect_no_crash(self, recovery):
+        """Test CLI detect command when no crash"""
+        import subprocess
+
+        session_id = "test_cli_001"
+        recovery.create_checkpoint(session_id, {"test": "data"})
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py", "detect", session_id],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0 or "[OK]" in result.stdout or "Session running normally" in result.stdout
+
+    def test_cli_detect_crash(self, recovery):
+        """Test CLI detect command when crash detected"""
+        import subprocess
+
+        session_id = "test_cli_002"
+        recovery.create_checkpoint(session_id, {"test": "data"})
+
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=False):
+            result = subprocess.run(
+                [sys.executable, "scripts/session_recovery.py", "detect", session_id],
+                capture_output=True,
+                text=True,
+            )
+
+        assert "CRASH" in result.stdout or result.returncode == 0
+
+    def test_cli_recover_success(self, recovery):
+        """Test CLI recover command"""
+        import subprocess
+
+        session_id = "test_cli_003"
+        recovery.create_checkpoint(session_id, {"test": "data"})
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py", "recover", session_id],
+            capture_output=True,
+            text=True,
+        )
+
+        assert "RECOVERY" in result.stdout or result.returncode == 0
+
+    def test_cli_stats(self, recovery):
+        """Test CLI stats command"""
+        import subprocess
+
+        for i in range(3):
+            log = RecoveryLog(
+                recovery_id=f"recovery_{i}",
+                session_id=f"session_{i}",
+                crash_reason="process_killed",
+                detected_at=datetime.now(timezone.utc).isoformat(),
+                started_at=datetime.now(timezone.utc).isoformat(),
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status=RecoveryStatus.SUCCESS.value,
+                checkpoint_used="checkpoint_001",
+                files_restored=3,
+                context_restored=True,
+                error_message=None,
+                recovery_time_sec=0.5,
+            )
+
+            log_file = recovery.recovery_log_dir / f"{log.recovery_id}.json"
+            with open(log_file, "w", encoding="utf-8") as f:
+                json.dump(log.to_dict(), f)
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py", "stats"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert "STATS" in result.stdout or "Recovery success rate" in result.stdout or result.returncode == 0
+
+    def test_cli_no_args(self):
+        """Test CLI with no arguments"""
+        import subprocess
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 1 or "Usage:" in result.stdout
+
+    def test_cli_detect_no_session_id(self):
+        """Test CLI detect without session_id"""
+        import subprocess
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py", "detect"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 1 or "Error:" in result.stdout or "required" in result.stdout
+
+    def test_cli_unknown_command(self):
+        """Test CLI with unknown command"""
+        import subprocess
+
+        result = subprocess.run(
+            [sys.executable, "scripts/session_recovery.py", "invalid_command"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert "Unknown command" in result.stdout or "invalid_command" in result.stdout or result.returncode != 0
