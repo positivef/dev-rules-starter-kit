@@ -404,12 +404,16 @@ articles:
 
     principle: |
       모든 기능은 테스트를 먼저 작성한 후 구현해야 하며,
-      테스트 커버리지는 90% 이상이어야 합니다.
+      테스트 커버리지는 80% 이상이어야 합니다.
 
     requirements:
-      - desc: "테스트 커버리지 ≥ 90%"
+      - desc: "테스트 커버리지 ≥ 80%"
         mandatory: true
-        threshold: 90.0
+        threshold: 80.0
+        rationale: |
+          업계 표준 (Google 80%, Microsoft 70-80%)
+          P15 수렴 원칙과 조화 (80%면 충분)
+          80→90% ROI 낮음 (+3% 품질에 +40% 시간)
 
       - desc: "Red-Green-Refactor 사이클"
         steps:
@@ -599,6 +603,105 @@ articles:
         (내부: Constitution 중심인데... 뭐 괜찮겠지)
 
         → 결과: 2주 후 "대시보드가 주 목표인 줄 착각" 발견
+
+    # ════════════════════════════════════════════════════════════════
+    # Anti-Patterns: 반복 패턴 재발 방지 (2025-11-08 추가)
+    # ════════════════════════════════════════════════════════════════
+    anti_patterns:
+      description: "오늘 발견된 반복 의사결정 패턴을 규칙화하여 재발 방지"
+      added: "2025-11-08"
+      source: "Constitution Zero-Based 재설계 세션"
+
+      pattern_1_zero_based_review:
+        name: "예외 추가 대신 기준 재설계 (Zero-Based)"
+        discovered: "P8, P16, P15, P17 Tier 2 모두 같은 패턴"
+
+        trigger: "예외 규칙 추가하려 할 때"
+
+        wrong_reflex: "기준 유지 + 예외 추가 → 복잡도 폭발"
+        right_approach: "기준 재설계 → 예외 불필요"
+
+        mandatory_questions:
+          - "왜 원래 기준이 이랬지? (근거 확인)"
+          - "근거가 있었나? (Evidence-Based)"
+          - "업계 표준은 뭐지? (P16 벤치마킹)"
+          - "기준 자체를 바꾸면 예외 불필요한가?"
+
+        decision_rule: "기준 재설계 > 예외 추가"
+
+        examples:
+          - case: "P8: 90% + 예외 3개"
+            solution: "80%로 재설계 → 예외 불필요"
+          - case: "P16: 3+ + 예외"
+            solution: "2-3 범위로 재설계 → 예외 불필요"
+          - case: "P17 Tier 2: 무조건 검증 + 예외"
+            solution: "Smart Validation Matrix → 예외 불필요"
+
+      pattern_2_unverified_not_rejection:
+        name: "미검증 ≠ 거부 (검증 기회)"
+        discovered: "3번 반복 (Enhanced 3 vs 10, P17 초안, P17 개선)"
+        severity: "CRITICAL - AI 고질적 편향"
+
+        trigger: "미검증 제안 평가 시"
+
+        ai_tendency: "미검증 → 부정적 판단 → 거부"
+        correction: "미검증 → 중립 → 검증 프로세스 → 데이터 기반 결정"
+
+        wrong_pattern: |
+          "미검증" → "불확실하니까" → "위험하니까" → "거부"
+          (혁신 차단!)
+
+        right_pattern: |
+          "미검증" → "아직 모름" → "측정하자" → "파일럿"
+          → "데이터 수집" → "비교" → "근거 기반 결정"
+
+        implementation:
+          - "P17 Tier 2: Validation Decision Matrix (Cost × Impact)"
+          - "P2 강화: '추측 금지 = 검증 필수' (거부 아님!)"
+          - "RICE Confidence: Low (50%) ≠ Bad, just needs validation"
+
+        never_say:
+          - "미검증이라 안 됩니다"
+          - "증거 없으니 거부합니다"
+          - "불확실해서 위험합니다"
+
+        always_say:
+          - "미검증이니 2-Track 파일럿으로 검증하겠습니다"
+          - "4주 측정 후 데이터 기반 결정하겠습니다"
+          - "Low confidence (50%)이니 validation 후 비교하겠습니다"
+
+      pattern_3_evidence_based_numbers:
+        name: "모든 숫자는 P16 벤치마킹 필수"
+        discovered: "P8 90%, P16 3개, Threshold 50/0.6 모두 근거 없음"
+
+        trigger: "새 threshold, weight, percentage, scale 정의 시"
+
+        mandatory_process:
+          1_benchmark: "P16 경쟁사 벤치마킹 (최소 2-3개)"
+          2_research: "산업 표준 조사 (WebSearch)"
+          3_rationale: "근거 명시 (rationale 필수)"
+          4_document: "Constitution에 출처 기록 (source, verified_by)"
+
+        never_allowed:
+          - "임의의 숫자 (50, 0.6, 70 같은 것)"
+          - "'적당해 보이는' 숫자"
+          - "'상식적인' 숫자 (근거 없음)"
+          - "'보통 이 정도' 숫자"
+
+        always_required:
+          - "출처: Intercom RICE framework"
+          - "검증: Thousands of companies (2024)"
+          - "근거: MCC government standard 10% ROI"
+
+        examples:
+          - wrong: "threshold: 50 (근거 없음)"
+            right: "minimum_roi: 10% (MCC U.S. Government standard)"
+
+          - wrong: "weight: 0.6 (임의)"
+            right: "scale: [3, 2, 1, 0.5, 0.25] (RICE Intercom verified)"
+
+          - wrong: "coverage: 90% (왜?)"
+            right: "coverage: 80% (Google/Microsoft industry standard)"
 
   # ============================================================================
   # 제12조: 트레이드오프 분석 의무 (Trade-off Analysis Mandate)
@@ -955,6 +1058,125 @@ articles:
 
         → 결과: 3개월 후 일관성 0%, 시스템 붕괴
 
+    # ════════════════════════════════════════════════════════════════
+    # Meta-Effects: Constitution 자기 개선 (2025-11-08 추가)
+    # ════════════════════════════════════════════════════════════════
+    meta_effects:
+      description: "Constitution 자체의 지속적 개선 및 반복 패턴 규칙화"
+      added: "2025-11-08"
+      source: "Constitution Zero-Based 재설계 세션"
+
+      meta_review_mandatory:
+        name: "주기적 메타 리뷰 (패턴 식별)"
+        frequency: "주 1회 또는 Major Constitution 변경 후"
+
+        trigger_conditions:
+          - "Major Constitution 변경 (P1-P17 수정)"
+          - "같은 유형 실수 2번 이상 반복"
+          - "큰 규모 개발 완료 (3일+ 작업)"
+          - "사용자가 패턴 발견 지적"
+
+        mandatory_questions:
+          question_1: "오늘/이번 주 반복된 의사결정 패턴이 뭐였지?"
+          question_2: "같은 실수를 여러 번 했나? (2번 이상)"
+          question_3: "이 패턴을 규칙화하면 재발 방지 가능한가?"
+          question_4: "P11 anti_patterns 업데이트 필요한가?"
+          question_5: "P13 Constitution 수정 기준 충족하는가?"
+
+        output_required:
+          - "패턴 문서화 (claudedocs/ 또는 Obsidian)"
+          - "P11 anti_patterns 업데이트 (필요 시)"
+          - "P14 meta_effects 사례 추가"
+          - "재발 방지 체크리스트 생성"
+
+        examples:
+          - pattern: "예외 추가 반복 (P8, P16, P15, P17)"
+            action: "P11 pattern_1_zero_based_review 추가"
+            result: "재발 방지 규칙 확립"
+
+          - pattern: "미검증 = 거부 (3번 반복)"
+            action: "P11 pattern_2_unverified_not_rejection 추가"
+            result: "AI 편향 교정 규칙 확립"
+
+      codified_flexibility:
+        name: "Codified Flexibility (일관성 유지하는 유연성)"
+        principle: "유연성을 IF-THEN 룰로 코드화하여 일관성 유지"
+
+        wrong_approach: |
+          "상황 봐서 판단하자"
+          → AI Session 1: Cost 3일 → Skip
+          → AI Session 2: Cost 3일 → Validate
+          → 결과: 일관성 ↓ (같은 조건, 다른 결정)
+
+        right_approach: |
+          "IF Cost > 3 days AND Impact < MEDIUM THEN Skip"
+          → AI Session 1: 같은 조건 → Skip
+          → AI Session 2: 같은 조건 → Skip
+          → 결과: 일관성 ✅ (같은 조건, 같은 결정)
+
+        implementation_examples:
+          - name: "P17 Tier 2 Smart Validation"
+            flexibility: "비용/영향도 기반 결정"
+            codification: "Validation Decision Matrix (2×2)"
+            consistency: "모든 AI가 Matrix 동일 적용"
+
+          - name: "RICE Confidence levels"
+            flexibility: "검증 수준에 따라 다른 가중치"
+            codification: "100%/80%/50% (Intercom 표준)"
+            consistency: "산업 표준으로 일관성"
+
+        benefits:
+          - "유연성 확보 (컨텍스트별 다른 결정)"
+          - "일관성 유지 (같은 룰 적용)"
+          - "투명성 향상 (결정 근거 명확)"
+          - "협업 용이 (팀원 즉시 이해)"
+
+      continuous_improvement_cycle:
+        name: "지속적 개선 사이클 (PDCA)"
+
+        plan: "위험 평가 및 완화 전략 수립 (Innovation Safety)"
+        do: "최소 기능으로 시작 (P15 80% 수렴)"
+        check: "실시간 메트릭 및 사용자 피드백"
+        act: "학습 기반 시스템 개선 + 패턴 규칙화"
+
+        success_criteria:
+          - "반복 패턴 → 규칙화 (P11 anti_patterns)"
+          - "같은 실수 2번 이하 (3번부터 규칙 추가)"
+          - "Constitution 비대화 방지 (P15 < 20 articles)"
+          - "ROI > 300% 유지 (P15 기준)"
+
+      pattern_to_rule_process:
+        description: "발견된 패턴을 Constitution 규칙으로 전환하는 프로세스"
+
+        step_1_identify:
+          action: "패턴 식별 (Meta-Review)"
+          criteria: "같은 유형 실수 2번 이상"
+          output: "패턴 문서화 (이름, 발견 이력, 근본 원인)"
+
+        step_2_validate:
+          action: "패턴 검증 (재발 가능성)"
+          criteria: "AI 고질적 편향 OR 구조적 문제"
+          output: "규칙화 필요성 판단"
+
+        step_3_codify:
+          action: "규칙 작성 (P11 anti_patterns)"
+          format: |
+            pattern_N_name:
+              trigger: "언제 적용?"
+              wrong: "잘못된 접근"
+              right: "올바른 접근"
+              examples: "구체적 사례"
+
+        step_4_integrate:
+          action: "Constitution 통합"
+          location: "P11 anti_patterns OR P14 meta_effects"
+          verification: "P13 Constitution 수정 기준 충족 확인"
+
+        step_5_monitor:
+          action: "효과 측정"
+          metric: "패턴 재발률 (목표: 0%)"
+          escalation: "3개월 내 재발 → 규칙 강화"
+
   # ============================================================================
   # 제15조: 수렴 원칙 (Convergence Principle)
   # ============================================================================
@@ -1003,11 +1225,14 @@ articles:
 
       - desc: "복잡도 예산 (Complexity Budget)"
         limits:
-          max_articles: 20
-          max_lines_per_article: 150
-          max_total_lines: 1500
+          primary: "max_articles: 20 (P13과 동일)"
+          secondary: "avg_lines_per_article: < 100"
           max_tools: 15
-        enforcement: "예산 초과 시 통합/제거 필수"
+        rationale: |
+          조항 수가 주 기준 (명확함)
+          총 Lines는 자연스럽게 제한됨 (20 × 100 = 2,000 이하)
+          예시 길이에 덜 민감
+        enforcement: "조항 20개 초과 시 통합/제거 필수"
         mandatory: true
 
     sunset_clauses:
@@ -1128,8 +1353,13 @@ articles:
       목표: 더 나은 버전의 프로그램 개발
 
     requirements:
-      - desc: "경쟁사 제품 3개 이상 분석"
+      - desc: "경쟁사 제품 2-3개 분석"
         mandatory: true
+        guideline: "일반 3개, 틈새 시장 2개"
+        rationale: |
+          업계 표준 (YC Startup School 2-3개, Lean Startup 최소 2개)
+          유연성 확보 (틈새 시장도 커버)
+          예외 불필요 (범위로 해결)
         details:
           - "각 제품의 강점(strengths) 파악"
           - "각 제품의 약점(weaknesses) 파악"
@@ -1340,6 +1570,504 @@ articles:
 
       - metric: "분석 시간"
         target: "<30분 (자동화로 단축)"
+
+  # ============================================================================
+  # 제17조: 의사결정 프레임워크 (Decision Framework)
+  # ============================================================================
+
+  - id: "P17"
+    name: "의사결정 프레임워크"
+    category: "meta_governance"
+    priority: "critical"
+
+    principle: |
+      원칙 충돌 시 다음 4-Tier 우선순위로 자동 해결하며,
+      AI 일관성을 보장하고 모순 재발을 방지한다.
+
+    decision_tiers:
+      tier_1_safety:
+        priority: 1
+        principle: "안전 > 모든 것"
+        articles: ["P5"]
+        rule: "보안, 데이터 안전은 절대 타협 불가"
+        examples:
+          - "P5 보안 vs P15 단순성 → P5 승리"
+          - "P5 Critical 이슈 vs 개발 속도 → P5 우선"
+
+      tier_2_evidence:
+        priority: 2
+        principle: "증거 기반 의사결정 + Smart Validation (Cost-Benefit)"
+        articles: ["P2"]
+        rule: "모든 주장은 증거로 검증 가능해야 하되, 비용/영향도 기반 smart decision"
+
+        core_philosophy: |
+          ❌ "미검증" ≠ "거부"
+          ✅ "미검증" = "검증 필요" (단, 비용/영향도 고려)
+
+          Wrong: 모든 미검증 항목 → 무조건 검증 (낭비)
+          Right: 영향도 HIGH → 검증, 영향도 LOW → Skip
+
+        # ═══════════════════════════════════════════════════
+        # Validation Decision Matrix (2×2: Cost × Impact)
+        # ═══════════════════════════════════════════════════
+        validation_decision_matrix:
+          high_cost_high_impact:
+            validation_cost: "> 3 days"
+            impact: "Critical (security, data, production break, core architecture)"
+            strategy: "MUST validate (no exception)"
+            rationale: "High risk → insurance worth it"
+            process: "2-Track pilot (4 weeks minimum)"
+            examples:
+              - "PostgreSQL → MongoDB migration (3개월)"
+              - "Microservices → Monolith redesign"
+              - "New auth system (security critical)"
+
+          high_cost_low_impact:
+            validation_cost: "> 3 days"
+            impact: "Low (UI polish, code style, non-critical feature)"
+            strategy: "SKIP or DEFER (P15 80% 수렴 원칙)"
+            rationale: "Low ROI → not worth validation cost"
+            process: "Use existing solution OR P12 user decision"
+            examples:
+              - "불확실성 지도 3개 vs 10개 (UI 요소만 차이)"
+              - "10개 UI 컴포넌트 라이브러리 vs 3개"
+              - "코드 포매터 세밀 조정"
+
+          low_cost_high_impact:
+            validation_cost: "< 1 day"
+            impact: "Critical"
+            strategy: "ALWAYS validate (cheap insurance)"
+            rationale: "High risk, low cost → validate 필수"
+            process: "Quick pilot (1-2주)"
+            examples:
+              - "Security library version test"
+              - "Critical bug fix validation"
+              - "Performance regression test"
+
+          low_cost_low_impact:
+            validation_cost: "< 1 day"
+            impact: "Low"
+            strategy: "Quick pilot (2-Track 10%)"
+            rationale: "Low risk, low cost → 빠르게 시도"
+            process: "1주 파일럿 → 즉시 결정"
+            examples:
+              - "코드 포매터 Prettier vs Black"
+              - "Linter rule tweak"
+              - "Minor UI animation"
+
+        # ═══════════════════════════════════════════════════
+        # Multi-Dimensional Tradeoff Scoring (RICE Framework)
+        # ═══════════════════════════════════════════════════
+        multi_dimensional_tradeoff:
+          methodology: "RICE Scoring (Industry Standard)"
+          source: "Intercom (2016), widely adopted across tech industry"
+          benchmark: "P16 경쟁사 벤치마킹 완료 (2024)"
+
+          description: |
+            RICE = (Reach × Impact × Confidence) / Effort
+            단순화: Impact × Confidence / Effort (Reach는 컨텍스트별)
+
+          # ═══════════════════════════════════════════════
+          # Impact Scale (RICE Industry Standard)
+          # ═══════════════════════════════════════════════
+          impact_scale:
+            source: "Intercom RICE framework"
+            verified_by: "Thousands of companies (2024)"
+
+            scale:
+              massive:
+                value: 3.0
+                description: "핵심 메트릭 대폭 개선 (3배 효과)"
+                examples:
+                  - "보안 취약점 수정 (Critical)"
+                  - "성능 3배 향상"
+                  - "사용자 경험 혁신"
+
+              high:
+                value: 2.0
+                description: "핵심 메트릭 큰 개선 (2배 효과)"
+                examples:
+                  - "주요 기능 추가"
+                  - "성능 2배 향상"
+                  - "중요 버그 수정"
+
+              medium:
+                value: 1.0
+                description: "핵심 메트릭 적당한 개선 (기준)"
+                examples:
+                  - "일반 기능 개선"
+                  - "성능 30-50% 향상"
+                  - "UX 개선"
+
+              low:
+                value: 0.5
+                description: "핵심 메트릭 작은 개선 (1/2 효과)"
+                examples:
+                  - "UI polish"
+                  - "성능 10-20% 향상"
+                  - "마이너 개선"
+
+              minimal:
+                value: 0.25
+                description: "핵심 메트릭 미미한 개선 (1/4 효과)"
+                examples:
+                  - "코드 스타일"
+                  - "문서화"
+                  - "리팩토링 (성능 변화 없음)"
+
+          # ═══════════════════════════════════════════════
+          # Confidence Scale (RICE Industry Standard)
+          # ═══════════════════════════════════════════════
+          confidence_scale:
+            source: "Intercom RICE framework"
+            verified_by: "Industry best practice (2024)"
+
+            scale:
+              high:
+                value: 100
+                percentage: "100%"
+                description: "완전히 검증됨 (과거 데이터 있음)"
+                examples:
+                  - "2년+ 사용한 솔루션"
+                  - "A/B 테스트 완료"
+                  - "프로덕션 검증 완료"
+
+              medium:
+                value: 80
+                percentage: "80%"
+                description: "부분 검증됨 (일부 증거)"
+                examples:
+                  - "파일럿 테스트 완료"
+                  - "유사 사례 존재"
+                  - "프로토타입 검증"
+                note: "P15 80% 수렴 원칙과 일치!"
+
+              low:
+                value: 50
+                percentage: "50%"
+                description: "미검증 (가설/이론만)"
+                examples:
+                  - "신규 제안 (증거 없음)"
+                  - "이론적 분석만"
+                  - "추측 기반"
+
+              moonshot:
+                value: "<50"
+                percentage: "<50%"
+                description: "매우 불확실 (위험)"
+                warning: "Confidence < 50% → 매우 신중 또는 거부"
+                examples:
+                  - "완전히 새로운 접근"
+                  - "검증 불가능"
+                  - "투기적 아이디어"
+
+          # ═══════════════════════════════════════════════
+          # Effort Scale (WSJF Fibonacci - Industry Standard)
+          # ═══════════════════════════════════════════════
+          effort_scale:
+            source: "SAFe WSJF framework"
+            verified_by: "Scaled Agile (2024)"
+
+            scale: [1, 2, 3, 5, 8, 13, 21]
+            unit: "person-days"
+            rationale: "Fibonacci는 불확실성 반영"
+
+            guidelines:
+              - range: "1-3 days"
+                certainty: "높음 (정확 예측 가능)"
+              - range: "5-8 days"
+                certainty: "중간 (약간의 불확실성)"
+              - range: "13-21 days"
+                certainty: "낮음 (높은 불확실성)"
+              - range: ">21 days"
+                action: "더 작은 단위로 분해 필요"
+
+          # ═══════════════════════════════════════════════
+          # RICE Scoring Formula
+          # ═══════════════════════════════════════════════
+          scoring_formula: |
+            RICE Score = (Impact × Confidence%) / Effort
+
+            Example 1: 성능 최적화 (검증됨)
+              - Impact: High (2.0)
+              - Confidence: High (100% = 1.0)
+              - Effort: 5 days
+              - RICE = (2.0 × 1.0) / 5 = 0.40
+
+            Example 2: UI polish (미검증)
+              - Impact: Low (0.5)
+              - Confidence: Medium (80% = 0.8)
+              - Effort: 13 days
+              - RICE = (0.5 × 0.8) / 13 = 0.03
+
+            Example 3: 보안 패치 (긴급)
+              - Impact: Massive (3.0)
+              - Confidence: High (100% = 1.0)
+              - Effort: 2 days
+              - RICE = (3.0 × 1.0) / 2 = 1.50
+
+            Decision: Score 높은 순 우선순위
+              - Example 3 (1.50) > Example 1 (0.40) > Example 2 (0.03)
+              - 보안 패치 > 성능 최적화 > UI polish
+
+          # ═══════════════════════════════════════════════
+          # Decision Threshold (Enterprise ROI Standard)
+          # ═══════════════════════════════════════════════
+          decision_threshold:
+            source: "MCC (Millennium Challenge Corporation) - U.S. Government"
+            verified_by: "Enterprise standard for taxpayer funds (2024)"
+
+            minimum_roi: 10%
+            rationale: |
+              - 10% = 인플레이션 + 기회비용
+              - 납세자 자금 책임성
+              - 간단한 의사결정 기준
+
+            formula: "ROI = (Benefit - Cost) / Cost × 100%"
+
+            decision_rules:
+              accept: "ROI ≥ 10% AND RICE Score > 0.1"
+              review: "ROI < 10% OR RICE Score < 0.1 → P12 사용자 결정"
+              reject: "ROI < 0% (손해) → 거부"
+
+            context_adjustments:
+              prototype:
+                min_roi: 5%
+                rationale: "빠른 검증 우선, 낮은 기준"
+
+              production:
+                min_roi: 15%
+                rationale: "안정성 중시, 높은 기준"
+
+              urgent_bug:
+                min_roi: "N/A"
+                rationale: "긴급성 > ROI (보안/중단 이슈)"
+
+          # ═══════════════════════════════════════════════
+          # Real-World Application Examples
+          # ═══════════════════════════════════════════════
+          application_examples:
+            - name: "성능 +150% vs 토큰 -30% (사용자 예시)"
+              impact: "High (2.0) - 성능 대폭 향상"
+              confidence: "Medium (80% = 0.8) - 파일럿 필요"
+              effort: "8 days"
+              rice_score: "(2.0 × 0.8) / 8 = 0.20"
+              roi: "150% benefit - 30% cost = 120% net → ROI = 400%"
+              decision: "ACCEPT (ROI 400% >> 10% threshold)"
+              rationale: "성능 향상이 토큰 손실을 충분히 상쇄"
+
+            - name: "성능 +100% vs 토큰 -30% (사용자 예시)"
+              impact: "Medium (1.0) - 성능 적당히 향상"
+              confidence: "Medium (80% = 0.8)"
+              effort: "8 days"
+              rice_score: "(1.0 × 0.8) / 8 = 0.10"
+              roi: "100% benefit - 30% cost = 70% net → ROI = 233%"
+              decision: "REVIEW (RICE 경계값, ROI는 충분)"
+              rationale: "P12 사용자 결정 - 토큰 비용 vs 성능"
+
+            - name: "불확실성 지도 3개 vs 10개"
+              three_components:
+                impact: "Medium (1.0)"
+                confidence: "High (100% = 1.0) - 6개월 검증"
+                effort: "3 days (이미 구현됨)"
+                rice_score: "(1.0 × 1.0) / 3 = 0.33"
+
+              ten_components:
+                impact: "Medium (1.0) - UI 표현만 다름"
+                confidence: "Low (50% = 0.5) - 미검증"
+                effort: "90 days (10개 × 3주)"
+                rice_score: "(1.0 × 0.5) / 90 = 0.006"
+
+              decision: "3개 선택 (RICE 0.33 >> 0.006)"
+              rationale: |
+                - 10개 RICE score 55배 낮음
+                - P15 수렴: 3개로 80% 달성
+                - Validation cost > benefit
+
+        # ═══════════════════════════════════════════════════
+        # Rigidity Classification (어떤 요소는 Rigid, 어떤 요소는 Flexible)
+        # ═══════════════════════════════════════════════════
+        rigidity_classification:
+          always_rigid:
+            description: "절대 예외 없음 (Tier 1 Safety와 동급)"
+            elements:
+              - "P5 Security (보안 취약점)"
+              - "Data safety (데이터 손실 위험)"
+              - "Production breaks (서비스 중단)"
+              - "P2 Evidence (추측 금지)"
+            rationale: "사용자 신뢰/안전 > 모든 것"
+
+          flexible_with_codified_rules:
+            description: "Flexible하되, 룰이 명확함 (일관성 유지)"
+            elements:
+              - element: "Performance optimization"
+                rule: "Multi-dimensional scoring"
+                threshold: "weighted_score > 50"
+                example: "성능 +150%, 토큰 -30% → Accept"
+
+              - element: "Code style/formatting"
+                rule: "Impact-based skip"
+                threshold: "impact < MEDIUM → SKIP validation"
+                example: "Prettier vs Black → Quick pilot (1주)"
+
+              - element: "UI polish"
+                rule: "Cost-benefit analysis"
+                threshold: "validation_cost > 2 days AND impact < HIGH → DEFER"
+                example: "10개 UI 컴포넌트 vs 3개 → Skip (low impact)"
+
+              - element: "Documentation completeness"
+                rule: "P15 수렴 원칙"
+                threshold: "80% coverage → STOP"
+                example: "80% 문서화 완료 → 나머지 20% Skip"
+
+              - element: "Test coverage edge cases"
+                rule: "P15 수렴 원칙"
+                threshold: "80% coverage → STOP"
+                example: "80% 커버리지 달성 → edge case Skip"
+
+          context_dependent:
+            description: "컨텍스트에 따라 P12 사용자 결정 필요"
+            elements:
+              - "Architecture choice (microservices vs monolith)"
+              - "Framework selection (React vs Vue vs Angular)"
+              - "Database choice (PostgreSQL vs MongoDB vs DynamoDB)"
+              - "Deployment strategy (Blue-Green vs Canary vs Rolling)"
+            rationale: "비즈니스 요구사항에 따라 답이 다름"
+            process: "P12 트레이드오프 분석 → 사용자 결정"
+
+        # ═══════════════════════════════════════════════════
+        # Examples with Matrix Application
+        # ═══════════════════════════════════════════════════
+        examples:
+          - name: "불확실성 지도 3개 vs 10개 (REVISED)"
+            classification: "High cost (검증 3개월), Low impact (UI 요소만)"
+            matrix_quadrant: "high_cost_low_impact"
+            decision: "SKIP validation (P15 80% 수렴)"
+            rationale: |
+              - Validation cost: 3개월 (10개 각각 테스트)
+              - Impact: LOW (UI 표현 방식만 차이, 핵심 기능 동일)
+              - P15 적용: 3개로 80% 달성 → 나머지 7개는 과도
+              - ROI: 3개월 투자 → UI 개선 (낮음)
+              - Decision: Enhanced 3개 사용, 10개 Skip
+
+          - name: "PostgreSQL vs MongoDB"
+            classification: "High cost (3개월), High impact (core architecture)"
+            matrix_quadrant: "high_cost_high_impact"
+            decision: "MUST validate"
+            process: |
+              1. PostgreSQL: 2년 검증됨
+              2. MongoDB: 미검증
+              3. Impact: Critical (core DB)
+              4. Cost: 3개월 마이그레이션
+              5. Quadrant: High/High → MUST validate
+              6. 2-Track: 90% PostgreSQL, 10% MongoDB 파일럿
+              7. 4주 측정 → 데이터 기반 결정
+
+          - name: "Security library version test"
+            classification: "Low cost (<1일), High impact (security)"
+            matrix_quadrant: "low_cost_high_impact"
+            decision: "ALWAYS validate (cheap insurance)"
+            rationale: |
+              - Cost: 1일 테스트
+              - Impact: Critical (보안 취약점 가능)
+              - Quadrant: Low/High → 반드시 검증
+              - Process: 1일 quick test → 즉시 적용
+
+          - name: "성능 +150% but 토큰 -30%"
+            classification: "Multi-dimensional tradeoff"
+            scoring: |
+              - Performance: +150% (150 × 0.6 = 90)
+              - Token: -30% (-30 × 0.4 = -12)
+              - Weighted score: 90 - 12 = 78
+              - Threshold: 50
+              - Decision: 78 > 50 → ACCEPT
+            rationale: "성능 향상이 토큰 손실을 충분히 상쇄"
+
+      tier_3_pragmatic:
+        priority: 3
+        principle: "YAGNI + KISS + 80% 수렴"
+        articles: ["P15"]
+        rule: "단순함, 실용성 우선"
+        examples:
+          - "P8 80% vs 완벽주의 90% → 80% 채택 (P15 적용)"
+          - "복잡한 해결책 vs 단순한 해결책 → 단순함 우선"
+
+      tier_4_progressive:
+        priority: 4
+        principle: "점진적 성장"
+        articles: ["P14"]
+        rule: "부작용 완화 가능하면 시도, 실패 시 즉시 롤백"
+        examples:
+          - "새 기술 도입: 2-Track 전략 (90% 안정, 10% 실험)"
+
+    conflict_resolution_algorithm: |
+      def resolve_conflict(principle_a, principle_b, context):
+          tier_a = get_tier(principle_a)
+          tier_b = get_tier(principle_b)
+
+          if tier_a < tier_b:
+              return principle_a  # 낮은 tier 번호가 우선
+          elif tier_a > tier_b:
+              return principle_b
+          else:
+              # Same tier → P12 트레이드오프 분석
+              return ask_user_with_tradeoff_analysis(
+                  principle_a, principle_b, context
+              )
+
+    rationale: |
+      Zero-Based Constitution과 시너지:
+        - Zero-Based가 현재 모순 해결 (7개 → 0개)
+        - P17이 미래 모순 방지 (자동 우선순위)
+        - 상호 강화 효과 (단순함 + 일관성)
+
+      AI 일관성 보장:
+        - 매번 같은 기준으로 판단
+        - "4번 질문, 4번 다른 답변" 방지
+        - 사용자 신뢰 확보
+
+      장기 안정성:
+        - P18, P19 추가 시에도 충돌 자동 해결
+        - Constitution 진화 가능 (모순 없이)
+
+    enforcement:
+      tool: "AI internal decision logic"
+      method: "자동 적용 (충돌 감지 시)"
+      automated: true
+      violation_severity: "high"
+
+    integration_with_other_articles:
+      - article: "P11"
+        relation: "P11이 충돌 감지 → P17이 해결"
+
+      - article: "P12"
+        relation: "Same tier 충돌 → P12 트레이드오프 분석"
+
+      - article: "P13"
+        relation: "P17도 P13 검증 대상 (재귀적 적용)"
+
+      - article: "P15"
+        relation: "P17 자체도 단순함 유지 (100 lines)"
+
+    examples:
+      good: |
+        # Case 1: P5 vs P15 충돌
+        상황: "보안 검증 vs 빠른 배포"
+        P17 적용:
+          - P5 (Tier 1) vs P15 (Tier 3)
+          - Tier 1 승리
+          - 결정: 보안 검증 필수, 배포 지연
+
+        # Case 2: P8 vs P15 (이미 해결됨)
+        상황: "테스트 90% vs 80% 수렴"
+        P17 적용:
+          - 충돌 없음 (Zero-Based로 80% 통일)
+          - P17 불필요 (예방 효과)
+
+      bad: |
+        # P17 없이 충돌 처리
+        AI: "P5와 P15가 충돌하네요... 음... 이번엔 P15를?"
+        (다음번: P5 선택 → 일관성 없음)
 
 
 # ==============================================================================

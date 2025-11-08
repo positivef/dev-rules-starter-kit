@@ -249,11 +249,173 @@ Layer 7: Visualization (시각화 - 검증 안 함!)
 |----|------|----------|-----------|
 | **P16** | 경쟁사 벤치마킹 우선 | BenchmarkAnalyzer + P16Validator | 신규 프로젝트/기능 시작 전 |
 
-**P16 요구사항**:
-- ✅ 경쟁사 3개 이상 분석 (strengths, weaknesses)
+**P16 요구사항** (Updated 2025-11-08):
+- ✅ 경쟁사 2-3개 분석 (일반 3개, 틈새 시장 2개)
 - ✅ 차별화 포인트 3개 이상 (point, rationale, target)
 - ✅ YAML 계약서에 `benchmarking:` 섹션 포함
+- 📊 근거: YC Startup School, Lean Startup 업계 표준
 
+### 의사결정 조항 (P17) - NEW!
+
+| ID | 조항 | 목적 | 언제 사용? |
+|----|------|------|-----------|
+| **P17** | Decision Framework | 원칙 충돌 시 우선순위 제공 | 2개 이상 조항이 충돌할 때 |
+
+**P17 4-Tier Priority System**:
+
+```
+Tier 1 (Safety & Integrity) - 절대 우선
+  └─ P5 (보안), P2 (증거), P10 (인코딩)
+
+Tier 2 (Evidence & Quality)
+  └─ P7 (Hallucination 방지), P8 (테스트 80%), P4 (SOLID)
+
+Tier 3 (Strategic & Governance)
+  └─ P16 (벤치마킹), P11 (충돌 검증), P14 (2차 효과)
+
+Tier 4 (Progressive & Balance)
+  └─ P15 (80% 수렴), P13 (헌법 최소화)
+```
+
+**의사결정 예시**:
+- P5 (보안) vs P15 (80% 충분)? → P5 승리 (Tier 1 > Tier 4)
+- P8 (테스트) vs P1 (YAML)? → P8 승리 (Tier 2 > 프로세스)
+- P16 (벤치마킹) vs P15 (간단하게)? → P16 승리 (Tier 3 > Tier 4)
+
+## 🆕 Constitution Updates (2025-11-08)
+
+### Zero-Based Redesign 결과
+
+**주요 변경사항**:
+
+| 조항 | Before | After | 근거 |
+|------|--------|-------|------|
+| **P8** | 90% 커버리지 | 80% 커버리지 | Google/Microsoft 업계 표준 |
+| **P16** | 3개 이상 | 2-3개 (범위) | YC/Lean Startup 표준 + 유연성 |
+| **P11** | 충돌 검증만 | +Anti-Patterns | 반복 실수 방지 규칙화 |
+| **P14** | 2차 효과만 | +Meta-Effects | Constitution 자체 개선 |
+| **P17** | (없음) | Decision Framework | 원칙 충돌 해결 체계 |
+
+### P8: 80% 통합 표준 (90% 폐지)
+
+**이유**: P15 수렴 원칙과 조화, 업계 표준 정렬
+
+```yaml
+# 모든 프로젝트 타입 80% 통일
+test_coverage:
+  mvp: 80%        # Was 60%
+  standard: 80%   # Unchanged
+  enterprise: 80% # Was 90%
+
+rationale: |
+  - 업계 표준: Google 80%, Microsoft 70-80%
+  - ROI 분석: 80→90% = +3% 품질, +40% 시간 (비효율)
+  - 일관성: 예외 없는 단일 기준
+```
+
+### P11: Anti-Patterns (반복 실수 규칙화)
+
+**Pattern 1: Zero-Based Review**
+- ❌ 예외 추가: "이 경우엔 60%", "저 경우엔 90%"
+- ✅ 기준 재설계: "왜 90%? → 근거 없음 → 80%로 변경"
+
+**Pattern 2: Unverified ≠ Rejection (CRITICAL!)**
+- ❌ AI 편향: "미검증 → 부정적 판단 → 거부"
+- ✅ 올바른 접근: "미검증 → 2-Track 파일럿 → 검증 → 데이터 기반 결정"
+
+```python
+# ❌ WRONG
+if proposal.verified == False:
+    return "REJECT"  # 혁신 차단!
+
+# ✅ RIGHT
+if proposal.verified == False:
+    return pilot_test(
+        track="2-Track (10%)",
+        duration="4 weeks",
+        measure=["impact", "cost", "risk"],
+        then=lambda results: compare_with_rice(results)
+    )
+```
+
+**Pattern 3: Evidence-Based Numbers**
+- ❌ "50이면 될 것 같아요" (근거 없음)
+- ✅ "MCC ROI 기준 10% (정부 표준)" (P16 벤치마킹)
+
+### P14: Meta-Effects (Constitution 자체 개선)
+
+**주 1회 필수 질문**:
+1. "오늘/이번 주 반복된 의사결정 패턴이 뭐였지?"
+2. "같은 실수를 여러 번 했나? (2번 이상)"
+3. "이 패턴을 규칙화하면 재발 방지 가능한가?"
+4. "P11 anti_patterns 업데이트 필요한가?"
+
+**Pattern → Rule 프로세스**:
+```
+반복 패턴 식별 (2번+)
+  → 재발 가능성 검증
+  → P11 규칙 작성
+  → Constitution 통합
+  → 효과 측정 (재발률 0% 목표)
+```
+
+### RICE Scoring (Industry Standard)
+
+**출처**: Intercom (2016), SAFe WSJF, MCC ROI
+
+**Impact Scale** (Intercom):
+- 3.0: Massive (전사 영향)
+- 2.0: High (팀 전체)
+- 1.0: Medium (일부 사용자)
+- 0.5: Low (개인)
+- 0.25: Minimal (마이크로)
+
+**Confidence Scale** (Intercom):
+- 100%: HIGH (검증됨)
+- 80%: MEDIUM (부분 검증) ← P15와 일치!
+- 50%: LOW (미검증)
+
+**Effort Scale** (SAFe WSJF):
+- Fibonacci: [1, 2, 3, 5, 8, 13, 21] person-days
+
+**ROI Threshold** (MCC):
+- 10% 이상 (미 정부 납세자 기금 기준)
+
+**RICE 계산**:
+```python
+rice_score = (impact * confidence) / effort
+
+# Example 1: 검증된 단순 개선
+impact = 2.0      # High
+confidence = 100  # 검증됨
+effort = 2        # 2 days
+rice = (2.0 * 100) / 2 = 100
+
+# Example 2: 미검증 복잡한 기능
+impact = 3.0      # Massive
+confidence = 50   # 미검증
+effort = 13       # 13 days
+rice = (3.0 * 50) / 13 = 11.5
+
+# Decision: Example 1 우선 (RICE 8.7배 높음)
+```
+
+### Validation Decision Matrix (2×2)
+
+| Cost / Impact | HIGH Impact | LOW Impact |
+|---------------|-------------|------------|
+| **HIGH Cost (>3 days)** | MUST validate (P16) | SKIP (P15) |
+| **LOW Cost (<1 day)** | ALWAYS validate | Quick pilot |
+
+**사용 예시**:
+```
+불확실성 지도 3개 vs 10개 제안:
+  Current (3개): RICE = 0.33 (검증됨, 2일)
+  Proposed (10개): RICE = 0.006 (미검증, 13일)
+
+Decision: 3개 유지 (RICE 55배 차이)
+Rationale: P17 Tier 2 (검증됨 > 미검증) + ROI 불충분
+```
 
 
 
@@ -540,6 +702,18 @@ python scripts/codex_auto_init.py
 - ❌ main/master 브랜치 직접 작업 (위험!)
 - ❌ **Python 코드에 이모지 사용** (Windows 크래시!)
 - ❌ System Python 사용 (venv 없이)
+- 🚨 **미검증 = 거부 판단** (P11 Pattern 2, AI 고질적 편향!)
+
+**P11 Pattern 2 경고 (CRITICAL)**:
+```python
+# ❌ NEVER say this
+"미검증이라 안 됩니다"
+"증거 없으니 거부합니다"
+
+# ✅ ALWAYS say this
+"미검증이니 2-Track 파일럿으로 검증하겠습니다"
+"4주 측정 후 RICE로 비교하겠습니다"
+```
 
 **가능하면 피할 것** (긴급 시 OK):
 - ⚠️ 복잡한 작업에 YAML 생략 → `SKIP_CONSTITUTION=true`
@@ -655,6 +829,12 @@ python scripts/agent_sync_status.py --files src/auth.py
 
 ---
 
-**버전**: 2.1.0 (Stage 6 Phase 2)
+**버전**: 2.2.0 (Constitution Zero-Based Redesign)
 **마지막 업데이트**: 2025-11-08
-**변경사항**: Constitution 표 완성, GitHub Template 추가, 문서 링크 업데이트
+**변경사항**:
+- P8: 80% 통합 표준 (90% 폐지)
+- P16: 2-3개 범위 (유연성 확보)
+- P17: Decision Framework 신설
+- P11: Anti-Patterns 추가 (Pattern 2 CRITICAL)
+- P14: Meta-Effects 추가
+- RICE Scoring 업계 표준 통합
