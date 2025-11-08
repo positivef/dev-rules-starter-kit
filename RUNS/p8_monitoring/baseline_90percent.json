@@ -1,0 +1,7 @@
+{
+  "standard": "90% coverage (pre-2025-11-08)",
+  "created": "2025-11-09T05:55:28.763820",
+  "avg_time_per_test_minutes": 15.0,
+  "avg_coverage_percent": 90.0,
+  "bug_escape_rate_percent": 5.0
+}

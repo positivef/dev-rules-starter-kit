@@ -1,0 +1,209 @@
+task_id: "PATTERN4-WEEK1-MONITORING"
+title: "Pattern 4 (Design Review First) - Week 1 Effectiveness Monitoring"
+created: "2025-11-09"
+period: "2025-11-09 ~ 2025-11-15"
+priority: "high"
+
+description: |
+  Track Pattern 4 effectiveness for 1 week:
+  - Compliance rate (% features with design review)
+  - Risk detection rate (avg risks found per review)
+  - Issue prevention (post-impl bugs reduced?)
+  - Time ROI (design time vs bug-fix time saved)
+
+# ========================================
+# One-Time Setup
+# ========================================
+
+one_time_tasks:
+  - id: "baseline"
+    title: "Pattern 4 베이스라인 설정 (Historical Data)"
+    estimated_time: "10 minutes"
+    priority: "critical"
+
+    procedure: |
+      1. Review past 10 features (before Pattern 4)
+      2. Count post-implementation issues
+      3. Document historical baseline
+
+    baseline_data:
+      historical_post_impl_issues: "~30%"
+      historical_rollback_rate: "~10%"
+      historical_design_changes: "~20%"
+
+    commands:
+      - step: "Create baseline file"
+        cmd: |
+          python -c "
+          import json
+          from datetime import datetime
+          baseline = {
+            'period': 'Pre-Pattern 4 (historical)',
+            'created': datetime.now().isoformat(),
+            'post_impl_issues_percent': 30.0,
+            'rollback_rate_percent': 10.0,
+            'design_changes_percent': 20.0,
+            'notes': 'Estimated from past experience'
+          }
+          with open('RUNS/pattern4_monitoring/baseline.json', 'w') as f:
+            json.dump(baseline, f, indent=2)
+          print('[OK] Baseline saved')
+          "
+
+  - id: "create-directory"
+    title: "Create Pattern 4 monitoring directory"
+    priority: "critical"
+
+    commands:
+      - step: "Create directory"
+        cmd: "mkdir -p RUNS/pattern4_monitoring"
+
+# ========================================
+# Development Session Tasks (Recurring)
+# ========================================
+
+recurring_tasks:
+  - id: "record-review"
+    title: "Design Review 기록 (새 기능 시작 시)"
+    frequency: "매 새 기능 개발 시작 전"
+    estimated_time: "2 minutes"
+    priority: "high"
+
+    trigger: |
+      - 10줄 이상 새 기능 구현 전
+      - 시스템 아키텍처 변경 전
+      - 폴더 구조 수정 전
+
+    procedure: |
+      1. Design review 수행 (8가지 위험 체크)
+      2. 위험 완화 전략 수립
+      3. 메트릭 기록
+
+    commands:
+      - step: "Record design review"
+        cmd: |
+          python scripts/pattern4_impact_monitor.py --record-review \
+            --feature "[기능명]" \
+            --time [리뷰소요시간_분] \
+            --risks [발견위험수] \
+            --mitigated [완화위험수]
+
+  - id: "record-impl"
+    title: "Implementation 결과 기록 (기능 완료 후)"
+    frequency: "매 기능 구현 완료 시"
+    estimated_time: "2 minutes"
+    priority: "high"
+
+    procedure: |
+      1. 구현 완료 후 테스트
+      2. 발견된 버그 수 기록
+      3. 롤백 필요 여부 기록
+
+    commands:
+      - step: "Record implementation"
+        cmd: |
+          python scripts/pattern4_impact_monitor.py --record-impl \
+            --feature "[기능명]" \
+            --bugs [발견버그수] \
+            --rollback [true/false]
+
+# ========================================
+# Weekly Tasks
+# ========================================
+
+weekly_tasks:
+  - id: "weekly-report"
+    title: "Pattern 4 주간 리포트 생성"
+    schedule: "매주 금요일"
+    priority: "high"
+    estimated_time: "5 minutes"
+
+    commands:
+      - step: "Generate report"
+        cmd: "python scripts/pattern4_impact_monitor.py --report"
+
+      - step: "Review report"
+        action: "Read RUNS/pattern4_monitoring/report_YYYYMMDD.txt"
+
+      - step: "Decision"
+        options:
+          - "GREEN: Compliance >90%, Issues reduced >20%, ROI >150% -> CONTINUE"
+          - "YELLOW: Compliance 70-90%, Some improvement -> MONITOR Week 2"
+          - "RED: Compliance <70%, No improvement -> ANALYZE + MODIFY"
+
+# ========================================
+# Monitoring Metrics
+# ========================================
+
+monitoring:
+  compliance_rate:
+    target: "100%"
+    acceptable: ">90%"
+    warning: "70-90%"
+    failure: "<70%"
+
+  risk_detection:
+    target: ">2 risks per review"
+    acceptable: ">1.5 risks"
+    warning: "1-1.5 risks"
+    failure: "<1 risk"
+
+  issue_prevention:
+    baseline: "30% post-impl issues"
+    target: "<10% post-impl issues"
+    acceptable: "<15%"
+    warning: "15-20%"
+    failure: ">20%"
+
+  time_roi:
+    target: ">200% (2x savings)"
+    acceptable: ">150%"
+    warning: "100-150%"
+    failure: "<100%"
+
+# ========================================
+# Emergency Procedures
+# ========================================
+
+emergency_procedures:
+  modify_pattern4:
+    trigger: |
+      - Compliance rate <70% (team resistance)
+      - ROI <100% (not effective)
+      - Post-impl issues NOT reduced
+
+    procedure: |
+      1. Document failure:
+         python scripts/pattern4_impact_monitor.py --report > failure_report.txt
+
+      2. Analyze root cause:
+         - Is checklist too complex?
+         - Is time investment too high?
+         - Are risks not relevant?
+
+      3. Decide:
+         - Simplify checklist (8 -> 4 critical risks)
+         - Make optional for <20 lines features
+         - Remove Pattern 4 entirely
+
+      4. Update Constitution if needed
+
+# ========================================
+# Success Criteria
+# ========================================
+
+completion_criteria:
+  - "1주일 모니터링 완료 (2025-11-15)"
+  - "최소 5개 design review 데이터 포인트"
+  - "주간 리포트 생성 및 검토"
+  - "Decision 완료: Continue / Monitor / Modify"
+
+# ========================================
+# References
+# ========================================
+
+references:
+  - "docs/PATTERN4_MONITORING_GUIDE.md"
+  - "config/constitution.yaml (P11 anti_patterns.pattern_4)"
+  - "~/.claude/INNOVATION_SAFETY_PRINCIPLES.md"
+  - "docs/PATTERN_PRIORITY_GUIDE.md"
