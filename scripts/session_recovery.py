@@ -16,7 +16,6 @@ ROI: 306% (15min manual recovery -> 5sec automatic recovery)
 
 import json
 import os
-import psutil
 import time
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
@@ -24,6 +23,14 @@ from enum import Enum
 from hashlib import sha256
 from pathlib import Path
 from typing import Dict, Any, Optional
+
+# Optional dependency: psutil for real-time PID/disk monitoring
+try:
+    import psutil
+
+    HAS_PSUTIL = True
+except ImportError:
+    HAS_PSUTIL = False
 
 
 class RecoveryStatus(Enum):
@@ -43,6 +50,7 @@ class CrashReason(Enum):
     HEARTBEAT_TIMEOUT = "heartbeat_timeout"
     CORRUPTED_STATE = "corrupted_state"
     DISK_FULL = "disk_full"
+    ORPHANED_SESSION = "orphaned_session"
     UNKNOWN = "unknown"
 
 
@@ -84,6 +92,7 @@ class RecoveryLog:
     context_restored: bool
     error_message: Optional[str]
     recovery_time_sec: float
+    data_loss_minutes: float = 0.0  # Time between crash and last checkpoint
 
     def to_dict(self) -> Dict:
         """Serialize to dictionary"""
@@ -172,6 +181,10 @@ class SessionRecovery:
             if not self._check_disk_space():
                 return CrashReason.DISK_FULL
 
+            # Check orphaned session (safety net - file-based detection)
+            if self._detect_orphaned_session(session_id):
+                return CrashReason.ORPHANED_SESSION
+
             return None
 
         except Exception:
@@ -208,6 +221,7 @@ class SessionRecovery:
                 context_restored=False,
                 error_message="No checkpoint found",
                 recovery_time_sec=time.time() - start_time,
+                data_loss_minutes=0.0,
             )
 
         try:
@@ -229,6 +243,12 @@ class SessionRecovery:
 
             recovery_time = time.time() - start_time
 
+            # Calculate data loss: time between crash and last checkpoint
+            checkpoint_time = datetime.fromisoformat(checkpoint.timestamp)
+            crash_time = datetime.now(timezone.utc)
+            data_loss_seconds = (crash_time - checkpoint_time).total_seconds()
+            data_loss_minutes = data_loss_seconds / 60.0
+
             log = RecoveryLog(
                 recovery_id=recovery_id,
                 session_id=session_id,
@@ -242,6 +262,7 @@ class SessionRecovery:
                 context_restored=context_restored,
                 error_message=None if status == RecoveryStatus.SUCCESS else "Partial recovery",
                 recovery_time_sec=recovery_time,
+                data_loss_minutes=data_loss_minutes,
             )
 
             self._save_recovery_log(log)
@@ -261,6 +282,7 @@ class SessionRecovery:
                 context_restored=False,
                 error_message=str(e),
                 recovery_time_sec=time.time() - start_time,
+                data_loss_minutes=0.0,
             )
 
     def get_recovery_success_rate(self) -> float:
@@ -305,7 +327,15 @@ class SessionRecovery:
         return sha256(json_str.encode()).hexdigest()[:16]
 
     def _is_process_alive(self, pid: int) -> bool:
-        """Check if process is alive"""
+        """Check if process is alive
+
+        If psutil is not available, assumes process is alive
+        and relies on other detection layers (heartbeat, orphaned session).
+        """
+        if not HAS_PSUTIL:
+            # Fallback: assume alive, let other layers detect crash
+            return True
+
         try:
             return psutil.pid_exists(pid)
         except Exception:
@@ -325,12 +355,60 @@ class SessionRecovery:
         return computed_hash == checkpoint.context_hash
 
     def _check_disk_space(self) -> bool:
-        """Check if disk has enough space"""
+        """Check if disk has enough space
+
+        If psutil is not available, assumes disk space is sufficient.
+        """
+        if not HAS_PSUTIL:
+            # Fallback: assume disk space is OK
+            return True
+
         try:
             disk = psutil.disk_usage(str(Path.cwd()))
             return disk.free > 100 * 1024 * 1024
         except Exception:
             return True
+
+    def _detect_orphaned_session(self, session_id: str) -> bool:
+        """Detect orphaned session (file-based detection)
+
+        Legacy detection layer from Implementation A.
+        Checks if session file exists and has:
+        - graceful_shutdown = False
+        - last_update > 1 hour ago
+
+        Args:
+            session_id: Session ID to check
+
+        Returns:
+            True if session is orphaned (crashed without graceful shutdown)
+        """
+        try:
+            session_file = self.checkpoint_dir.parent / f"{session_id}.json"
+
+            if not session_file.exists():
+                return False
+
+            with open(session_file, "r", encoding="utf-8") as f:
+                session_data = json.load(f)
+
+            # Check graceful shutdown flag
+            if session_data.get("graceful_shutdown", False):
+                return False
+
+            # Check if session is old enough (1 hour threshold)
+            last_update = session_data.get("last_update")
+            if not last_update:
+                return False
+
+            last_update_time = datetime.fromisoformat(last_update)
+            time_since_update = datetime.now(timezone.utc) - last_update_time
+
+            # 1 hour = 3600 seconds
+            return time_since_update.total_seconds() > 3600
+
+        except Exception:
+            return False
 
     def _capture_file_states(self) -> Dict[str, str]:
         """Capture current file states (hash)"""

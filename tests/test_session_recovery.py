@@ -17,7 +17,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
 
 import pytest
@@ -124,6 +124,40 @@ class TestCheckpointCreation:
 
 class TestCrashDetection:
     """Test crash detection"""
+
+    def test_detect_orphaned_via_detect_crash(self, recovery):
+        """Test orphaned session detected through detect_crash()"""
+        session_id = "orphaned_integration"
+
+        # Create checkpoint
+        recovery.create_checkpoint(session_id, {"test": "data"})
+
+        # Create orphaned session file (old, not gracefully shut down)
+        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+
+        session_file.write_text(
+            json.dumps(
+                {
+                    "session_id": session_id,
+                    "graceful_shutdown": False,
+                    "last_update": old_time,
+                    "scope_data": {"SESSION": {}},
+                },
+                ensure_ascii=True,
+            ),
+            encoding="utf-8",
+        )
+
+        # Mock PID/heartbeat/integrity checks to pass
+        # So that orphaned session detection is reached
+        with patch("scripts.session_recovery.psutil.pid_exists", return_value=True):
+            crash_reason = recovery.detect_crash(session_id)
+
+        # Should detect as ORPHANED_SESSION
+        from scripts.session_recovery import CrashReason
+
+        assert crash_reason == CrashReason.ORPHANED_SESSION
 
     def test_detect_no_crash(self, recovery):
         """Test no crash when process alive"""
@@ -380,6 +414,56 @@ class TestEdgeCases:
 
         assert log.recovery_time_sec >= 0
         assert log.recovery_time_sec < 5.0
+
+    def test_detect_orphaned_session(self, recovery):
+        """Test orphaned session detection"""
+        session_id = "orphaned_001"
+
+        # Create session file (without graceful shutdown)
+        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+
+        session_file.write_text(
+            json.dumps({"session_id": session_id, "graceful_shutdown": False, "last_update": old_time}, ensure_ascii=True),
+            encoding="utf-8",
+        )
+
+        # Should detect as orphaned
+        is_orphaned = recovery._detect_orphaned_session(session_id)
+        assert is_orphaned is True
+
+    def test_detect_orphaned_session_graceful(self, recovery):
+        """Test graceful shutdown is not detected as crash"""
+        session_id = "graceful_001"
+
+        # Create session file WITH graceful shutdown
+        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+
+        session_file.write_text(
+            json.dumps({"session_id": session_id, "graceful_shutdown": True, "last_update": old_time}, ensure_ascii=True),
+            encoding="utf-8",
+        )
+
+        # Should NOT detect as orphaned
+        is_orphaned = recovery._detect_orphaned_session(session_id)
+        assert is_orphaned is False
+
+    def test_psutil_fallback_process_alive(self, recovery):
+        """Test psutil fallback when not available"""
+        # Temporarily disable psutil
+        with patch("scripts.session_recovery.HAS_PSUTIL", False):
+            # Without psutil, assume process is alive
+            result = recovery._is_process_alive(99999)
+            assert result is True
+
+    def test_psutil_fallback_disk_space(self, recovery):
+        """Test disk space check fallback"""
+        # Temporarily disable psutil
+        with patch("scripts.session_recovery.HAS_PSUTIL", False):
+            # Without psutil, assume disk space is OK
+            result = recovery._check_disk_space()
+            assert result is True
 
 
 class TestCLIInterface:
