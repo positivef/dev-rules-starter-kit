@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Heavy Tools Benchmark - 무거운 도구 성능 측정"""
+"""Heavy Tools Benchmark - Performance measurement for heavy tools"""
 
 import time
 import subprocess
@@ -8,7 +8,7 @@ import sys
 
 
 def measure_script(script_name, args=None, timeout=300):
-    """스크립트 실행 시간 측정"""
+    """Measure script execution time"""
     args = args or []
     print(f"\n[BENCHMARK] {script_name} {' '.join(args)}")
     print("-" * 60)
@@ -50,12 +50,12 @@ print("=" * 60)
 print("HEAVY TOOLS PERFORMANCE BENCHMARK")
 print("=" * 60)
 
-# 1. auto_improver.py --dry-run (예상: 3-5초)
-print("\n[1/2] Auto-Improver (Constitution 위반 검사)")
+# 1. auto_improver.py --dry-run (expected: 3-5s)
+print("\n[1/2] Auto-Improver (Constitution violation check)")
 results["auto_improver"] = measure_script("auto_improver.py", ["--dry-run"], timeout=60)
 
-# 2. auto_test_generator.py --dry-run (예상: 5-10초)
-print("\n[2/2] Auto Test Generator (테스트 생성)")
+# 2. auto_test_generator.py --dry-run (expected: 5-10s)
+print("\n[2/2] Auto Test Generator (test generation)")
 results["auto_test_generator"] = measure_script("auto_test_generator.py", ["--dry-run"], timeout=60)
 
 # Summary
@@ -79,66 +79,66 @@ print("=" * 60)
 
 # Find slowest
 slowest = max(results.items(), key=lambda x: x[1][0])
-print(f"\n가장 느린 도구: {slowest[0]} ({slowest[1][0]:.3f}s)")
+print(f"\nSlowest tool: {slowest[0]} ({slowest[1][0]:.3f}s)")
 
 # Priority recommendations
-print("\n최적화 우선순위:")
+print("\nOptimization priority:")
 
 if slowest[1][0] > 5:
-    print(f"  1. [HIGH] Worker Pool 병렬화 - {slowest[0]}")
-    print(f"     예상 효과: {slowest[1][0]:.1f}s -> {slowest[1][0]*0.4:.1f}s (60% 개선)")
+    print(f"  1. [HIGH] Worker Pool parallelization - {slowest[0]}")
+    print(f"     Expected effect: {slowest[1][0]:.1f}s -> {slowest[1][0]*0.4:.1f}s (60% improvement)")
 elif slowest[1][0] > 2:
-    print(f"  1. [MEDIUM] 캐싱 및 중복 제거 - {slowest[0]}")
-    print(f"     예상 효과: {slowest[1][0]:.1f}s -> {slowest[1][0]*0.6:.1f}s (40% 개선)")
+    print(f"  1. [MEDIUM] Caching and deduplication - {slowest[0]}")
+    print(f"     Expected effect: {slowest[1][0]:.1f}s -> {slowest[1][0]*0.6:.1f}s (40% improvement)")
 else:
-    print("  1. [LOW] 마이크로 최적화만 필요")
-    print(f"     모든 도구가 {max(t for _, (t, _) in results.items()):.1f}초 미만")
+    print("  1. [LOW] Only micro-optimizations needed")
+    print(f"     All tools under {max(t for _, (t, _) in results.items()):.1f}s")
 
 # Parallelization analysis
-print("\n병렬화 가능성:")
+print("\nParallelization potential:")
 if total_time > 5:
-    print(f"  - 순차 실행 시: {total_time:.1f}s")
-    print(f"  - 병렬 실행 시: {max(t for _, (t, _) in results.items()):.1f}s")
-    print(f"  - 절감 시간: {total_time - max(t for _, (t, _) in results.items()):.1f}s")
+    print(f"  - Sequential execution: {total_time:.1f}s")
+    print(f"  - Parallel execution: {max(t for _, (t, _) in results.items()):.1f}s")
+    print(f"  - Time saved: {total_time - max(t for _, (t, _) in results.items()):.1f}s")
 else:
-    print(f"  - 총 시간이 {total_time:.1f}s로 짧아 병렬화 효과 미미")
+    print(f"  - Total time is {total_time:.1f}s - parallelization has minimal effect")
 
 # Reality check
 print("\n" + "=" * 60)
-print("REALITY CHECK - 실제 절감 시간 계산")
+print("REALITY CHECK - Actual time savings calculation")
 print("=" * 60)
 
-# 가정: 주 1회 전체 실행
+# Assumption: 1 run per week
 weekly_runs = 1
 weeks_per_year = 52
 
 before_time = total_time * weekly_runs * weeks_per_year / 3600  # hours
-print("\n현재 상태 (자동화 후):")
-print(f"  - 주 {weekly_runs}회 실행")
-print(f"  - 연간: {before_time:.1f}시간")
+print("\nCurrent state (after automation):")
+print(f"  - {weekly_runs} runs/week")
+print(f"  - Yearly: {before_time:.1f} hours")
 
-# 수동 실행 시간 (가정)
+# Manual execution time (assumption)
 manual_time_per_run = 30  # minutes
 manual_yearly = manual_time_per_run * weekly_runs * weeks_per_year / 60  # hours
 
-print("\n자동화 전 (수동 실행):")
-print(f"  - 실행당: {manual_time_per_run}분")
-print(f"  - 연간: {manual_yearly:.1f}시간")
+print("\nBefore automation (manual execution):")
+print(f"  - Per run: {manual_time_per_run} minutes")
+print(f"  - Yearly: {manual_yearly:.1f} hours")
 
 savings = manual_yearly - before_time
-print("\n실제 절감:")
-print(f"  - 연간: {savings:.1f}시간")
-print(f"  - 개선율: {savings/manual_yearly*100:.1f}%")
+print("\nActual savings:")
+print(f"  - Yearly: {savings:.1f} hours")
+print(f"  - Improvement rate: {savings/manual_yearly*100:.1f}%")
 
-# 추가 최적화 효과
+# Additional optimization effects
 if slowest[1][0] > 2:
     optimized_time = total_time * 0.6  # 40% improvement
     optimized_yearly = optimized_time * weekly_runs * weeks_per_year / 3600
     additional_savings = before_time - optimized_yearly
 
-    print("\n추가 최적화 시:")
-    print(f"  - 추가 절감: {additional_savings:.1f}시간/년")
-    print(f"  - 총 절감: {savings + additional_savings:.1f}시간/년")
+    print("\nWith additional optimization:")
+    print(f"  - Additional savings: {additional_savings:.1f} hours/year")
+    print(f"  - Total savings: {savings + additional_savings:.1f} hours/year")
 else:
-    print("\n추가 최적화:")
-    print("  - 효과: 미미 (<0.5시간/년)")
+    print("\nAdditional optimization:")
+    print("  - Effect: minimal (<0.5 hours/year)")

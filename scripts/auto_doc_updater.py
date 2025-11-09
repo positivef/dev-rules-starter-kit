@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Auto Documentation Updater - Constitution 변경 시 문서 자동 갱신
-===========================================================
+Auto Documentation Updater - Automatic doc updates when Constitution changes
+===============================================================================
 
-핵심 기능:
-1. Constitution.yaml 변경 감지 (Git diff 기반)
-2. 변경된 조항(Article) 분석
-3. 영향받는 문서 자동 업데이트
-4. 버전 관리 및 변경 이력 추적
-5. Obsidian 자동 동기화
+Core Features:
+1. Detect Constitution.yaml changes (Git diff based)
+2. Analyze changed articles
+3. Auto-update affected documentation
+4. Version control and change history tracking
+5. Auto-sync to Obsidian
 
-목표: Constitution 변경 시 수동 문서 업데이트 제거 (2시간 → 30초)
+Goal: Eliminate manual doc updates on Constitution changes (2h -> 30s)
 """
 
 import yaml
@@ -27,7 +27,7 @@ import subprocess
 
 @dataclass
 class ConstitutionChange:
-    """Constitution 변경 사항"""
+    """Constitution change record"""
 
     article_id: str
     change_type: str  # added, modified, deleted
@@ -38,7 +38,7 @@ class ConstitutionChange:
 
 @dataclass
 class DocumentUpdate:
-    """문서 업데이트 작업"""
+    """Document update task"""
 
     file_path: Path
     section: str
@@ -48,7 +48,7 @@ class DocumentUpdate:
 
 
 class ConstitutionMonitor:
-    """Constitution.yaml 변경 감지"""
+    """Detect Constitution.yaml changes"""
 
     def __init__(self, constitution_path: Path):
         self.constitution_path = constitution_path
@@ -56,13 +56,13 @@ class ConstitutionMonitor:
         self.history_file = Path("RUNS/constitution_history.json")
 
     def get_file_hash(self) -> str:
-        """파일 해시 계산"""
+        """Calculate file hash"""
         with open(self.constitution_path, "r", encoding="utf-8") as f:
             content = f.read()
         return hashlib.sha256(content.encode()).hexdigest()
 
     def has_changed(self) -> bool:
-        """파일이 변경되었는지 확인"""
+        """Check if file has changed"""
         current_hash = self.get_file_hash()
 
         if self.last_hash is None:
@@ -76,7 +76,7 @@ class ConstitutionMonitor:
         return changed
 
     def get_changes_from_git(self) -> List[ConstitutionChange]:
-        """Git diff로 변경 사항 감지"""
+        """Detect changes via Git diff"""
         try:
             # Get unstaged changes
             result = subprocess.run(
@@ -105,7 +105,7 @@ class ConstitutionMonitor:
             return []
 
     def _parse_diff(self, diff_output: str) -> List[ConstitutionChange]:
-        """Git diff 출력 파싱"""
+        """Parse Git diff output"""
         changes = []
 
         # Simple parsing - look for article ID patterns
@@ -139,12 +139,12 @@ class ConstitutionMonitor:
         return changes
 
     def load_constitution(self) -> Dict:
-        """Constitution.yaml 로드"""
+        """Load Constitution.yaml"""
         with open(self.constitution_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
 
     def save_history(self, changes: List[ConstitutionChange]):
-        """변경 이력 저장"""
+        """Save change history"""
         self.history_file.parent.mkdir(exist_ok=True)
 
         history = []
@@ -162,7 +162,7 @@ class ConstitutionMonitor:
 
 
 class DocumentAnalyzer:
-    """문서 분석 및 업데이트 지점 식별"""
+    """Document analysis and update point identification"""
 
     def __init__(self, project_root: Path):
         self.project_root = project_root
@@ -174,7 +174,7 @@ class DocumentAnalyzer:
         ]
 
     def find_article_references(self, article_id: str) -> Dict[Path, List[Tuple[int, str]]]:
-        """특정 조항을 참조하는 문서 위치 찾기"""
+        """Find document locations that reference specific article"""
         references = {}
 
         for doc_path in self.docs_to_update:
@@ -186,7 +186,7 @@ class DocumentAnalyzer:
 
             matches = []
             for i, line in enumerate(lines, 1):
-                # P1, P2, ... P16 패턴 찾기
+                # Find P1, P2, ... P16 patterns
                 if article_id in line:
                     matches.append((i, line.strip()))
 
@@ -196,7 +196,7 @@ class DocumentAnalyzer:
         return references
 
     def extract_article_summary(self, constitution: Dict, article_id: str) -> Optional[str]:
-        """조항 요약 추출"""
+        """Extract article summary"""
         for article in constitution.get("articles", []):
             if article.get("id") == article_id:
                 name = article.get("name", "")
@@ -209,14 +209,14 @@ class DocumentAnalyzer:
 
 
 class DocumentUpdater:
-    """문서 자동 갱신 엔진"""
+    """Auto-document update engine"""
 
     def __init__(self, project_root: Path):
         self.project_root = project_root
         self.analyzer = DocumentAnalyzer(project_root)
 
     def generate_updates(self, changes: List[ConstitutionChange], constitution: Dict) -> List[DocumentUpdate]:
-        """필요한 업데이트 목록 생성"""
+        """Generate list of required updates"""
         updates = []
 
         for change in changes:
@@ -252,10 +252,10 @@ class DocumentUpdater:
         return updates
 
     def _generate_new_text(self, old_text: str, summary: str, change: ConstitutionChange) -> str:
-        """새 텍스트 생성"""
+        """Generate new text"""
         if change.change_type == "modified":
             # Update summary in place
-            return old_text  # Placeholder - 실제로는 더 스마트한 업데이트 필요
+            return old_text  # Placeholder - needs smarter update logic
         elif change.change_type == "added":
             return old_text + f" [NEW: {summary}]"
         elif change.change_type == "deleted":
@@ -264,7 +264,7 @@ class DocumentUpdater:
         return old_text
 
     def apply_updates(self, updates: List[DocumentUpdate], dry_run: bool = False) -> Dict:
-        """업데이트 적용"""
+        """Apply updates"""
         results = {"success": [], "failed": [], "skipped": []}
 
         for update in updates:
@@ -301,14 +301,14 @@ class DocumentUpdater:
 
 
 class ObsidianSyncer:
-    """Obsidian 동기화"""
+    """Obsidian synchronization"""
 
     def __init__(self, project_root: Path):
         self.project_root = project_root
         self.obsidian_bridge = project_root / "scripts" / "obsidian_bridge.py"
 
     def sync_changes(self, changes: List[ConstitutionChange]) -> bool:
-        """Constitution 변경사항을 Obsidian에 동기화"""
+        """Sync Constitution changes to Obsidian"""
         try:
             if not self.obsidian_bridge.exists():
                 print("[WARN] Obsidian bridge not found")
@@ -334,7 +334,7 @@ class ObsidianSyncer:
             return False
 
     def _create_sync_note(self, changes: List[ConstitutionChange]) -> str:
-        """동기화 노트 생성"""
+        """Create sync note"""
         note = f"""# Constitution Changes
 
 **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -349,7 +349,7 @@ class ObsidianSyncer:
 
 
 class AutoDocUpdater:
-    """메인 오케스트레이터"""
+    """Main orchestrator"""
 
     def __init__(self, project_root: Path = None):
         self.project_root = project_root or Path.cwd()
@@ -360,7 +360,7 @@ class AutoDocUpdater:
         self.obsidian = ObsidianSyncer(self.project_root)
 
     def check_and_update(self, dry_run: bool = False) -> Dict:
-        """Constitution 변경 확인 및 문서 업데이트"""
+        """Check Constitution changes and update documents"""
         print("[CHECK] Checking Constitution for changes...")
 
         # 1. Check for changes
@@ -418,7 +418,7 @@ class AutoDocUpdater:
         return report
 
     def watch_mode(self, interval: int = 60):
-        """Watch mode - 주기적 체크"""
+        """Watch mode - periodic check"""
         import time
 
         print(f"[WATCH] Monitoring Constitution (every {interval}s)")
@@ -433,7 +433,7 @@ class AutoDocUpdater:
 
 
 def main():
-    """메인 실행 함수"""
+    """Main execution function"""
     import argparse
 
     parser = argparse.ArgumentParser(description="Auto Documentation Updater")

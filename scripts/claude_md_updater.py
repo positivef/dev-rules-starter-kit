@@ -35,10 +35,10 @@ class ConstitutionTableGenerator:
 
     def generate_process_table(self) -> str:
         """Generate Development Process Articles (P1-P10) table"""
-        table = """### 개발 프로세스 조항 (P1-P10)
+        table = """### Development Process Articles (P1-P10)
 
-| ID | 조항 | 강제 도구 | 언제 사용? |
-|----|------|----------|-----------|
+| ID | Article | Enforcement Tool | When to Use? |
+|----|---------|------------------|--------------|
 """
 
         for article in self.constitution.get("articles", []):
@@ -67,10 +67,10 @@ class ConstitutionTableGenerator:
 
     def generate_governance_table(self) -> str:
         """Generate Governance Articles (P11-P15) table"""
-        table = """### 거버넌스 조항 (P11-P15)
+        table = """### Governance Articles (P11-P15)
 
-| ID | 조항 | 목적 | 적용 시점 |
-|----|------|------|-----------|
+| ID | Article | Purpose | When to Apply |
+|----|---------|---------|---------------|
 """
 
         for article in self.constitution.get("articles", []):
@@ -97,10 +97,10 @@ class ConstitutionTableGenerator:
 
     def generate_strategy_table(self) -> str:
         """Generate Strategy Articles (P16) table"""
-        table = """### 전략 조항 (P16)
+        table = """### Strategy Articles (P16)
 
-| ID | 조항 | 강제 도구 | 언제 사용? |
-|----|------|----------|-----------|
+| ID | Article | Enforcement Tool | When to Use? |
+|----|---------|------------------|--------------|
 """
 
         for article in self.constitution.get("articles", []):
@@ -247,8 +247,8 @@ class ClaudeMdUpdater:
         today = datetime.now().strftime("%Y-%m-%d")
 
         # Find version line
-        pattern = r"\*\*마지막 업데이트\*\*:.*"
-        replacement = f"**마지막 업데이트**: {today}"
+        pattern = r"\*\*Last Update\*\*:.*"
+        replacement = f"**Last Update**: {today}"
 
         updated = re.sub(pattern, replacement, content)
 

@@ -4,13 +4,13 @@
 Auto Test Generator - P8 (Test First) Enforcement Tool
 ======================================================
 
-핵심 기능:
-1. 코드 분석하여 테스트 누락 함수 탐지
-2. 기존 테스트 패턴 학습
-3. 자동으로 pytest 기반 테스트 생성
-4. Constitution P8 준수 검증
+Core Features:
+1. Analyze code to detect untested functions
+2. Learn existing test patterns
+3. Auto-generate pytest-based tests
+4. Verify Constitution P8 compliance
 
-목표: 테스트 커버리지 95% 자동 달성
+Goal: Automatically achieve 95% test coverage
 """
 
 import ast
@@ -24,7 +24,7 @@ import json
 
 @dataclass
 class FunctionSignature:
-    """함수 시그니처 정보"""
+    """Function signature information"""
 
     name: str
     params: List[str]
@@ -45,7 +45,7 @@ class FunctionSignature:
 
 @dataclass
 class TestPattern:
-    """학습된 테스트 패턴"""
+    """Learned test pattern"""
 
     pattern_type: str  # unit, integration, edge_case, error_handling
     function_pattern: str  # e.g., "validate_*", "parse_*"
@@ -57,7 +57,7 @@ class TestPattern:
 
 @dataclass
 class GeneratedTest:
-    """생성된 테스트 케이스"""
+    """Generated test case"""
 
     function_signature: FunctionSignature
     test_name: str
@@ -67,14 +67,14 @@ class GeneratedTest:
 
 
 class CodeAnalyzer:
-    """코드 분석 및 함수 시그니처 추출"""
+    """Code analysis and function signature extraction"""
 
     def __init__(self):
         self.functions_found: List[FunctionSignature] = []
         self.test_functions_found: Set[str] = set()
 
     def analyze_file(self, file_path: Path) -> List[FunctionSignature]:
-        """Python 파일 분석하여 함수 시그니처 추출"""
+        """Analyze Python file and extract function signatures"""
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Auto-Improver: Constitution 기반 자동 개선 시스템
-============================================
+Auto-Improver: Constitution-Based Automatic Improvement System
+===============================================================
 
-이 시스템은 코드를 분석하여 Constitution 위반을 감지하고,
-자동으로 개선안을 제안하며, 승인된 개선사항을 적용합니다.
+This system analyzes code to detect Constitution violations,
+automatically suggests improvements, and applies approved changes.
 
-주요 기능:
-1. Constitution 파싱 및 규칙 추출
-2. 코드 패턴 분석 및 위반 감지
-3. 개선안 자동 생성
-4. 위험도 평가 및 자동/수동 적용
+Core Features:
+1. Constitution parsing and rule extraction
+2. Code pattern analysis and violation detection
+3. Automatic improvement generation
+4. Risk assessment and auto/manual application
 
 Author: VibeCoding Enhanced v1.5.1
 Date: 2025-11-06
@@ -52,30 +52,30 @@ except ImportError:
 
 
 class RiskLevel(Enum):
-    """개선사항의 위험도 레벨"""
+    """Risk level for improvements"""
 
-    LOW = "low"  # 자동 적용 가능
-    MEDIUM = "medium"  # 승인 필요
-    HIGH = "high"  # 수동 검토 필수
-    CRITICAL = "critical"  # 절대 자동 적용 금지
+    LOW = "low"  # Auto-apply allowed
+    MEDIUM = "medium"  # Approval required
+    HIGH = "high"  # Manual review required
+    CRITICAL = "critical"  # Never auto-apply
 
 
 class ImprovementCategory(Enum):
-    """개선사항 카테고리"""
+    """Improvement categories"""
 
-    SOLID = "solid"  # P4: SOLID 원칙
-    SECURITY = "security"  # P5: 보안
+    SOLID = "solid"  # P4: SOLID principles
+    SECURITY = "security"  # P5: Security
     HALLUCINATION = "hallucination"  # P7: AI Hallucination
-    QUALITY = "quality"  # P6: 품질
-    ENCODING = "encoding"  # P10: Windows 인코딩
-    TESTING = "testing"  # P8: 테스트 우선
-    STRUCTURE = "structure"  # 코드 구조
-    PERFORMANCE = "performance"  # 성능
+    QUALITY = "quality"  # P6: Quality
+    ENCODING = "encoding"  # P10: Windows encoding
+    TESTING = "testing"  # P8: Test-first
+    STRUCTURE = "structure"  # Code structure
+    PERFORMANCE = "performance"  # Performance
 
 
 @dataclass
 class ConstitutionArticle:
-    """Constitution 조항"""
+    """Constitution article"""
 
     id: str
     name: str
@@ -88,7 +88,7 @@ class ConstitutionArticle:
 
 @dataclass
 class Violation:
-    """Constitution 위반 사항"""
+    """Constitution violation"""
 
     article_id: str
     file_path: str
