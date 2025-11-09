@@ -133,7 +133,7 @@ class TestCrashDetection:
         recovery.create_checkpoint(session_id, {"test": "data"})
 
         # Create orphaned session file (old, not gracefully shut down)
-        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        session_file = recovery.checkpoint_dir / f"{session_id}.json"
         old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
 
         session_file.write_text(
@@ -420,7 +420,7 @@ class TestEdgeCases:
         session_id = "orphaned_001"
 
         # Create session file (without graceful shutdown)
-        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        session_file = recovery.checkpoint_dir / f"{session_id}.json"
         old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
 
         session_file.write_text(
@@ -437,7 +437,7 @@ class TestEdgeCases:
         session_id = "graceful_001"
 
         # Create session file WITH graceful shutdown
-        session_file = recovery.checkpoint_dir.parent / f"{session_id}.json"
+        session_file = recovery.checkpoint_dir / f"{session_id}.json"
         old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
 
         session_file.write_text(
