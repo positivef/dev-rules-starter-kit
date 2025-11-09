@@ -114,3 +114,6 @@ RUNS/dev-assistant-*/
 # Validation reports
 validation_report.html
 *_report.html
+
+# Auto-generated test files
+tests/*_generated.py
