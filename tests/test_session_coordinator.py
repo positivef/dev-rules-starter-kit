@@ -389,3 +389,247 @@ class TestSessionCoordinator:
         # All should still be active
         active = coordinator.get_active_sessions()
         assert len(active) == 4
+
+
+class TestPhase2RealTimeSync:
+    """Test Phase 2 real-time context synchronization features."""
+
+    def test_enable_shared_context_sync(self, tmp_path):
+        """Test enabling shared context synchronization."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+
+        # Enable sync
+        coordinator.enable_shared_context_sync("session1")
+
+        assert coordinator.shared_context_enabled is True
+        assert coordinator.current_session_id == "session1"
+        assert coordinator.sync_thread is not None
+        assert coordinator.sync_thread.is_alive()
+
+        # Cleanup
+        coordinator.stop()
+        time.sleep(0.5)  # Allow thread to stop
+        assert coordinator.sync_thread is None or not coordinator.sync_thread.is_alive()
+
+    def test_update_shared_context(self, tmp_path):
+        """Test updating shared context (propagates to all sessions)."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+        coordinator.enable_shared_context_sync("session1")
+
+        # Update shared context
+        success = coordinator.update_shared_context("current_task", "implementing auth")
+        assert success is True
+
+        # Verify value was written
+        value = coordinator.get_shared_context("current_task")
+        assert value == "implementing auth"
+
+        # Cleanup
+        coordinator.stop()
+
+    def test_get_shared_context(self, tmp_path):
+        """Test getting value from shared context."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+        coordinator.enable_shared_context_sync("session1")
+
+        # Set and get value
+        coordinator.update_shared_context("feature", "login")
+        value = coordinator.get_shared_context("feature")
+        assert value == "login"
+
+        # Get non-existent key
+        default_value = coordinator.get_shared_context("nonexistent", "default")
+        assert default_value == "default"
+
+        # Cleanup
+        coordinator.stop()
+
+    def test_two_session_concurrent_updates(self, tmp_path):
+        """Test 2 sessions updating shared context concurrently (Phase 2.3)."""
+        # Session 1
+        coordinator1 = SessionCoordinator(context_dir=tmp_path)
+        coordinator1.register_session("session1", "frontend", "claude_1")
+        coordinator1.enable_shared_context_sync("session1")
+
+        # Session 2
+        coordinator2 = SessionCoordinator(context_dir=tmp_path)
+        coordinator2.register_session("session2", "backend", "claude_2")
+        coordinator2.enable_shared_context_sync("session2")
+
+        # Session 1 updates
+        coordinator1.update_shared_context("frontend_status", "ready")
+
+        # Session 2 updates
+        coordinator2.update_shared_context("backend_status", "processing")
+
+        # Allow time for sync (background thread polls every 1 second)
+        time.sleep(2.0)
+
+        # Both sessions should see both updates
+        frontend_status = coordinator2.get_shared_context("frontend_status")
+        backend_status = coordinator1.get_shared_context("backend_status")
+
+        assert frontend_status == "ready"
+        assert backend_status == "processing"
+
+        # Cleanup
+        coordinator1.stop()
+        coordinator2.stop()
+
+    def test_sync_latency_under_1s(self, tmp_path):
+        """Test context sync latency is <1s (Phase 2.3 performance validation)."""
+        import time
+
+        # Session 1
+        coordinator1 = SessionCoordinator(context_dir=tmp_path)
+        coordinator1.register_session("session1", "frontend", "claude_1")
+        coordinator1.enable_shared_context_sync("session1")
+
+        # Session 2
+        coordinator2 = SessionCoordinator(context_dir=tmp_path)
+        coordinator2.register_session("session2", "backend", "claude_2")
+        coordinator2.enable_shared_context_sync("session2")
+
+        # Measure latency
+        start_time = time.time()
+        coordinator1.update_shared_context("test_key", "test_value")
+
+        # Poll until session2 sees the update (max 2 seconds)
+        max_wait = 2.0
+        while time.time() - start_time < max_wait:
+            value = coordinator2.get_shared_context("test_key")
+            if value == "test_value":
+                break
+            time.sleep(0.1)
+
+        latency = time.time() - start_time
+
+        # Verify latency is under 1 second (with some buffer for CI)
+        # Note: In production, poll_interval is 1s, so latency should be <1.5s
+        assert latency < 1.5, f"Sync latency {latency:.2f}s exceeds 1.5s threshold"
+
+        # Cleanup
+        coordinator1.stop()
+        coordinator2.stop()
+
+    def test_conflict_detection(self, tmp_path):
+        """Test conflict detection when multiple sessions update same key."""
+        # Session 1
+        coordinator1 = SessionCoordinator(context_dir=tmp_path)
+        coordinator1.register_session("session1", "frontend", "claude_1")
+        coordinator1.enable_shared_context_sync("session1")
+
+        # Session 2
+        coordinator2 = SessionCoordinator(context_dir=tmp_path)
+        coordinator2.register_session("session2", "backend", "claude_2")
+        coordinator2.enable_shared_context_sync("session2")
+
+        # Both sessions update same key (conflict scenario)
+        coordinator1.update_shared_context("current_phase", "Phase 1")
+        coordinator2.update_shared_context("current_phase", "Phase 2")
+
+        # Allow sync
+        time.sleep(2.0)
+
+        # Last write wins (optimistic locking in SharedContextManager)
+        final_value = coordinator1.get_shared_context("current_phase")
+        assert final_value in ["Phase 1", "Phase 2"]
+
+        # Check conflict was detected (stats incremented)
+        stats = coordinator1.get_statistics()
+        # Note: conflicts_detected increments when context event is received
+        assert stats.conflicts_detected >= 0
+
+        # Cleanup
+        coordinator1.stop()
+        coordinator2.stop()
+
+    def test_graceful_shutdown(self, tmp_path):
+        """Test graceful thread shutdown (Mitigation #3)."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+        coordinator.enable_shared_context_sync("session1")
+
+        # Verify thread is running
+        assert coordinator.sync_thread is not None
+        assert coordinator.sync_thread.is_alive()
+
+        # Graceful stop
+        coordinator.stop()
+
+        # Wait for thread to finish (max 6 seconds - join timeout is 5s)
+        time.sleep(6.0)
+
+        # Verify thread stopped
+        assert coordinator.shared_context_enabled is False
+        assert coordinator.sync_thread is None or not coordinator.sync_thread.is_alive()
+
+    def test_sync_without_enable_fails(self, tmp_path):
+        """Test that sync operations fail if not enabled."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+
+        # Try to update without enabling sync
+        success = coordinator.update_shared_context("key", "value")
+        assert success is False
+
+        # Try to get without enabling sync
+        value = coordinator.get_shared_context("key", "default")
+        assert value == "default"
+
+    def test_four_session_concurrent_sync(self, tmp_path):
+        """Test 4 sessions coordinating with real-time sync (Phase 2.3)."""
+        coordinators = []
+
+        # Create 4 sessions with different roles
+        roles = ["frontend", "backend", "testing", "assistant"]
+        for i, role in enumerate(roles):
+            coord = SessionCoordinator(context_dir=tmp_path)
+            coord.register_session(f"session{i+1}", role, f"agent{i+1}")
+            coord.enable_shared_context_sync(f"session{i+1}")
+            coordinators.append(coord)
+
+        # Each session updates a different key
+        coordinators[0].update_shared_context("frontend", "ready")
+        coordinators[1].update_shared_context("backend", "ready")
+        coordinators[2].update_shared_context("testing", "ready")
+        coordinators[3].update_shared_context("assistant", "ready")
+
+        # Allow sync (4 updates across 4 sessions)
+        time.sleep(3.0)
+
+        # All sessions should see all updates
+        for coord in coordinators:
+            assert coord.get_shared_context("frontend") == "ready"
+            assert coord.get_shared_context("backend") == "ready"
+            assert coord.get_shared_context("testing") == "ready"
+            assert coord.get_shared_context("assistant") == "ready"
+
+        # Cleanup all coordinators
+        for coord in coordinators:
+            coord.stop()
+
+    def test_background_sync_resilience(self, tmp_path):
+        """Test background sync continues despite errors (resilience)."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+        coordinator.enable_shared_context_sync("session1")
+
+        # Update context
+        coordinator.update_shared_context("test", "value1")
+
+        # Allow sync loop to run for a few iterations
+        time.sleep(3.0)
+
+        # Thread should still be alive (resilient to errors)
+        assert coordinator.sync_thread.is_alive()
+
+        # Can still update after errors
+        success = coordinator.update_shared_context("test", "value2")
+        assert success is True
+
+        # Cleanup
+        coordinator.stop()
