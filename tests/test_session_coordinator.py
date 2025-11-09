@@ -87,6 +87,23 @@ class TestSession:
         assert restored.role == original.role
         assert restored.status == original.status
 
+    def test_session_locked_files_default(self):
+        """Test Session initializes locked_files to empty list when None."""
+        now = datetime.now(timezone.utc)
+        session = Session(
+            session_id="test",
+            agent_id="agent1",
+            role="testing",
+            status="active",
+            registered_at=now,
+            last_heartbeat=now,
+            locked_files=None,  # Explicitly pass None
+        )
+
+        # Should be initialized to empty list by __post_init__
+        assert session.locked_files == []
+        assert isinstance(session.locked_files, list)
+
 
 class TestSessionCoordinator:
     """Test SessionCoordinator functionality."""
@@ -630,6 +647,116 @@ class TestPhase2RealTimeSync:
         # Can still update after errors
         success = coordinator.update_shared_context("test", "value2")
         assert success is True
+
+        # Cleanup
+        coordinator.stop()
+
+
+class TestCoordinationStats:
+    """Test CoordinationStats dataclass."""
+
+    def test_coordination_stats_creation(self):
+        """Test CoordinationStats can be created with all fields."""
+        stats = CoordinationStats(
+            total_sessions=10,
+            active_sessions=7,
+            dead_sessions=3,
+            tasks_assigned=15,
+            conflicts_detected=2,
+            average_session_duration_minutes=45.5,
+        )
+
+        assert stats.total_sessions == 10
+        assert stats.active_sessions == 7
+        assert stats.dead_sessions == 3
+        assert stats.tasks_assigned == 15
+        assert stats.conflicts_detected == 2
+        assert stats.average_session_duration_minutes == 45.5
+
+    def test_coordination_stats_zero_values(self):
+        """Test CoordinationStats with zero/empty values."""
+        stats = CoordinationStats(
+            total_sessions=0,
+            active_sessions=0,
+            dead_sessions=0,
+            tasks_assigned=0,
+            conflicts_detected=0,
+            average_session_duration_minutes=0.0,
+        )
+
+        assert stats.total_sessions == 0
+        assert stats.active_sessions == 0
+        assert stats.dead_sessions == 0
+        assert stats.tasks_assigned == 0
+        assert stats.conflicts_detected == 0
+        assert stats.average_session_duration_minutes == 0.0
+
+
+class TestSessionCoordinatorErrorHandling:
+    """Test error handling and edge cases in SessionCoordinator."""
+
+    def test_read_context_with_corrupted_json(self, tmp_path):
+        """Test _read_context recovers from corrupted JSON file."""
+        context_file = tmp_path / "shared_context.json"
+
+        # Create corrupted JSON file
+        context_file.write_text("{ invalid json }", encoding="utf-8")
+
+        # Coordinator should recover by reinitializing
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+
+        # Context should be valid after recovery
+        context = coordinator._read_context()
+        assert "sessions" in context
+        assert "shared_knowledge" in context
+        assert isinstance(context["sessions"], list)
+
+    def test_update_shared_context_before_enable(self, tmp_path):
+        """Test update_shared_context fails gracefully when not enabled."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+
+        # Try to update without enabling sync first
+        result = coordinator.update_shared_context("key", "value")
+
+        # Should return False and log warning
+        assert result is False
+
+    def test_get_shared_context_before_enable(self, tmp_path):
+        """Test get_shared_context returns default when not enabled."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+
+        # Try to get context without enabling sync first
+        result = coordinator.get_shared_context("key", default="default_value")
+
+        # Should return default value
+        assert result == "default_value"
+
+    def test_stop_when_not_enabled(self, tmp_path):
+        """Test stop() does nothing gracefully when sync not enabled."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+
+        # Call stop without enabling sync - should not raise exception
+        coordinator.stop()
+
+        # Should be safe to call multiple times
+        coordinator.stop()
+
+    def test_enable_shared_context_sync_twice(self, tmp_path):
+        """Test enabling sync twice logs warning but doesn't break."""
+        coordinator = SessionCoordinator(context_dir=tmp_path)
+        coordinator.register_session("session1", "frontend", "claude_1")
+
+        # Enable sync first time
+        coordinator.enable_shared_context_sync("session1")
+        assert coordinator.shared_context_enabled is True
+
+        # Enable sync second time (should log warning)
+        coordinator.enable_shared_context_sync("session1")
+
+        # Should still be enabled
+        assert coordinator.shared_context_enabled is True
 
         # Cleanup
         coordinator.stop()
