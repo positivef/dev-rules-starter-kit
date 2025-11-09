@@ -384,7 +384,7 @@ class SessionRecovery:
             True if session is orphaned (crashed without graceful shutdown)
         """
         try:
-            session_file = self.checkpoint_dir.parent / f"{session_id}.json"
+            session_file = self.checkpoint_dir / f"{session_id}.json"
 
             if not session_file.exists():
                 return False

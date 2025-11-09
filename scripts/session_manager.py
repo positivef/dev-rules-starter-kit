@@ -49,6 +49,8 @@ class SessionState:
     context_hash: str
     state_data: Dict[str, Any]
     scope_data: Dict[str, Dict[str, Any]]  # scope별 데이터
+    graceful_shutdown: bool = False  # 정상 종료 여부 (session_recovery 연동)
+    last_update: str = ""  # 마지막 업데이트 시간 (session_recovery 연동)
 
     def to_dict(self) -> Dict:
         """직렬화를 위한 딕셔너리 변환"""
@@ -118,10 +120,11 @@ class SessionManager:
 
         if self.current_state is None:
             # 새 세션 생성
+            now = datetime.now(timezone.utc).isoformat()
             self.current_state = SessionState(
                 session_id=self.session_id,
-                started_at=datetime.now(timezone.utc).isoformat(),
-                last_checkpoint=datetime.now(timezone.utc).isoformat(),
+                started_at=now,
+                last_checkpoint=now,
                 context_hash=self._generate_context_hash({}),
                 state_data={},
                 scope_data={
@@ -130,6 +133,8 @@ class SessionManager:
                     StateScope.APP.value: {},
                     StateScope.TEMP.value: {},
                 },
+                graceful_shutdown=False,
+                last_update=now,
             )
 
         # 자동 체크포인트 스레드 시작
@@ -188,6 +193,12 @@ class SessionManager:
         """체크포인트 생성 (수동 또는 자동)"""
         if self.current_state is None:
             return
+
+        # last_update 갱신
+        from dataclasses import replace
+
+        now = datetime.now(timezone.utc).isoformat()
+        self.current_state = replace(self.current_state, last_checkpoint=now, last_update=now)
 
         # 세션 파일 저장
         session_file = self.session_path / f"{self.session_id}.json"
@@ -286,6 +297,24 @@ class SessionManager:
         """Cleanup operations"""
         self.stop_event.set()
         self.checkpoint()
+
+        # Set graceful_shutdown flag for session_recovery integration
+        if self.current_state is not None:
+            session_file = self.session_path / f"{self.session_id}.json"
+            if session_file.exists():
+                try:
+                    from dataclasses import replace
+
+                    # Update graceful_shutdown flag
+                    self.current_state = replace(self.current_state, graceful_shutdown=True)
+
+                    # Save updated state
+                    with open(session_file, "w", encoding="utf-8") as f:
+                        json.dump(self.current_state.to_dict(), f, indent=2, ensure_ascii=True)
+                except Exception as e:
+                    # Log but don't fail cleanup
+                    print(f"[WARNING] Failed to set graceful_shutdown flag: {e}")
+
         self._cleanup_old_sessions()
         print("[SESSION] Saved and cleaned up")
 
