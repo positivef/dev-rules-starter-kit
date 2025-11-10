@@ -620,6 +620,11 @@ def execute_contract(contract_path: str, mode: str = "execute"):
                 if gate_id == "human-review":
                     # Already verified
                     pass
+                elif gate.get("type") == "constitutional" and "P16" in gate.get("articles", []):
+                    # P16: Competitive Benchmarking gate
+                    from p16_validator import validate_p16_gate
+
+                    validate_p16_gate(contract, gate)
                 else:
                     exec_info = gate.get("exec")
                     if exec_info:

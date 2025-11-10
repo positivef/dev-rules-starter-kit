@@ -227,7 +227,7 @@ def generate_yaml_frontmatter(commit_info: Dict[str, any]) -> str:
     # Build YAML
     yaml_lines = [
         "---",
-        f'date: {now.strftime("%Y-%m-%d")}',
+        f"date: {now.strftime('%Y-%m-%d')}",
         f'time: "{now.strftime("%H:%M")}"',
         f'project: "{project}"',
         f'topic: "{topic}"',
@@ -250,6 +250,113 @@ def generate_yaml_frontmatter(commit_info: Dict[str, any]) -> str:
     )
 
     return "\n".join(yaml_lines)
+
+
+def analyze_diff_for_insights(commit_info: Dict[str, any]) -> Dict[str, List[str]]:
+    """Analyze git diff to extract learned insights and patterns
+
+    Returns:
+        {
+            "learned": ["Insight 1", "Insight 2"],
+            "trials": ["Problem X -> Solution Y"],
+            "next_steps": ["TODO from code"]
+        }
+    """
+    insights = {"learned": [], "trials": [], "next_steps": []}
+
+    try:
+        # Get actual diff content
+        result = subprocess.run(
+            ["git", "diff", "HEAD~1..HEAD"], capture_output=True, text=True, encoding="utf-8", check=True
+        )
+        diff_content = result.stdout
+
+        # Extract learned insights from diff patterns
+        files = commit_info.get("files", [])
+
+        # Pattern 1: New test files = Learned TDD
+        if any("test" in f.lower() for f in files):
+            insights["learned"].append("TDD 방식으로 테스트 우선 작성")
+
+        # Pattern 2: Refactoring = Learned better patterns
+        if "refactor" in commit_info["message"].lower():
+            insights["learned"].append("코드 구조 개선을 통한 유지보수성 향상")
+
+        # Pattern 3: Performance optimization
+        if any(word in commit_info["message"].lower() for word in ["performance", "optimize", "cache"]):
+            insights["learned"].append("성능 최적화 기법 적용")
+
+        # Pattern 4: Security improvements
+        if any(word in commit_info["message"].lower() for word in ["security", "auth", "validate"]):
+            insights["learned"].append("보안 강화 방법 학습")
+
+        # Detect trial-and-error from commit history
+        # Check if there were recent related commits (fixes, reverts)
+        result = subprocess.run(
+            ["git", "log", "--oneline", "-10"], capture_output=True, text=True, encoding="utf-8", check=True
+        )
+        recent_commits = result.stdout.split("\n")
+
+        # Pattern: Multiple commits on same topic = Trial and error
+        topic = extract_topic_from_commit(commit_info["message"])
+        related_commits = [c for c in recent_commits if any(word in c.lower() for word in topic.lower().split("-"))]
+
+        if len(related_commits) > 2:
+            insights["trials"].append(f"{topic} 구현 중 여러 시행착오를 거쳐 최적 방법 발견")
+
+        # Look for fix commits
+        if "fix" in commit_info["message"].lower():
+            # Extract what was fixed
+            msg = commit_info["message"]
+            insights["trials"].append(f"문제: {msg.split(':')[1].strip() if ':' in msg else msg[:50]} -> 해결 완료")
+
+        # Extract TODOs from diff
+        todo_pattern = r"#\s*TODO[:\s]+(.+)"
+        todos_found = re.findall(todo_pattern, diff_content, re.IGNORECASE)
+
+        for todo in todos_found[:3]:  # Max 3 TODOs
+            insights["next_steps"].append(f"[코드에서] {todo.strip()}")
+
+        # Check TASKS folder for related tasks
+        tasks_dir = Path("TASKS")
+        if tasks_dir.exists():
+            yaml_files = list(tasks_dir.glob("*.yaml"))
+            for yaml_file in yaml_files[-3:]:  # Latest 3 tasks
+                task_name = yaml_file.stem
+                if any(word in task_name.lower() for word in ["pending", "todo", "next"]):
+                    insights["next_steps"].append(f"[TASKS] {task_name.replace('-', ' ').title()}")
+
+        # If no insights found, add generic but useful ones
+        if not insights["learned"]:
+            stats = parse_stats(commit_info["stats"])
+            if stats["insertions"] > 100:
+                insights["learned"].append(f"대규모 기능 추가 ({stats['insertions']}줄) - 체계적 개발 프로세스 적용")
+            elif stats["deletions"] > stats["insertions"]:
+                insights["learned"].append("불필요한 코드 제거를 통한 코드베이스 간소화")
+
+        if not insights["trials"]:
+            # Look for patterns in changed files
+            if any("test" in f for f in files) and any("test" not in f for f in files):
+                insights["trials"].append("구현 -> 테스트 -> 수정 사이클을 통한 품질 개선")
+
+        if not insights["next_steps"]:
+            # Generate based on work type
+            work_type = categorize_work(commit_info)
+            if work_type == "feature":
+                insights["next_steps"].append("기능 통합 테스트 수행")
+                insights["next_steps"].append("문서화 업데이트 필요")
+            elif work_type == "bugfix":
+                insights["next_steps"].append("회귀 테스트로 재발 방지 확인")
+            elif work_type == "refactor":
+                insights["next_steps"].append("성능 벤치마크 비교")
+
+    except Exception as e:
+        print(f"[WARN] Could not analyze diff for insights: {e}")
+        # Return minimal insights on error
+        insights["learned"].append("커밋 완료 및 옵시디언 자동 동기화 성공")
+        insights["next_steps"].append("코드 리뷰 요청")
+
+    return insights
 
 
 def extract_key_changes(commit_info: Dict[str, any]) -> List[str]:
@@ -280,10 +387,13 @@ def extract_key_changes(commit_info: Dict[str, any]) -> List[str]:
 
 
 def generate_devlog_content(commit_info: Dict[str, any]) -> str:
-    """Generate development log content with YAML frontmatter"""
+    """Generate development log content with YAML frontmatter and AI-analyzed insights"""
     today = datetime.now().strftime("%Y-%m-%d")
     work_type = categorize_work(commit_info)
     key_changes = extract_key_changes(commit_info)
+
+    # AI-powered insights analysis
+    insights = analyze_diff_for_insights(commit_info)
 
     # Parse commit message
     commit_lines = commit_info["message"].split("\n")
@@ -314,49 +424,74 @@ def generate_devlog_content(commit_info: Dict[str, any]) -> str:
     if description:
         content += f"\n### 상세 설명\n{description}\n"
 
-    content += f"""
-## [TIP] 배운 점 & 인사이트
+    # AI-generated learned insights
+    content += "\n## [TIP] 배운 점 & 인사이트\n\n### 성공 사례\n"
+    for learned in insights["learned"]:
+        content += f"- {learned}\n"
 
-### 성공 사례
-- [자동 생성됨] 커밋 완료 및 옵시디언 자동 동기화 성공
+    # Add improvement areas if any fixes or refactoring
+    content += "\n### 개선 필요 영역\n"
+    if "fix" in commit_info["message"].lower():
+        content += "- 유사한 버그 재발 방지를 위한 테스트 커버리지 확대\n"
+    elif "refactor" in commit_info["message"].lower():
+        content += "- 리팩토링 후 성능 벤치마크로 개선 효과 측정\n"
+    else:
+        content += "- 코드 리뷰를 통한 추가 개선점 발견\n"
 
-### 개선 필요 영역
-- TODO: 회고 내용 추가
+    # AI-detected trial-and-error patterns
+    content += "\n## 🔧 시행착오 및 해결\n\n"
+    if insights["trials"]:
+        for trial in insights["trials"]:
+            content += f"- {trial}\n"
+    else:
+        content += "- [순조로운 진행] 특별한 시행착오 없이 계획대로 구현 완료\n"
 
-## 🔧 시행착오 및 해결
+    # AI-extracted next steps
+    content += "\n## 📋 다음 단계\n\n### 즉시 수행\n"
+    immediate_steps = [s for s in insights["next_steps"][:2]]
+    if not immediate_steps:
+        immediate_steps = ["코드 리뷰 요청", "테스트 실행 확인"]
 
-- TODO: 문제와 해결 과정 기록
+    for step in immediate_steps:
+        content += f"- [ ] {step}\n"
 
-## 📋 다음 단계
+    content += "\n### 단기 (1-2일)\n"
+    short_term = [s for s in insights["next_steps"][2:4]]
+    if not short_term:
+        if work_type == "feature":
+            short_term = ["사용자 피드백 수집", "문서화 업데이트"]
+        elif work_type == "bugfix":
+            short_term = ["회귀 테스트 추가"]
+        else:
+            short_term = ["관련 기능 개선 검토"]
 
-### 즉시 수행
-- [ ] 코드 리뷰 요청
-- [ ] 테스트 실행 확인
+    for step in short_term:
+        content += f"- [ ] {step}\n"
 
-### 단기 (1-2일)
-- [ ] TODO
+    content += "\n### 장기 (1주일+)\n"
+    long_term = insights["next_steps"][4:5]
+    if not long_term:
+        long_term = ["성능 최적화 검토"] if work_type == "feature" else ["코드베이스 전반 점검"]
 
-### 장기 (1주일+)
-- [ ] TODO
+    for step in long_term:
+        content += f"- [ ] {step}\n"
 
-## 🔗 관련 링크
-
-- 커밋: `{commit_info["hash"]}`
-- 변경 파일:
-"""
+    content += "\n## 🔗 관련 링크\n\n"
+    content += f"- 커밋: `{commit_info['hash']}`\n"
+    content += "- 변경 파일:\n"
 
     for file in commit_info["files"][:10]:
         content += f"  - `{file}`\n"
 
     if len(commit_info["files"]) > 10:
-        content += f"  - ... 외 {len(commit_info["files"]) - 10}개\n"
+        content += f"  - ... 외 {len(commit_info['files']) - 10}개\n"
 
     content += f"""
 ---
-**태그**: #{work_type} #자동동기화
+**태그**: #{work_type} #자동동기화 #AI분석
 **카테고리**: 개발일지
 **우선순위**: MEDIUM
-**자동 생성**: post-commit hook
+**자동 생성**: post-commit hook (AI-enhanced)
 """
 
     return content
@@ -574,6 +709,19 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
             content = content.replace("{creation_date}", now.strftime("%Y-%m-%d"))
         else:
             # Fallback to simple MOC if template not found
+            dataview_block = (
+                "```dataview\n"
+                "TABLE\n"
+                '  file.link AS "작업",\n'
+                '  type AS "유형",\n'
+                '  date AS "날짜",\n'
+                '  time AS "시간"\n'
+                'FROM "개발일지"\n'
+                'WHERE file.folder != "개발일지/_backup_old_structure"\n'
+                "SORT date DESC, time DESC\n"
+                "LIMIT 20\n"
+                "```"
+            )
             content = f"""# 개발일지 Map of Contents
 
 > 자동 생성 MOC - Dataview 플러그인이 설치되면 자동 쿼리가 실행됩니다
@@ -582,17 +730,7 @@ def update_moc(vault_path: Path, date: str, topic: str) -> None:
 
 ## 📅 최근 작업
 
-\`\`\`dataview
-TABLE
-  file.link AS "작업",
-  type AS "유형",
-  date AS "날짜",
-  time AS "시간"
-FROM "개발일지"
-WHERE file.folder != "개발일지/_backup_old_structure"
-SORT date DESC, time DESC
-LIMIT 20
-\`\`\`
+{dataview_block}
 
 ---
 

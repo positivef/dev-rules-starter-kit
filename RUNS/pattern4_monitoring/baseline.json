@@ -1,0 +1,8 @@
+{
+  "period": "Pre-Pattern 4 (historical)",
+  "created": "2025-11-09T05:59:39.403880",
+  "post_impl_issues_percent": 30.0,
+  "rollback_rate_percent": 10.0,
+  "design_changes_percent": 20.0,
+  "notes": "Estimated from past experience before Pattern 4"
+}

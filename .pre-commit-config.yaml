@@ -1,6 +1,15 @@
 repos:
   - repo: local
     hooks:
+      - id: constitution-guard
+        name: Constitution Guard (Stage 5 - P4/P5/P7/P10)
+        entry: python scripts/constitution_guard.py
+        language: python
+        pass_filenames: false
+        stages: [commit]
+        always_run: true
+        verbose: true
+
       - id: pre-execution-guard
         name: Pre-Execution Guard (P7 Zero Hallucination)
         entry: python scripts/pre_execution_guard.py

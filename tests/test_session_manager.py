@@ -166,6 +166,105 @@ def test_session_cleanup():
     print("[OK] Session cleanup test passed")
 
 
+def test_graceful_shutdown_flag():
+    """Graceful shutdown 플래그 테스트 (session_recovery 연동)"""
+    print("\n=== Graceful Shutdown Flag Test ===")
+    import json
+
+    # 새 세션 생성
+    SessionManager._instance = None
+    session = SessionManager.get_instance()
+    session.start(resume_last=False)
+
+    session_id = session.current_state.session_id
+    session_file = Path("RUNS/sessions") / f"{session_id}.json"
+
+    # 데이터 저장 및 체크포인트
+    session.set("test", "value", StateScope.SESSION)
+    session.checkpoint()
+
+    # graceful_shutdown이 False로 초기화되었는지 확인
+    with open(session_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["graceful_shutdown"] is False
+    print(f"Initial state: graceful_shutdown={data['graceful_shutdown']}")
+
+    # 정상 종료 시뮬레이션 (cleanup 호출)
+    session._cleanup()
+
+    # graceful_shutdown이 True로 설정되었는지 확인
+    with open(session_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["graceful_shutdown"] is True
+    print(f"After cleanup: graceful_shutdown={data['graceful_shutdown']}")
+
+    print("[OK] Graceful shutdown flag test passed")
+
+
+def test_session_recovery_integration():
+    """SessionManager와 SessionRecovery 통합 테스트"""
+    print("\n=== Session Recovery Integration Test ===")
+    import json
+    from datetime import datetime, timezone, timedelta
+
+    # session_recovery 임포트 (optional)
+    try:
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from scripts.session_recovery import SessionRecovery
+    except ImportError:
+        print("[SKIP] session_recovery not available")
+        return
+
+    # 1. 정상 종료된 세션 생성
+    SessionManager._instance = None
+    session1 = SessionManager.get_instance()
+    session1.start(resume_last=False)
+    session1.set("data", "normal", StateScope.SESSION)
+    session1.checkpoint()
+
+    session1_id = session1.current_state.session_id
+
+    # 정상 종료 (graceful_shutdown=True)
+    session1._cleanup()
+
+    # 2. 비정상 종료 시뮬레이션 (orphaned session)
+    SessionManager._instance = None
+    session2 = SessionManager.get_instance()
+    session2.start(resume_last=False)
+    session2.set("data", "crashed", StateScope.SESSION)
+    session2.checkpoint()
+
+    session2_id = session2.current_state.session_id
+    session2_file = Path("RUNS/sessions") / f"{session2_id}.json"
+
+    # 비정상 종료 시뮬레이션 (cleanup 안 함, graceful_shutdown=False)
+    # last_update를 2시간 전으로 설정
+    with open(session2_file, "r", encoding="utf-8") as f:
+        session2_data = json.load(f)
+
+    old_time = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+    session2_data["last_update"] = old_time
+    session2_data["graceful_shutdown"] = False
+
+    with open(session2_file, "w", encoding="utf-8") as f:
+        json.dump(session2_data, f, indent=2, ensure_ascii=True)
+
+    # 3. SessionRecovery로 orphaned session 감지
+    recovery = SessionRecovery()
+
+    # 정상 종료된 세션은 orphaned로 감지되지 않아야 함
+    is_session1_orphaned = recovery._detect_orphaned_session(session1_id)
+    assert is_session1_orphaned is False
+    print(f"Session1 (normal shutdown): orphaned={is_session1_orphaned}")
+
+    # 비정상 종료된 세션은 orphaned로 감지되어야 함
+    is_session2_orphaned = recovery._detect_orphaned_session(session2_id)
+    assert is_session2_orphaned is True
+    print(f"Session2 (crashed, >1hr old): orphaned={is_session2_orphaned}")
+
+    print("[OK] Session recovery integration test passed")
+
+
 if __name__ == "__main__":
     # 모든 테스트 실행
     test_session_basic()
@@ -173,6 +272,8 @@ if __name__ == "__main__":
     test_auto_checkpoint()
     test_scope_management()
     test_session_cleanup()
+    test_graceful_shutdown_flag()
+    test_session_recovery_integration()
 
     print("\n" + "=" * 50)
     print("[SUCCESS] All session manager tests passed!")

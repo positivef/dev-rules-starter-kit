@@ -1,0 +1,116 @@
+# Test YAML Contract for P16 Gate Validation
+# Purpose: Verify TaskExecutor correctly validates P16 benchmarking requirements
+
+task_id: "TEST-P16-GATE-2025-11-04"
+title: "Test P16 Competitive Benchmarking Gate"
+description: "Integration test for P16 gate validation in TaskExecutor"
+
+# P16 Gate - Constitutional compliance check
+gates:
+  - id: "p16-benchmarking"
+    type: "constitutional"
+    articles: ["P16"]
+    description: "P16: Competitive Benchmarking"
+
+# P16 Benchmarking Section (Valid)
+benchmarking:
+  query: "todo app"
+  category: "productivity"
+
+  # Requirement: 3+ competitors
+  competitors:
+    - name: "Todoist"
+      github_url: "https://github.com/Doist/todoist-api"
+      github_stars: 50000
+      strengths:
+        - title: "Natural Language Processing"
+          description: "Parse dates like 'tomorrow 3pm' automatically"
+        - title: "Cross-platform Sync"
+          description: "Real-time sync across all devices"
+        - title: "Project Hierarchy"
+          description: "Nested projects and sub-tasks"
+      weaknesses:
+        - category: "AI"
+          description: "No AI-powered auto-prioritization"
+          severity: "medium"
+        - category: "Pricing"
+          description: "Premium features are expensive"
+          severity: "low"
+
+    - name: "TickTick"
+      github_url: "https://github.com/ticktick/api"
+      github_stars: 30000
+      strengths:
+        - title: "Pomodoro Timer"
+          description: "Built-in focus timer"
+        - title: "Habit Tracking"
+          description: "Dedicated habit tracker"
+      weaknesses:
+        - category: "UX"
+          description: "Complex UI with steep learning curve"
+          severity: "medium"
+        - category: "Performance"
+          description: "Slow sync on mobile"
+          severity: "high"
+
+    - name: "Things 3"
+      github_url: "https://github.com/culturedcode/things-api"
+      github_stars: 40000
+      strengths:
+        - title: "Beautiful Design"
+          description: "Award-winning minimalist UI"
+        - title: "Quick Entry"
+          description: "Fast task capture"
+      weaknesses:
+        - category: "Platform"
+          description: "MacOS/iOS only - no Windows/Android"
+          severity: "high"
+        - category: "Collaboration"
+          description: "No team features"
+          severity: "medium"
+
+  # Requirement: 3+ differentiation points
+  differentiation:
+    - point: "AI Auto-Priority"
+      rationale: "None of the competitors have AI-powered automatic prioritization based on deadlines, importance, and user behavior patterns"
+      target: "Busy professionals who struggle with task prioritization"
+      implementation_complexity: "high"
+      estimated_impact: "high"
+
+    - point: "Open Source & Privacy-First"
+      rationale: "Things 3 is closed-source and expensive, users want transparency and data ownership"
+      target: "Privacy-conscious users and developers"
+      implementation_complexity: "medium"
+      estimated_impact: "medium"
+
+    - point: "True Cross-Platform"
+      rationale: "Things 3 is Mac-only, we can support Windows/Linux/Android/iOS from day one"
+      target: "Users with mixed device ecosystems (Windows work laptop + iPhone)"
+      implementation_complexity: "high"
+      estimated_impact: "high"
+
+  target_market:
+    segment: "Tech-savvy professionals and developers"
+    size: "1M+ potential users"
+    pain_points:
+      - "Existing tools lack smart prioritization"
+      - "Vendor lock-in and high costs"
+      - "Platform limitations"
+
+# Simple command to test gate validation
+commands:
+  - id: "test-echo"
+    description: "Test P16 gate validation"
+    exec:
+      cmd: "echo"
+      args: ["P16 gate validation test passed"]
+
+# Evidence collection
+evidence:
+  - "TASKS/TEST-P16-GATE.yaml"
+
+# Provenance
+provenance:
+  author: "Claude"
+  purpose: "P16 integration testing"
+  constitutional_basis: ["P1", "P2", "P16"]

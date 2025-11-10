@@ -1,0 +1,38 @@
+2025-11-02 21:54:25 [INFO] TechnicalDebtTracker initialized with data_dir=RUNS\technical_debt
+2025-11-02 21:54:25 [INFO] Scanning 145 Python files for technical debt...
+<unknown>:736: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:736: SyntaxWarning: invalid escape sequence '\`'
+2025-11-02 21:54:28 [INFO] Detected 269 technical debt items
+2025-11-02 21:54:55 [INFO] Quantified 269 debt items, total cost: $98405.00
+2025-11-02 21:54:55 [INFO] Prioritized 269 debt items
+2025-11-02 21:54:55 [INFO] Created refactoring plan with 269 tasks over 4 sprints
+2025-11-02 21:54:55 [INFO] Progress: 0/269 tasks completed (0.0%)
+
+======================================================================
+                    TechnicalDebtTracker Demo
+======================================================================
+
+[1/5] Detecting technical debt...
+  Found 269 debt items
+
+[2/5] Quantifying debt...
+  Total cost: $98,405.00
+  Monthly interest: $4,920.25
+
+[3/5] Prioritizing debt...
+  Critical: 0
+  High: 0
+  Medium: 0
+  Low: 269
+
+[4/5] Creating refactoring plan...
+  Total effort: 1968.1 hours
+  Expected ROI: 527.3%
+
+[5/5] Tracking progress...
+  Resolution: 0.0%
+  Completed: 0/269
+
+======================================================================
+Demo completed!
+======================================================================

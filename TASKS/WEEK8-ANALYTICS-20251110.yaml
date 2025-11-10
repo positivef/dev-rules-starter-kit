@@ -1,0 +1,472 @@
+task_id: "WEEK8-ANALYTICS-20251110"
+title: "Week 8: Advanced Analytics & Monitoring System"
+created_at: "2025-11-10T01:10:00+09:00"
+priority: "high"
+estimated_hours: 6
+constitutional_articles: ["P1", "P2", "P3", "P6", "P8", "P10"]
+
+description: |
+  Implement advanced analytics and monitoring system for session management.
+
+  Goals:
+  1. Real-time performance metrics collection
+  2. Predictive crash and performance analytics
+  3. Advanced productivity insights
+  4. Enhanced health monitoring dashboard
+
+  Prerequisites:
+  - Week 7 Session Management complete (128/128 tests passing)
+  - session_coordinator.py functional
+  - shared_context_manager.py functional
+
+phases:
+  - phase: 1
+    name: "Real-Time Metrics Engine"
+    estimated_hours: 2
+    commands:
+      - name: "Setup and scaffolding"
+        exec:
+          - "mkdir"
+          - "-p"
+          - "tests"
+        description: "Ensure test directory exists"
+
+      - name: "Create test file first (TDD - P8)"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            test_content = '''"""Tests for SessionMetricsEngine - Real-time metrics collection.
+
+            Constitutional Compliance:
+            - P8: Test-First Development (TDD)
+            - P6: Quality Gates (coverage ≥90%)
+            """
+
+            import time
+            from datetime import datetime
+            import pytest
+
+            # Tests will be implemented here
+            class TestMetricsCollector:
+                def test_collect_metrics_success(self):
+                    pass
+
+                def test_calculate_health_score(self):
+                    pass
+
+                def test_detect_anomalies(self):
+                    pass
+
+            class TestMetricsAggregator:
+                def test_aggregate_by_period(self):
+                    pass
+
+                def test_calculate_trends(self):
+                    pass
+            '''
+
+            Path('tests/test_session_metrics_engine.py').write_text(test_content, encoding='utf-8')
+            print('[OK] Test scaffold created')
+        description: "Create test scaffold (TDD)"
+
+      - name: "Implement metrics engine"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            impl_content = '''"""Session Metrics Engine - Real-time performance metrics collection.
+
+            Features:
+            - Real-time metrics collection (<1s latency)
+            - Health score calculation (0-100)
+            - Anomaly detection
+            - Trend analysis
+            """
+
+            from datetime import datetime, timezone
+            from typing import Dict, Any, List
+            from dataclasses import dataclass
+            import statistics
+
+
+            @dataclass
+            class SessionMetrics:
+                """Real-time session metrics."""
+                timestamp: datetime
+                session_id: str
+                health_score: float  # 0-100
+                operation_latency_ms: float
+                active_sessions: int
+                error_rate: float  # errors per minute
+                cpu_percent: float
+                memory_mb: float
+
+
+            class MetricsCollector:
+                """Collect real-time session metrics."""
+
+                def collect_metrics(self, session_id: str) -> SessionMetrics:
+                    """Collect current metrics snapshot."""
+                    pass
+
+                def calculate_health_score(self, metrics: Dict[str, Any]) -> float:
+                    """Calculate 0-100 health score."""
+                    pass
+
+                def detect_anomalies(self, metrics: SessionMetrics) -> List[str]:
+                    """Detect anomalous patterns."""
+                    pass
+
+
+            class MetricsAggregator:
+                """Aggregate metrics over time periods."""
+
+                def aggregate_by_period(self, metrics: List[SessionMetrics], period_min: int) -> Dict[str, Any]:
+                    """Aggregate metrics by time period."""
+                    pass
+
+                def calculate_trends(self, aggregated: Dict[str, Any]) -> str:
+                    """Calculate trend: up/down/stable."""
+                    pass
+            '''
+
+            Path('scripts/session_metrics_engine.py').write_text(impl_content, encoding='utf-8')
+            print('[OK] Implementation scaffold created')
+        description: "Create implementation scaffold"
+
+      - name: "Run tests (should fail - TDD)"
+        exec:
+          - "python"
+          - "-m"
+          - "pytest"
+          - "tests/test_session_metrics_engine.py"
+          - "-v"
+        allow_failure: true
+        description: "Verify tests exist (TDD red phase)"
+
+  - phase: 2
+    name: "Predictive Analytics"
+    estimated_hours: 2
+    commands:
+      - name: "Create predictor test scaffold (TDD)"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            test_content = '''"""Tests for SessionPredictor - Predictive analytics.
+
+            Constitutional Compliance:
+            - P8: Test-First Development (TDD)
+            - P6: Quality Gates (coverage ≥85%)
+            """
+
+            import pytest
+
+            class TestCrashPredictor:
+                def test_predict_crash_probability(self):
+                    pass
+
+                def test_detect_memory_leak(self):
+                    pass
+
+                def test_estimate_time_to_failure(self):
+                    pass
+
+            class TestPerformancePredictor:
+                def test_predict_operation_time(self):
+                    pass
+
+                def test_predict_bottleneck(self):
+                    pass
+            '''
+
+            Path('tests/test_session_predictor.py').write_text(test_content, encoding='utf-8')
+            print('[OK] Predictor test scaffold created')
+        description: "Create predictor tests (TDD)"
+
+      - name: "Implement predictor"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            impl_content = '''"""Session Predictor - Predictive analytics for crash and performance.
+
+            Features:
+            - Crash probability prediction
+            - Memory leak detection
+            - Performance bottleneck prediction
+            """
+
+            from typing import Dict, Any, Optional
+            from dataclasses import dataclass
+
+
+            @dataclass
+            class CrashPrediction:
+                """Crash prediction result."""
+                probability: float  # 0-1
+                confidence: float  # 0-1
+                estimated_time_to_failure_min: Optional[int]
+                reasons: list
+
+
+            class CrashPredictor:
+                """Predict potential session crashes."""
+
+                def predict_crash_probability(self, metrics_history: list) -> float:
+                    """Predict crash probability 0-1."""
+                    pass
+
+                def detect_memory_leak(self, memory_history: list) -> bool:
+                    """Detect memory leak pattern."""
+                    pass
+
+                def estimate_time_to_failure(self, metrics: Dict[str, Any]) -> Optional[int]:
+                    """Estimate minutes until failure."""
+                    pass
+
+
+            class PerformancePredictor:
+                """Predict performance issues."""
+
+                def predict_operation_time(self, operation: str, history: list) -> float:
+                    """Predict operation duration in seconds."""
+                    pass
+
+                def predict_bottleneck(self, metrics: Dict[str, Any]) -> str:
+                    """Predict next bottleneck component."""
+                    pass
+            '''
+
+            Path('scripts/session_predictor.py').write_text(impl_content, encoding='utf-8')
+            print('[OK] Predictor scaffold created')
+        description: "Create predictor implementation"
+
+  - phase: 3
+    name: "Advanced Insights Generator"
+    estimated_hours: 1.5
+    commands:
+      - name: "Create insights test scaffold (TDD)"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            test_content = '''"""Tests for SessionInsightsGenerator - Advanced productivity insights.
+
+            Constitutional Compliance:
+            - P8: Test-First Development (TDD)
+            - P6: Quality Gates (coverage ≥85%)
+            """
+
+            import pytest
+
+            class TestProductivityAnalyzer:
+                def test_analyze_peak_hours(self):
+                    pass
+
+                def test_calculate_task_efficiency(self):
+                    pass
+
+            class TestOptimizationAdvisor:
+                def test_generate_suggestions(self):
+                    pass
+
+                def test_prioritize_actions(self):
+                    pass
+            '''
+
+            Path('tests/test_session_insights_generator.py').write_text(test_content, encoding='utf-8')
+            print('[OK] Insights test scaffold created')
+        description: "Create insights tests (TDD)"
+
+      - name: "Implement insights generator"
+        exec:
+          - "python"
+          - "-c"
+          - |
+            from pathlib import Path
+
+            impl_content = '''"""Session Insights Generator - Advanced productivity and optimization insights.
+
+            Features:
+            - Peak productivity hour analysis
+            - Task efficiency scoring
+            - Optimization recommendations
+            """
+
+            from typing import List, Dict, Any
+            from dataclasses import dataclass
+
+
+            @dataclass
+            class OptimizationSuggestion:
+                """Optimization suggestion."""
+                category: str
+                description: str
+                impact: str  # high/medium/low
+                effort: str  # high/medium/low
+                priority: int  # 1-10
+
+
+            class ProductivityAnalyzer:
+                """Analyze productivity patterns."""
+
+                def analyze_peak_hours(self, session_data: list) -> List[int]:
+                    """Identify peak productivity hours (0-23)."""
+                    pass
+
+                def calculate_task_efficiency(self, task_data: Dict[str, Any]) -> float:
+                    """Calculate task efficiency score 0-100."""
+                    pass
+
+
+            class OptimizationAdvisor:
+                """Generate optimization recommendations."""
+
+                def generate_suggestions(self, analysis_results: Dict[str, Any]) -> List[OptimizationSuggestion]:
+                    """Generate prioritized suggestions."""
+                    pass
+
+                def prioritize_actions(self, suggestions: List[OptimizationSuggestion]) -> List[OptimizationSuggestion]:
+                    """Prioritize by impact/effort ratio."""
+                    pass
+            '''
+
+            Path('scripts/session_insights_generator.py').write_text(impl_content, encoding='utf-8')
+            print('[OK] Insights generator scaffold created')
+        description: "Create insights generator"
+
+  - phase: 4
+    name: "Integration & Validation"
+    estimated_hours: 0.5
+    commands:
+      - name: "Run all new tests"
+        exec:
+          - "python"
+          - "-m"
+          - "pytest"
+          - "tests/test_session_metrics_engine.py"
+          - "tests/test_session_predictor.py"
+          - "tests/test_session_insights_generator.py"
+          - "-v"
+          - "--tb=short"
+        description: "Verify all scaffolds work"
+
+      - name: "Check test coverage"
+        exec:
+          - "python"
+          - "-m"
+          - "pytest"
+          - "tests/test_session_metrics_engine.py"
+          - "tests/test_session_predictor.py"
+          - "tests/test_session_insights_generator.py"
+          - "--cov=scripts.session_metrics_engine"
+          - "--cov=scripts.session_predictor"
+          - "--cov=scripts.session_insights_generator"
+          - "--cov-report=term"
+        description: "Verify coverage targets"
+
+gates:
+  - type: "constitutional"
+    articles: ["P8"]
+    description: "TDD: Tests written before implementation"
+
+  - type: "constitutional"
+    articles: ["P6"]
+    description: "Quality Gates: Coverage ≥85%"
+    threshold:
+      metrics_engine: 0.90
+      predictor: 0.85
+      insights: 0.85
+
+  - type: "constitutional"
+    articles: ["P10"]
+    description: "Windows Encoding: No emojis in production code"
+
+  - type: "performance"
+    description: "Metrics collection latency <1s"
+    threshold:
+      max_latency_ms: 1000
+
+  - type: "integration"
+    description: "All tests passing"
+    threshold:
+      pass_rate: 1.0
+
+deliverables:
+  - path: "scripts/session_metrics_engine.py"
+    description: "Real-time metrics collection engine"
+    test_coverage_target: 0.90
+
+  - path: "scripts/session_predictor.py"
+    description: "Predictive analytics for crash and performance"
+    test_coverage_target: 0.85
+
+  - path: "scripts/session_insights_generator.py"
+    description: "Advanced productivity insights generator"
+    test_coverage_target: 0.85
+
+  - path: "tests/test_session_metrics_engine.py"
+    description: "Tests for metrics engine"
+
+  - path: "tests/test_session_predictor.py"
+    description: "Tests for predictor"
+
+  - path: "tests/test_session_insights_generator.py"
+    description: "Tests for insights generator"
+
+  - path: "claudedocs/WEEK8-IMPLEMENTATION-REPORT.md"
+    description: "Implementation completion report"
+
+success_criteria:
+  - criterion: "All tests passing"
+    target: "100%"
+    measured_by: "pytest"
+
+  - criterion: "Test coverage"
+    target: "≥85% (90% for metrics engine)"
+    measured_by: "pytest-cov"
+
+  - criterion: "Metrics latency"
+    target: "<1s"
+    measured_by: "Performance test"
+
+  - criterion: "Prediction accuracy"
+    target: ">80%"
+    measured_by: "Validation against historical data"
+
+  - criterion: "Constitutional compliance"
+    target: "P1, P2, P3, P6, P8, P10"
+    measured_by: "constitutional_validator.py"
+
+notes: |
+  Week 8 builds on top of Week 7 Session Management system.
+
+  Focus on:
+  1. TDD approach (P8) - tests first
+  2. Scaffold creation for rapid development
+  3. Integration with existing session_coordinator
+  4. Real-time performance (<1s latency)
+
+  This YAML creates scaffolds only. Full implementation will follow
+  with proper TDD cycles (red-green-refactor).
+
+metadata:
+  week: 8
+  tier: 1
+  branch: "tier1/week8-analytics"
+  parent_task: "TIER1-SESSION-MANAGEMENT"
+  related_tasks:
+    - "WEEK7-SESSION-RECOVERY"
+    - "WEEK7-REAL-TIME-SYNC"

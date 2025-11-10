@@ -1,0 +1,114 @@
+{
+  "benchmarking": {
+    "competitors": [
+      {
+        "name": "Todoist",
+        "github_stars": 50000,
+        "strengths": [
+          {
+            "title": "Natural Language Input",
+            "description": "Type 'tomorrow 3pm meeting' and it parses automatically"
+          },
+          {
+            "title": "Project Hierarchy",
+            "description": "Organize tasks with projects and labels"
+          },
+          {
+            "title": "Karma Points",
+            "description": "Gamification with productivity scoring"
+          }
+        ],
+        "weaknesses": [
+          {
+            "category": "AI",
+            "description": "No AI-powered auto-priority"
+          },
+          {
+            "category": "Time Tracking",
+            "description": "No built-in time tracking"
+          }
+        ]
+      },
+      {
+        "name": "Things 3",
+        "github_stars": 40000,
+        "strengths": [
+          {
+            "title": "Clean Design",
+            "description": "Minimalist and intuitive UI"
+          },
+          {
+            "title": "Magic Plus",
+            "description": "Quick entry from anywhere"
+          },
+          {
+            "title": "Areas Concept",
+            "description": "Organize by life areas"
+          }
+        ],
+        "weaknesses": [
+          {
+            "category": "Platform",
+            "description": "MacOS/iOS only"
+          },
+          {
+            "category": "Collaboration",
+            "description": "No team features"
+          }
+        ]
+      },
+      {
+        "name": "TickTick",
+        "github_stars": 30000,
+        "strengths": [
+          {
+            "title": "Pomodoro Timer",
+            "description": "Built-in timer for focused work sessions"
+          },
+          {
+            "title": "Habit Tracking",
+            "description": "Track daily habits alongside tasks"
+          },
+          {
+            "title": "Calendar Integration",
+            "description": "Seamless calendar view"
+          }
+        ],
+        "weaknesses": [
+          {
+            "category": "UX",
+            "description": "Complex UI for beginners"
+          },
+          {
+            "category": "AI",
+            "description": "No context-aware suggestions"
+          }
+        ]
+      }
+    ],
+    "differentiation": [
+      {
+        "point": "Ai Auto-Priority",
+        "rationale": "None of the 3 competitors provide this feature",
+        "target": "Users seeking modern, intelligent task management",
+        "complexity": "medium",
+        "impact": "high"
+      },
+      {
+        "point": "Solve AI Issue",
+        "rationale": "Multiple competitors struggle with ai: No AI-powered auto-priority",
+        "target": "Users frustrated with ai in existing tools",
+        "complexity": "medium",
+        "impact": "medium"
+      },
+      {
+        "point": "Open Source + Privacy First",
+        "rationale": "Most competitors are closed-source or SaaS-only",
+        "target": "Privacy-conscious users and developers",
+        "complexity": "low",
+        "impact": "medium"
+      }
+    ],
+    "target_market": {}
+  }
+}
