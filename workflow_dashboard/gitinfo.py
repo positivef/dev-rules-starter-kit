@@ -19,15 +19,24 @@ class GitInfo:
     worktrees: list = field(default_factory=list)
 
 
+def _decode(raw: bytes) -> str:
+    """Decode git output as UTF-8, tolerating invalid bytes.
+
+    git emits UTF-8 (e.g. Korean commit messages); decoding with the Windows
+    cp949 locale (subprocess text=True default) raises UnicodeDecodeError, so we
+    capture bytes and decode explicitly.
+    """
+    return (raw or b"").decode("utf-8", errors="replace")
+
+
 def _default_runner(args: list, cwd: Path) -> str:
     proc = subprocess.run(
         ["git"] + args,
         cwd=str(cwd),
         capture_output=True,
-        text=True,
         timeout=15,
     )
-    return proc.stdout
+    return _decode(proc.stdout)
 
 
 def _int(text: str, default: int = 0) -> int:

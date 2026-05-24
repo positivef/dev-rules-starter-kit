@@ -1,6 +1,15 @@
 from pathlib import Path
 
-from workflow_dashboard.gitinfo import collect_git_info, GitInfo
+from workflow_dashboard.gitinfo import collect_git_info, GitInfo, _decode
+
+
+def test_decode_handles_korean_utf8_bytes():
+    assert _decode("브랜치 메시지".encode("utf-8")) == "브랜치 메시지"
+
+
+def test_decode_replaces_invalid_bytes_without_raising():
+    # 0xed is a UTF-8 lead byte; an incomplete sequence must not raise.
+    assert isinstance(_decode(b"abc\xed\x00"), str)
 
 
 def make_runner(responses):
