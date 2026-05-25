@@ -117,3 +117,6 @@ validation_report.html
 
 # Auto-generated test files
 tests/*_generated.py
+
+# Session Workflow Dashboard generated artifacts (read-only tool output)
+workflow_dashboard/output/
